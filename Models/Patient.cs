@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TestWebApp.Models
+namespace AADWebApp.Models
 {
     public class Patient
     {
