@@ -1,4 +1,4 @@
-namespace TestWebApp.Models
+namespace AADWebApp.Models
 {
     public class Account
     {
