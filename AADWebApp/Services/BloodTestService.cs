@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 
-namespace TestWebApp.Services
+namespace AADWebApp.Services
 {
     public class BloodTestService
     {
