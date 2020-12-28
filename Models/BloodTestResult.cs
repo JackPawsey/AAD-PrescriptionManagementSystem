@@ -1,6 +1,6 @@
 using System;
 
-namespace TestWebApp.Models
+namespace AADWebApp.Models
 {
     public class BloodTestResult
     {
