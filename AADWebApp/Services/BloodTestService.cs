@@ -1,3 +1,4 @@
+using AADWebApp.Models;
 using Microsoft.AspNetCore.Hosting;
 using System;
 
@@ -26,7 +27,7 @@ namespace AADWebApp.Services
             return Result;
         }
 
-        public String SetBloodTestResults(int BloodTestID, int[] TestResults)
+        public String SetBloodTestResults(BloodTestResult TestResult)
         {
             String Result = "";
 
