@@ -1,6 +1,7 @@
 using AADWebApp.Models;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Collections.Generic;
 
 namespace AADWebApp.Services
 {
@@ -11,6 +12,23 @@ namespace AADWebApp.Services
         public BloodTestService(IWebHostEnvironment webHostEnvironment)
         {
             WebHostEnvironment = webHostEnvironment;
+        }
+
+        public IEnumerable<BloodTest> GetBloodTests()
+        {
+            IEnumerable<BloodTest> BloodTests;
+
+            try
+            {
+                //GET BLOODTEST TABLE
+                BloodTests = null; //*** TEMPORARY ***
+            }
+            catch
+            {
+                BloodTests = null;
+            }
+
+            return BloodTests;
         }
 
         public String RequestBloodTest(int PatientID, String BloodTestType)
