@@ -48,6 +48,8 @@ namespace AADWebApp.Services
             Client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
             String Userstate = "Sending...";
             Client.SendAsync(MailMessage, Userstate);
+
+            MailMessage.Dispose();
         }
 
         private void SendCompletedCallback(object Sernder, AsyncCompletedEventArgs e)
