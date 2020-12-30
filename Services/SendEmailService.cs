@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AADWebApp.Services
 {
-    public class SendEmailService
+    public class SendEmailService: ISendEmailService
     {
         public IWebHostEnvironment WebHostEnvironment { get; }
 
