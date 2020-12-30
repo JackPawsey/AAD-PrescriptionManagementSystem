@@ -26,6 +26,7 @@ namespace AADWebApp
         {
             services.AddRazorPages();
             services.AddTransient<ISendEmailService, SendEmailService>();
+            services.AddTransient<SendSMSService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
