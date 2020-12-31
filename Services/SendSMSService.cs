@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
-    public class SendSMSService
+    public class SendSMSService : ISendSMSService
     {
         public IWebHostEnvironment WebHostEnvironment { get; }
 
@@ -27,7 +27,7 @@ namespace AADWebApp.Services
                 PhoneNumber = PhoneNumber
             };
 
-            request.MessageAttributes["AWS.SNS.SMS.SenderID"] = new MessageAttributeValue { StringValue = "CCrusaders", DataType = "String" };
+            request.MessageAttributes["AWS.SNS.SMS.SenderID"] = new MessageAttributeValue { StringValue = "CCrusaders, DataType = "String" };
 
             try
             {

@@ -1,14 +1,9 @@
 using AADWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AADWebApp
 {
@@ -26,7 +21,7 @@ namespace AADWebApp
         {
             services.AddRazorPages();
             services.AddTransient<ISendEmailService, SendEmailService>();
-            services.AddTransient<SendSMSService>();
+            services.AddTransient<ISendSMSService, SendSMSService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
