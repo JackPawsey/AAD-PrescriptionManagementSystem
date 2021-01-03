@@ -1,0 +1,47 @@
+﻿@page
+@model AADWebApp.Areas.Admin.Pages.ListRolesModel
+@inject RoleManager<IdentityRole> RoleManager;
+
+@{
+    ViewData["Title"] = "List Roles";
+    Layout = "~/Areas/Identity/Pages/_AuthLayout.cshtml";
+}
+
+<h1>List Roles</h1>
+
+@if (RoleManager.Roles.Any())
+{
+    <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/CreateRole">
+        Create role
+    </a>
+
+    foreach (var role in RoleManager.Roles)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                Role ID : @role.Id
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Role Name : @role.Name</h5>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/EditRole" asp-route-id="@role.Id">Edit</a>
+                <a class="btn btn-primary" style="width:auto" asp-area="" asp-page="/">Delete</a>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            No roles created yet
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">
+                Use button below to create a role
+            </h5>
+            <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/CreateRole">Create role</a>
+        </div>
+    </div>
+}

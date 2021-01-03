@@ -21,6 +21,7 @@ namespace AADWebApp.Areas.Identity
                         context.Configuration.GetConnectionString("AuthDbContextConnection")));
 
                 services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false) // Set true to require email confirmation
+                    .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<AuthDbContext>();
             });
         }

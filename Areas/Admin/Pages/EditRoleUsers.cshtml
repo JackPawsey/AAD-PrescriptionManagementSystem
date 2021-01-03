@@ -1,0 +1,39 @@
+﻿@page
+@model AADWebApp.Areas.Admin.Pages.EditRoleUsersModel
+@{
+    ViewData["Title"] = "Edit Role Users";
+    var roleId = Request.Query["id"];
+    Layout = "~/Areas/Identity/Pages/_AuthLayout.cshtml";
+}
+
+<h1>Edit '@Model.RoleName' Role Users</h1>
+
+<form method="post">
+    <div class="card">
+        <div class="card-header">
+            <h2>Add or remove users from role:</h2>
+        </div>
+        <div class="card-body">
+            @for (int x = 0; x < Model.userRoleModels.Count; x++)
+            {
+            <div class="form-check m-1">
+                @if (Model.userRoleModels[x].IsSelected)
+                {
+                    <input asp-for="Input[x].IsSelected" checked class="form-check-input" />
+                }
+                else
+                {
+                    <input asp-for="Input[x].IsSelected" class="form-check-input" />
+                }
+                <label class="form-check-label">
+                    @Model.userRoleModels[x].UserName
+                </label>
+            </div>
+            }
+        </div>
+        <div class="card-footer">
+            <input type="submit" value="Update" class="btn btn-primary" style="width:auto" />
+            <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/EditRole" asp-route-id="@roleId">Cancel</a>
+        </div>
+    </div>
+</form>
