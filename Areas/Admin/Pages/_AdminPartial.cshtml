@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AADWebApp.Areas.Identity.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Admin")))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="register" asp-area="Admin" asp-page="ListUsers">Manage Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-area="Admin" asp-page="ListRoles">Manage Roles</a>
+        </li>
+    }
+</ul>

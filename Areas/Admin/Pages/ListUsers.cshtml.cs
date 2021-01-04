@@ -1,3 +1,4 @@
+using AADWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,43 +9,39 @@ using System.Threading.Tasks;
 namespace AADWebApp.Areas.Admin.Pages
 {
     [Authorize(Roles = "Admin")]
-    public class ListRolesModel : PageModel
+    public class ListUsersModel : PageModel
     {
-        private readonly RoleManager<IdentityRole> RoleManager;
+        private readonly UserManager<ApplicationUser> UserManager;
 
         [BindProperty]
-        public string RoleID { get; set; }
+        public string UserID { get; set; }
 
-        public ListRolesModel(RoleManager<IdentityRole> roleManager)
+        public ListUsersModel(UserManager<ApplicationUser> userManager)
         {
-            RoleManager = roleManager;
+            UserManager = userManager;
         }
 
         public void OnGet()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("/");
-            }
         }
 
         public async Task<IActionResult> OnPost()
         {
-            Console.WriteLine("Role to delete: " + RoleID);
+            Console.WriteLine("UserID to delete: " + UserID);
 
-            IdentityRole Role = await RoleManager.FindByIdAsync(RoleID);
+            ApplicationUser User = await UserManager.FindByIdAsync(UserID);
 
-            if (Role != null)
+            if (User != null)
             {
-                var result = await RoleManager.DeleteAsync(Role);
+                var DeleteResult = await UserManager.DeleteAsync(User);
 
-                if (result.Succeeded)
+                if (DeleteResult.Succeeded)
                 {
-                    Response.Redirect("/Admin/ListRoles");
+                    Response.Redirect("/Admin/ListUsers");
                 }
                 else
                 {
-                    foreach (IdentityError error in result.Errors)
+                    foreach (IdentityError error in DeleteResult.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
@@ -54,7 +51,7 @@ namespace AADWebApp.Areas.Admin.Pages
             {
                 ModelState.AddModelError("", "Role not found");
             }
-            
+
             return Page();
         }
     }

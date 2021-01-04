@@ -1,0 +1,56 @@
+﻿@page
+@model AADWebApp.Areas.Admin.Pages.ListUsersModel
+@inject UserManager<ApplicationUser> UserManager;
+@{
+    ViewData["Title"] = "List Users";
+    Layout = "~/Areas/Admin/Pages/_AdminLayout.cshtml";
+
+
+    string var = "test";
+
+
+}
+
+<h1>List Users</h1>
+
+@if (UserManager.Users.Any())
+{
+    <a class="btn btn-primary" style="width:auto" asp-area="Identity" asp-page="/Account/Register">Create user</a>
+
+    foreach (var user in UserManager.Users)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                User ID : @user.Id
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">User Name: @user.FirstName @user.LastName</h5>
+                <h6 class="card-title">Email Address: @user.NormalizedEmail</h6>
+                <h6 class="card-title">Phone Number: @user.PhoneNumber</h6>
+                <h6 class="card-title">Email Confirmed: @user.EmailConfirmed, Phone Number Confirmed: @user.PhoneNumberConfirmed</h6>
+                <h6 class="card-title">NHS Number: @user.NHSNumber</h6>
+                <h6 class="card-title">City: @user.City</h6>
+                <h6 class="card-title">General Practioner: @user.GeneralPractioner</h6>
+                <h6 class="card-title">Two factor enabled: @user.TwoFactorEnabled</h6>
+            </div>
+            <div class="card-footer">
+                <form method="post">
+                    <input asp-for="UserID" value="@user.Id" type="hidden">
+                    <button type="submit" asp class="btn btn-primary btn-block" style="width:auto" onclick="return confirm('Are you sure you want to delete user: @user.UserName?')">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            No users created yet
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Use button below to create a user</h5>
+            <a class="btn btn-primary" style="width:auto" asp-area="Identity" asp-page="/Account/Register">Create user</a>
+        </div>
+    </div>
+}

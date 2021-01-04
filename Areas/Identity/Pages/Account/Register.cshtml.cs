@@ -22,17 +22,20 @@ namespace AADWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -43,6 +46,8 @@ namespace AADWebApp.Areas.Identity.Pages.Account
         public string ReturnUrl { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+        private string DefaultRole { get; set; } = "Patient";
 
         public class InputModel
         {
@@ -95,7 +100,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && !(User.IsInRole("Admin")))
             {
                 Response.Redirect("/");
             }
@@ -110,9 +115,54 @@ namespace AADWebApp.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, City = Input.City, PhoneNumber = Input.PhoneNumber };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, City = Input.City, PhoneNumber = Input.PhoneNumber, NHSNumber = Input.NHSNumber, GeneralPractioner = Input.GeneralPractitioner };
+                var CreateResult = await _userManager.CreateAsync(user, Input.Password);
+                IdentityResult AddToRoleresult = new IdentityResult();
+
+                //If default role exists, add new user to role
+                if (await _roleManager.RoleExistsAsync(DefaultRole))
+                {
+                    AddToRoleresult = await _userManager.AddToRoleAsync(user, DefaultRole);
+
+                    if (!AddToRoleresult.Succeeded)
+                    {
+                        foreach (IdentityError error in AddToRoleresult.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                    }
+                }
+                else //Create default role, then add user
+                {
+                    IdentityRole NewRole = new IdentityRole
+                    {
+                        Name = DefaultRole
+                    };
+
+                    IdentityResult CreateDefaultRoleresult = await _roleManager.CreateAsync(NewRole);
+
+                    if (CreateDefaultRoleresult.Succeeded)
+                    {
+                        AddToRoleresult = await _userManager.AddToRoleAsync(user, DefaultRole);
+
+                        if (!AddToRoleresult.Succeeded)
+                        {
+                            foreach (IdentityError error in AddToRoleresult.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (IdentityError error in CreateDefaultRoleresult.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                    }
+                }
+
+                if (CreateResult.Succeeded && AddToRoleresult.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
@@ -133,11 +183,18 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (User.IsInRole("Admin"))
+                        {
+                            Response.Redirect("/Admin/ListUsers");
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                 }
-                foreach (var error in result.Errors)
+                foreach (var error in CreateResult.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }

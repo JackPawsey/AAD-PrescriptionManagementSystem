@@ -4,7 +4,7 @@
 
 @{
     ViewData["Title"] = "List Roles";
-    Layout = "~/Areas/Identity/Pages/_AuthLayout.cshtml";
+    Layout = "~/Areas/Admin/Pages/_AdminLayout.cshtml";
 }
 
 <h1>List Roles</h1>
@@ -26,7 +26,10 @@
             </div>
             <div class="card-footer">
                 <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/EditRole" asp-route-id="@role.Id">Edit</a>
-                <a class="btn btn-primary" style="width:auto" asp-area="" asp-page="/">Delete</a>
+                <form method="post">
+                    <input asp-for="RoleID" value="@role.Id" type="hidden">
+                    <button type="submit" asp class="btn btn-primary" onclick="return confirm('Are you sure you want to delete role: @role.Name?')">Delete</button>
+                </form>
             </div>
         </div>
     }
