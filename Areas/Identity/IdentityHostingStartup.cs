@@ -23,6 +23,13 @@ namespace AADWebApp.Areas.Identity
                 services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false) // Set true to require email confirmation
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<AuthDbContext>();
+
+                services.ConfigureApplicationCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                    options.LoginPath = "/Identity/Account/Login";
+                    options.SlidingExpiration = true; // Instruct the handler to re-issue a new cookie with a new expiration time any time it processes a request which is more than halfway through the expiration window.
+                });
             });
         }
     }
