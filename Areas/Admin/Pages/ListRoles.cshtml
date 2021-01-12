@@ -10,40 +10,36 @@
 <h1>List Roles</h1>
 @if (RoleManager.Roles.Any())
 {
-    <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/CreateRole">
-        Create role
-    </a>
+    <a class="btn btn-primary mb-3" asp-area="Admin" asp-page="/CreateRole">Create role</a>
 
-    foreach (var role in RoleManager.Roles)
-    {
-        <div class="card mb-3">
-            <div class="card-header">
-                Role ID : @role.Id
+    <div class="row">
+        @foreach (var role in RoleManager.Roles)
+        {
+            <div class="col-md-6 mb-3 d-flex align-items-stretch">
+                <div class="card w-100">
+                    <div class="card-header">Role ID : @role.Id</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Role Name : @role.Name</h5>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-warning" asp-area="Admin" asp-page="/EditRole" asp-route-id="@role.Id">Edit</a>
+                        <form method="post" class="d-inline">
+                            <input asp-for="RoleId" value="@role.Id" type="hidden">
+                            <button type="submit" asp class="btn btn-danger" onclick="return confirm('Are you sure you want to delete role: @role.Name?')">Delete</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title">Role Name : @role.Name</h5>
-            </div>
-            <div class="card-footer">
-                <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/EditRole" asp-route-id="@role.Id">Edit</a>
-                <form method="post">
-                    <input asp-for="RoleId" value="@role.Id" type="hidden">
-                    <button type="submit" asp class="btn btn-primary" onclick="return confirm('Are you sure you want to delete role: @role.Name?')">Delete</button>
-                </form>
-            </div>
-        </div>
-    }
+        }
+    </div>
 }
 else
 {
     <div class="card">
-        <div class="card-header">
-            No roles created yet
-        </div>
+        <div class="card-header">No roles created yet</div>
         <div class="card-body">
-            <h5 class="card-title">
-                Use button below to create a role
-            </h5>
-            <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/CreateRole">Create role</a>
+            <h5 class="card-title">Use button below to create a role</h5>
+            <a class="btn btn-primary" asp-area="Admin" asp-page="/CreateRole">Create role</a>
         </div>
     </div>
 }
