@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AADWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using AADWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +42,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public string ReturnUrl { get; set; }
+        public string ReturnUrl { get; private set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
@@ -100,10 +99,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (User.Identity.IsAuthenticated && !(User.IsInRole("Admin")))
-            {
-                Response.Redirect("/");
-            }
+            if (User.Identity.IsAuthenticated && !User.IsInRole("Admin")) Response.Redirect("/");
 
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -115,28 +111,34 @@ namespace AADWebApp.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, City = Input.City, PhoneNumber = Input.PhoneNumber, NHSNumber = Input.NHSNumber, GeneralPractioner = Input.GeneralPractitioner };
-                var CreateResult = await _userManager.CreateAsync(user, Input.Password);
-                IdentityResult AddToRoleresult = new IdentityResult();
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    City = Input.City,
+                    PhoneNumber = Input.PhoneNumber,
+                    NHSNumber = Input.NHSNumber,
+                    GeneralPractioner = Input.GeneralPractitioner
+                };
+                var createResult = await _userManager.CreateAsync(user, Input.Password);
+                var addToRoleResult = new IdentityResult();
 
                 if (await _roleManager.RoleExistsAsync(DefaultRole))
                 {
-                    AddToRoleresult = await _userManager.AddToRoleAsync(user, DefaultRole);
+                    addToRoleResult = await _userManager.AddToRoleAsync(user, DefaultRole);
 
-                    if (!AddToRoleresult.Succeeded)
-                    {
-                        foreach (IdentityError error in AddToRoleresult.Errors)
-                        {
+                    if (!addToRoleResult.Succeeded)
+                        foreach (var error in addToRoleResult.Errors)
                             ModelState.AddModelError("", error.Description);
-                        }
-                    }
                 }
                 else
                 {
                     ModelState.AddModelError("", "Default role does not exist");
                 }
 
-                if (CreateResult.Succeeded && AddToRoleresult.Succeeded)
+                if (createResult.Succeeded && addToRoleResult.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
@@ -144,16 +146,25 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                        null,
+                        new
+                        {
+                            area = "Identity",
+                            userId = user.Id,
+                            code = code,
+                            returnUrl = returnUrl
+                        },
+                        Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new
+                        {
+                            email = Input.Email,
+                            returnUrl = returnUrl
+                        });
                     }
                     else
                     {
@@ -163,15 +174,13 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                         }
                         else
                         {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            await _signInManager.SignInAsync(user, false);
                             return LocalRedirect(returnUrl);
                         }
                     }
                 }
-                foreach (var error in CreateResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+
+                foreach (var error in createResult.Errors) ModelState.AddModelError(string.Empty, error.Description);
             }
 
             // If we got this far, something failed, redisplay form

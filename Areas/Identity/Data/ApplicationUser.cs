@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace AADWebApp.Areas.Identity.Data
@@ -12,22 +8,22 @@ namespace AADWebApp.Areas.Identity.Data
     {
         [PersonalData]
         [Column(TypeName = "nvarchar(100)")]
-        public String FirstName { get; set; }
-        
-        [PersonalData]
-        [Column(TypeName = "nvarchar(100)")]
-        public String LastName { get; set; }
+        public string FirstName { get; set; }
 
         [PersonalData]
         [Column(TypeName = "nvarchar(100)")]
-        public String City { get; set; }
+        public string LastName { get; set; }
 
         [PersonalData]
         [Column(TypeName = "nvarchar(100)")]
-        public String GeneralPractioner { get; set; }
+        public string City { get; set; }
 
         [PersonalData]
         [Column(TypeName = "nvarchar(100)")]
-        public String NHSNumber { get; set; }
+        public string GeneralPractioner { get; set; }
+
+        [PersonalData]
+        [Column(TypeName = "nvarchar(100)")]
+        public string NHSNumber { get; set; }
     }
 }

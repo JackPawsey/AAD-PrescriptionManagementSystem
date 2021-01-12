@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
@@ -12,15 +11,15 @@ namespace AADWebApp.Areas.Admin.Pages
     [Authorize(Roles = "Admin")]
     public class CreateRoleModel : PageModel
     {
-        private readonly RoleManager<IdentityRole> RoleManager;
-        private readonly UserManager<ApplicationUser> UserManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public CreateRoleModel(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
-            UserManager = userManager;
-            RoleManager = roleManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -36,34 +35,25 @@ namespace AADWebApp.Areas.Admin.Pages
 
         public void OnGet()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("/");
-            }
+            if (!User.Identity.IsAuthenticated) Response.Redirect("/");
         }
-        
+
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-
             if (ModelState.IsValid)
             {
-                IdentityRole NewRole = new IdentityRole
+                var newRole = new IdentityRole
                 {
                     Name = Input.RoleName
                 };
 
-                IdentityResult result = await RoleManager.CreateAsync(NewRole);
+                var result = await _roleManager.CreateAsync(newRole);
 
-                if (result.Succeeded)
-                {
-                    return Redirect("/Admin/ListRoles");
-                }
+                if (result.Succeeded) return Redirect("/Admin/ListRoles");
 
-                foreach (IdentityError error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+                foreach (var error in result.Errors) ModelState.AddModelError("", error.Description);
             }
+
             return Page();
         }
     }

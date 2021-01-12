@@ -1,40 +1,39 @@
 ﻿using System;
+using Amazon;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
-using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
-    public class SendSMSService : ISendSMSService
+    public class SendSmsService : ISendSmsService
     {
-        public IWebHostEnvironment WebHostEnvironment { get; }
-
-        public SendSMSService(IWebHostEnvironment webHostEnvironment)
+        public void SendSms(string phoneNumber, string message)
         {
-            WebHostEnvironment = webHostEnvironment;
-        }
+            const string awsKey = "AKIA3NTV7LS6XPMG4NOK";
+            const string awsSecretKey = "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";
 
-        public void SendSMS(String PhoneNumber, String Message)
-        {
-            String AWSKey = "AKIA3NTV7LS6XPMG4NOK";
-            String AWSSecretKey = "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";
+            var client = new AmazonSimpleNotificationServiceClient(awsKey, awsSecretKey, RegionEndpoint.EUWest1);
 
-            AmazonSimpleNotificationServiceClient client = new AmazonSimpleNotificationServiceClient(AWSKey, AWSSecretKey, region: Amazon.RegionEndpoint.EUWest1);
-
-            PublishRequest request = new PublishRequest
+            var request = new PublishRequest
             {
-                Message = Message,
-                PhoneNumber = PhoneNumber
+                Message = message,
+                PhoneNumber = phoneNumber,
+                MessageAttributes =
+                {
+                    ["AWS.SNS.SMS.SenderID"] = new MessageAttributeValue
+                    {
+                        StringValue = "CCrusaders",
+                        DataType = "String"
+                    }
+                }
             };
-
-            request.MessageAttributes["AWS.SNS.SMS.SenderID"] = new MessageAttributeValue { StringValue = "CCrusaders", DataType = "String" };
 
             try
             {
                 var response = client.PublishAsync(request);
 
-                Console.WriteLine("Message sent to " + PhoneNumber + ":");
-                Console.WriteLine(Message);
+                Console.WriteLine("Message sent to " + phoneNumber + ":");
+                Console.WriteLine(message);
             }
             catch (Exception ex)
             {

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AADWebApp.Areas.Identity.Data;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace AADWebApp.Data
+namespace AADWebApp.Areas.Identity.Data
 {
     public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {

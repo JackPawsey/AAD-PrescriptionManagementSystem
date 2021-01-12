@@ -1,60 +1,51 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Areas.Admin.Pages
 {
     [Authorize(Roles = "Admin")]
     public class ListRolesModel : PageModel
     {
-        private readonly RoleManager<IdentityRole> RoleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         [BindProperty]
-        public string RoleID { get; set; }
+        public string RoleId { get; set; }
 
         public ListRolesModel(RoleManager<IdentityRole> roleManager)
         {
-            RoleManager = roleManager;
+            _roleManager = roleManager;
         }
 
         public void OnGet()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("/");
-            }
+            if (!User.Identity.IsAuthenticated) Response.Redirect("/");
         }
 
         public async Task<IActionResult> OnPost()
         {
-            Console.WriteLine("Role to delete: " + RoleID);
+            Console.WriteLine("Role to delete: " + RoleId);
 
-            IdentityRole Role = await RoleManager.FindByIdAsync(RoleID);
+            var role = await _roleManager.FindByIdAsync(RoleId);
 
-            if (Role != null)
+            if (role != null)
             {
-                var result = await RoleManager.DeleteAsync(Role);
+                var result = await _roleManager.DeleteAsync(role);
 
                 if (result.Succeeded)
-                {
                     Response.Redirect("/Admin/ListRoles");
-                }
                 else
-                {
-                    foreach (IdentityError error in result.Errors)
-                    {
+                    foreach (var error in result.Errors)
                         ModelState.AddModelError("", error.Description);
-                    }
-                }
             }
             else
             {
                 ModelState.AddModelError("", "Role not found");
             }
-            
+
             return Page();
         }
     }

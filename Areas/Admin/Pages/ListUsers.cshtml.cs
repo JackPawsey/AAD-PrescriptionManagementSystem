@@ -1,24 +1,24 @@
+using System;
+using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Areas.Admin.Pages
 {
     [Authorize(Roles = "Admin")]
     public class ListUsersModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> UserManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         [BindProperty]
-        public string UserID { get; set; }
+        public string UserId { get; set; }
 
         public ListUsersModel(UserManager<ApplicationUser> userManager)
         {
-            UserManager = userManager;
+            _userManager = userManager;
         }
 
         public void OnGet()
@@ -27,25 +27,19 @@ namespace AADWebApp.Areas.Admin.Pages
 
         public async Task<IActionResult> OnPost()
         {
-            Console.WriteLine("UserID to delete: " + UserID);
+            Console.WriteLine("UserID to delete: " + UserId);
 
-            ApplicationUser User = await UserManager.FindByIdAsync(UserID);
+            var user = await _userManager.FindByIdAsync(UserId);
 
-            if (User != null)
+            if (user != null)
             {
-                var DeleteResult = await UserManager.DeleteAsync(User);
+                var deleteResult = await _userManager.DeleteAsync(user);
 
-                if (DeleteResult.Succeeded)
-                {
+                if (deleteResult.Succeeded)
                     Response.Redirect("/Admin/ListUsers");
-                }
                 else
-                {
-                    foreach (IdentityError error in DeleteResult.Errors)
-                    {
+                    foreach (var error in deleteResult.Errors)
                         ModelState.AddModelError("", error.Description);
-                    }
-                }
             }
             else
             {

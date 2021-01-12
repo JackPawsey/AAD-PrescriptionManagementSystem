@@ -17,9 +17,9 @@
 </div>
 
 @section Scripts {
-    @RenderSection("Scripts", required: false)
+    @RenderSection("Scripts", false)
 
-<script>
+    <script>
     $(function () {
         var current = location.pathname;
         $(' .nav-tabs li a').each(function () {

@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace AADWebApp.Services
+﻿namespace AADWebApp.Services
 {
     public interface ISendEmailService
     {
-        public void SendEmail(String BodyContent, String Subject, String RecipientAddress);
+        public void SendEmail(string bodyContent, string subject, string recipientAddress);
     }
 }

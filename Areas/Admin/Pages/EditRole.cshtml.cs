@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
@@ -12,8 +11,8 @@ namespace AADWebApp.Areas.Admin.Pages
     [Authorize(Roles = "Admin")]
     public class EditRoleModel : PageModel
     {
-        private readonly RoleManager<IdentityRole> RoleManager;
-        private readonly UserManager<ApplicationUser> UserManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         [BindProperty]
         public RoleModel roleModel { get; set; }
@@ -28,60 +27,51 @@ namespace AADWebApp.Areas.Admin.Pages
 
         public EditRoleModel(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            RoleManager = roleManager;
-            UserManager = userManager;
+            _roleManager = roleManager;
+            _userManager = userManager;
             roleModel = new RoleModel();
         }
 
         public async Task OnGet()
         {
-            var Role = await RoleManager.FindByIdAsync(Request.Query["id"]);
-            
-            if (Role == null)
+            var role = await _roleManager.FindByIdAsync(Request.Query["id"]);
+
+            if (role == null)
             {
                 ModelState.AddModelError("", "Role not found");
                 Response.Redirect("/Admin/ListRoles");
             }
             else
             {
-                this.roleModel.Id = Role.Id;
-                this.roleModel.RoleName = Role.Name;
+                roleModel.Id = role.Id;
+                roleModel.RoleName = role.Name;
 
-                foreach (var User in UserManager.Users)
-                {
-                    if (await UserManager.IsInRoleAsync(User, Role.Name))
-                    {
-                        this.roleModel.Users.Add(User.UserName);
-                    }
-                }
+                foreach (var user in _userManager.Users)
+                    if (await _userManager.IsInRoleAsync(user, role.Name))
+                        roleModel.Users.Add(user.UserName);
             }
         }
 
         public async Task OnPostAsync()
         {
-            var Role = await RoleManager.FindByIdAsync(Request.Query["id"]);
+            var role = await _roleManager.FindByIdAsync(Request.Query["id"]);
 
-            if (Role == null)
+            if (role == null)
             {
                 ModelState.AddModelError("", "Role not found");
             }
             else
             {
-                Role.Name = roleModel.RoleName;
-                var result = await RoleManager.UpdateAsync(Role);
+                role.Name = roleModel.RoleName;
+                var result = await _roleManager.UpdateAsync(role);
 
                 if (result.Succeeded)
-                {
                     Response.Redirect("/Admin/ListRoles");
-                }
                 else
-                {
                     foreach (var error in result.Errors)
-                    {
                         ModelState.AddModelError("", error.Description);
-                    }
-                }
             }
+
             await OnGet();
         }
     }

@@ -1,18 +1,13 @@
 ﻿@page
 @model AADWebApp.Areas.Admin.Pages.ListUsersModel
 @inject UserManager<ApplicationUser> UserManager;
+
 @{
     ViewData["Title"] = "List Users";
     Layout = "~/Areas/Admin/Pages/_AdminLayout.cshtml";
-
-
-    string var = "test";
-
-
 }
 
 <h1>List Users</h1>
-
 @if (UserManager.Users.Any())
 {
     <a class="btn btn-primary" style="width:auto" asp-area="Identity" asp-page="/Account/Register">Create user</a>
@@ -35,7 +30,7 @@
             </div>
             <div class="card-footer">
                 <form method="post">
-                    <input asp-for="UserID" value="@user.Id" type="hidden">
+                    <input asp-for="UserId" value="@user.Id" type="hidden">
                     <button type="submit" asp class="btn btn-primary btn-block" style="width:auto" onclick="return confirm('Are you sure you want to delete user: @user.UserName?')">Delete</button>
                 </form>
             </div>

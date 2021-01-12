@@ -12,11 +12,11 @@ namespace AADWebApp.Areas.Admin.Pages
     [Authorize(Roles = "Admin")]
     public class EditRoleUsersModel : PageModel
     {
-        private readonly RoleManager<IdentityRole> RoleManager;
-        private readonly UserManager<ApplicationUser> UserManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         [BindProperty]
-        public List<UserRoleModel> userRoleModels { get; set; } = new List<UserRoleModel>();
+        public List<UserRoleModel> UserRoleModels { get; set; } = new List<UserRoleModel>();
 
         public class UserRoleModel
         {
@@ -33,28 +33,28 @@ namespace AADWebApp.Areas.Admin.Pages
             public bool IsSelected { get; set; }
         }
 
-        public string RoleName { get; set; }
+        public string RoleName { get; private set; }
 
         public EditRoleUsersModel(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            RoleManager = roleManager;
-            UserManager = userManager;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task OnGet()
         {
-            var Role = await RoleManager.FindByIdAsync(Request.Query["id"]);
+            var role = await _roleManager.FindByIdAsync(Request.Query["id"]);
 
-            RoleName = Role.Name;
+            RoleName = role.Name;
 
-            if (Role == null)
+            if (role == null)
             {
                 ModelState.AddModelError("", "Role not found");
                 Response.Redirect("/Admin/ListRoles");
             }
             else
             {
-                foreach (var user in UserManager.Users)
+                foreach (var user in _userManager.Users)
                 {
                     var userRoleModel = new UserRoleModel
                     {
@@ -62,24 +62,21 @@ namespace AADWebApp.Areas.Admin.Pages
                         UserName = user.UserName
                     };
 
-                    if (await UserManager.IsInRoleAsync(user, Role.Name))
-                    {
+                    if (await _userManager.IsInRoleAsync(user, role.Name))
                         userRoleModel.IsSelected = true;
-                    }
                     else
-                    {
                         userRoleModel.IsSelected = false;
-                    }
-                    userRoleModels.Add(userRoleModel);
+
+                    UserRoleModels.Add(userRoleModel);
                 }
             }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var Role = await RoleManager.FindByIdAsync(Request.Query["id"]);
+            var role = await _roleManager.FindByIdAsync(Request.Query["id"]);
 
-            if (Role == null)
+            if (role == null)
             {
                 ModelState.AddModelError("", "Role not found");
                 Console.WriteLine("role not found");
@@ -87,7 +84,7 @@ namespace AADWebApp.Areas.Admin.Pages
             }
             else
             {
-                foreach (var user in UserManager.Users)
+                foreach (var user in _userManager.Users)
                 {
                     var userRoleModel = new UserRoleModel
                     {
@@ -95,27 +92,20 @@ namespace AADWebApp.Areas.Admin.Pages
                         UserName = user.UserName
                     };
 
-                    userRoleModels.Add(userRoleModel);
+                    UserRoleModels.Add(userRoleModel);
                 }
 
-                for (int x = 0; x < userRoleModels.Count; x++)
+                for (var x = 0; x < UserRoleModels.Count; x++)
                 {
-                    var user = await UserManager.FindByIdAsync(userRoleModels[x].UserId);
+                    var user = await _userManager.FindByIdAsync(UserRoleModels[x].UserId);
                     IdentityResult result = null;
 
-                    if (Input[x].IsSelected && !(await UserManager.IsInRoleAsync(user, Role.Name)))
-                    {
-                        result = await UserManager.AddToRoleAsync(user, Role.Name);
-                    }
-                    else if (!Input[x].IsSelected && await UserManager.IsInRoleAsync(user, Role.Name))
-                    {
-                        result = await UserManager.RemoveFromRoleAsync(user, Role.Name);
-                    }
+                    if (Input[x].IsSelected && !await _userManager.IsInRoleAsync(user, role.Name))
+                        result = await _userManager.AddToRoleAsync(user, role.Name);
+                    else if (!Input[x].IsSelected && await _userManager.IsInRoleAsync(user, role.Name))
+                        result = await _userManager.RemoveFromRoleAsync(user, role.Name);
 
-                    if (result?.Succeeded == false)
-                    {
-                        break;
-                    }
+                    if (result?.Succeeded == false) break;
                 }
 
                 return Redirect("/Admin/EditRole");

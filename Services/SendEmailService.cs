@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Mail;
@@ -7,65 +6,56 @@ using System.Text;
 
 namespace AADWebApp.Services
 {
-    public class SendEmailService: ISendEmailService
+    public class SendEmailService : ISendEmailService
     {
-        public IWebHostEnvironment WebHostEnvironment { get; }
+        private SmtpClient _client;
+        private MailMessage _mailMessage;
+        private NetworkCredential _networkCredentials;
 
-        private NetworkCredential NetworkCreds;
-        private SmtpClient Client;
-        private MailMessage MailMessage;
-
-        public SendEmailService(IWebHostEnvironment webHostEnvironment)
+        public void SendEmail(string bodyContent, string subject, string recipientAddress)
         {
-            WebHostEnvironment = webHostEnvironment;
-        }
+            const int smtpPort = 587;
+            const string smtpAddress = "smtp.gmail.com";
 
-        public void SendEmail(String BodyContent, String Subject, String RecipientAddress)
-        {
-            int SmtpPort = 587;
-            String SmtpAddress = "smtp.gmail.com";
+            const string accountAddress = "cloudcrusaderssystems@gmail.com";
+            const string accountPassword = "CloudCrusaders420";
 
-            String AccountAddress = "cloudcrusaderssystems@gmail.com";
-            String AccountPassword = "CloudCrusaders420";
-
-            NetworkCreds = new NetworkCredential(AccountAddress, AccountPassword);
-            Client = new SmtpClient(SmtpAddress);
-            Client.Port = SmtpPort;
-            Client.EnableSsl = true;
-            Client.Credentials = NetworkCreds;
-            
-            MailAddress From = new MailAddress(AccountAddress);
-            MailAddress To = new MailAddress(RecipientAddress);
-            MailMessage = new MailMessage(From, To);
-
-            MailMessage.Subject = Subject;
-            MailMessage.Body = BodyContent;
-            MailMessage.BodyEncoding = Encoding.UTF8;
-            MailMessage.IsBodyHtml = true;
-            MailMessage.Priority = MailPriority.Normal;
-            MailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-
-            Client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
-            String Userstate = "Sending...";
-            Client.SendAsync(MailMessage, Userstate);
-
-            MailMessage.Dispose();
-        }
-
-        private void SendCompletedCallback(object Sernder, AsyncCompletedEventArgs e)
-        {
-            if (e.Cancelled)
+            _networkCredentials = new NetworkCredential(accountAddress, accountPassword);
+            _client = new SmtpClient(smtpAddress)
             {
-                Console.WriteLine("Send cancelled");
-            }
+                Port = smtpPort,
+                EnableSsl = true,
+                Credentials = _networkCredentials
+            };
+
+            var from = new MailAddress(accountAddress);
+            var to = new MailAddress(recipientAddress);
+
+            _mailMessage = new MailMessage(from, to)
+            {
+                Subject = subject,
+                Body = bodyContent,
+                BodyEncoding = Encoding.UTF8,
+                IsBodyHtml = true,
+                Priority = MailPriority.Normal,
+                DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure
+            };
+
+            _client.SendCompleted += SendCompletedCallback;
+            const string userState = "Sending...";
+            _client.SendAsync(_mailMessage, userState);
+
+            _mailMessage.Dispose();
+        }
+
+        private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+        {
+            if (e.Cancelled) Console.WriteLine("Send cancelled");
+
             if (e.Error != null)
-            {
                 Console.WriteLine("Error");
-            }
             else
-            {
                 Console.WriteLine("Email sent successfully");
-            }
         }
     }
 }

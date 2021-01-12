@@ -8,7 +8,6 @@
 }
 
 <h1>List Roles</h1>
-
 @if (RoleManager.Roles.Any())
 {
     <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/CreateRole">
@@ -27,7 +26,7 @@
             <div class="card-footer">
                 <a class="btn btn-primary" style="width:auto" asp-area="Admin" asp-page="/EditRole" asp-route-id="@role.Id">Edit</a>
                 <form method="post">
-                    <input asp-for="RoleID" value="@role.Id" type="hidden">
+                    <input asp-for="RoleId" value="@role.Id" type="hidden">
                     <button type="submit" asp class="btn btn-primary" onclick="return confirm('Are you sure you want to delete role: @role.Name?')">Delete</button>
                 </form>
             </div>
