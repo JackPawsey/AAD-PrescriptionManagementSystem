@@ -5,10 +5,10 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
+using AADWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -23,20 +23,20 @@ namespace AADWebApp.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly ISendEmailService _sendEmailService;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            ISendEmailService sendEmailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _logger = logger;
-            _emailSender = emailSender;
+            _sendEmailService = sendEmailService;
         }
 
         [BindProperty]
@@ -156,7 +156,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                         },
                         Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    _sendEmailService.SendEmail($"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.", "Confirm your email", Input.Email);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
