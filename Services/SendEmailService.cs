@@ -44,18 +44,18 @@ namespace AADWebApp.Services
             _client.SendCompleted += SendCompletedCallback;
             const string userState = "Sending...";
             _client.SendAsync(_mailMessage, userState);
-
-            _mailMessage.Dispose();
         }
 
-        private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+        private void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Cancelled) Console.WriteLine("Send cancelled");
-
-            if (e.Error != null)
+            if (e.Cancelled) 
+                Console.WriteLine("Send cancelled");
+            else if (e.Error != null)
                 Console.WriteLine("Error");
             else
                 Console.WriteLine("Email sent successfully");
+            
+            _mailMessage.Dispose();
         }
     }
 }
