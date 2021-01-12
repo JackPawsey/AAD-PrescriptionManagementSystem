@@ -119,7 +119,6 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                 var CreateResult = await _userManager.CreateAsync(user, Input.Password);
                 IdentityResult AddToRoleresult = new IdentityResult();
 
-                //If default role exists, add new user to role
                 if (await _roleManager.RoleExistsAsync(DefaultRole))
                 {
                     AddToRoleresult = await _userManager.AddToRoleAsync(user, DefaultRole);
@@ -132,34 +131,9 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                         }
                     }
                 }
-                else //Create default role, then add user
+                else
                 {
-                    IdentityRole NewRole = new IdentityRole
-                    {
-                        Name = DefaultRole
-                    };
-
-                    IdentityResult CreateDefaultRoleresult = await _roleManager.CreateAsync(NewRole);
-
-                    if (CreateDefaultRoleresult.Succeeded)
-                    {
-                        AddToRoleresult = await _userManager.AddToRoleAsync(user, DefaultRole);
-
-                        if (!AddToRoleresult.Succeeded)
-                        {
-                            foreach (IdentityError error in AddToRoleresult.Errors)
-                            {
-                                ModelState.AddModelError("", error.Description);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (IdentityError error in CreateDefaultRoleresult.Errors)
-                        {
-                            ModelState.AddModelError("", error.Description);
-                        }
-                    }
+                    ModelState.AddModelError("", "Default role does not exist");
                 }
 
                 if (CreateResult.Succeeded && AddToRoleresult.Succeeded)
