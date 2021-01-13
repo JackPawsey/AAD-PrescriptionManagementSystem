@@ -1,0 +1,57 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model AADWebApp.Areas.Admin.Pages.EditRoleUsersModel
+
+@{
+    ViewData["Title"] = "Edit Role Users";
+    var roleId = Request.Query["id"];
+    Layout = "~/Areas/Admin/Pages/_AdminLayout.cshtml";
+}
+
+@{
+    if (Model.ModelState.TryGetValue("EditRoleError", out var roleErrors))
+    {
+        <p class="text-danger font-weight-bold">Errors:</p>
+        <ul>
+            @foreach (var error in roleErrors.Errors)
+            {
+                <li class="text-danger">@error.ErrorMessage</li>
+            }
+        </ul>
+
+        <p class="text-danger">Please try again.</p>
+        <a class="btn btn-danger" asp-area="Admin" asp-page="/EditRole" asp-route-id="@roleId">Return</a>
+
+        return;
+    }
+    <h1>Edit '@Model.RoleName' Role Users</h1>
+    <form method="post">
+        <div class="card">
+            <div class="card-header">
+                <h2>Add or remove users from role:</h2>
+            </div>
+            <div class="card-body">
+                @for (var i = 0; i < Model.UserRoleModels.Count; i++)
+                {
+                    <div class="form-check m-1">
+                        @if (Model.UserRoleModels[i].IsSelected)
+                        {
+                            <input asp-for="@Model.UserRoleModels[i].IsSelected" checked class="form-check-input" />
+                        }
+                        else
+                        {
+                            <input asp-for="@Model.UserRoleModels[i].IsSelected" class="form-check-input" />
+                        }
+                        <input asp-for="@Model.UserRoleModels[i].UserId" value="@Model.UserRoleModels[i].UserId" type="hidden">
+                        <input asp-for="@Model.UserRoleModels[i].UserName" value="@Model.UserRoleModels[i].UserName" type="hidden">
+                        <label class="form-check-label">@Model.UserRoleModels[i].UserName</label>
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-danger" asp-area="Admin" asp-page="/EditRole" asp-route-id="@roleId">Cancel</a>
+                <input type="submit" value="Update" class="btn btn-success" />
+            </div>
+        </div>
+    </form>
+}

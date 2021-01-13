@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace AADWebApp.Services
+﻿namespace AADWebApp.Services
 {
-    public interface ISendSMSService
+    public interface ISendSmsService
     {
-        public void SendSMS(String PhoneNumber, String Message);
+        public void SendSms(string phoneNumber, string message);
     }
 }
