@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AADWebApp", "AADWebApp.csproj", "{6383FB05-8CA4-4F62-990A-2E8E307478ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AADWebAppTests1", "..\AADWebAppTests1\AADWebAppTests1.csproj", "{FB2E3C18-36F6-4D5A-8B5F-9C20D1C7CA88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6383FB05-8CA4-4F62-990A-2E8E307478ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6383FB05-8CA4-4F62-990A-2E8E307478ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6383FB05-8CA4-4F62-990A-2E8E307478ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB2E3C18-36F6-4D5A-8B5F-9C20D1C7CA88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB2E3C18-36F6-4D5A-8B5F-9C20D1C7CA88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB2E3C18-36F6-4D5A-8B5F-9C20D1C7CA88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB2E3C18-36F6-4D5A-8B5F-9C20D1C7CA88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
