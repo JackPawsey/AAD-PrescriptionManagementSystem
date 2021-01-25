@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using System.Data.Sql;
+using System.Data.SqlClient;
 
 namespace AADWebApp.Services
 {
@@ -17,7 +19,7 @@ namespace AADWebApp.Services
         private bool Initialised = false;
         public bool IsInitialised => Initialised;
 
-        private MySqlConnection DBConnection { get; set; }
+        private SqlConnection DBConnection { get; set; }
 
         /// <summary>
         /// Construct a DatabaseService object.
@@ -42,9 +44,9 @@ namespace AADWebApp.Services
         }
 
         /// <summary>
-        /// Open a connection to a MySQL database using the class variables.
+        /// Open a connection to a MSSQLServer database using the class variables.
         /// </summary>
-        public void ConnectToMySQLDB()
+        public void ConnectToMSSQLServer()
         {
             Initialised = false;
             if (string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(DatabaseName))
@@ -52,51 +54,51 @@ namespace AADWebApp.Services
                 throw new InvalidOperationException("ServerName, Username, Password or DatabaseName is NullOrEmpty.");
             }
 
-            MySqlConnectionStringBuilder ConnectionStringBuilder = new MySqlConnectionStringBuilder()
+            SqlConnectionStringBuilder ConnectionStringBuilder = new SqlConnectionStringBuilder()
             {
-                Server = ServerName,
+                DataSource = ServerName,
                 UserID = Username,
-                Password = Password
+                Password = Password,
+                InitialCatalog = DatabaseName
             };
             string ConnectionString = ConnectionStringBuilder.ToString();
-            DBConnection = new MySqlConnection(ConnectionString);
+            DBConnection = new SqlConnection(ConnectionString);
 
             try
             {
                 DBConnection.Open();
                 Initialised = true;
-                DBConnection.ChangeDatabase(DatabaseName);
             }
-            catch (MySqlException Ex)
+            catch (SqlException Ex)
             {
-                Exception CustomException = new Exception("Connection to MySQL Server failed. See inner exception and ensure arguments are correct.", Ex);
+                Exception CustomException = new Exception("Connection to MSSQLServer failed. See inner exception and ensure arguments are correct.", Ex);
                 CustomException.Data.Add("Connection String", ConnectionString);
                 throw CustomException;
             }
         }
 
         /// <summary>
-        /// Execute a query (a MySQL command that returns rows) against the database connection.
+        /// Execute a query (a T-SQL command that returns rows) against the database connection.
         /// </summary>
-        /// <param name="Query">The MySQL command.</param>
-        /// <returns>Returns a MySqlDataReader object containing the results of the query.</returns>
-        public MySqlDataReader ExecuteQuery(string Query)
+        /// <param name="Query">The T-SQL command.</param>
+        /// <returns>Returns a SqlDataReader object containing the results of the query.</returns>
+        public SqlDataReader ExecuteQuery(string Query)
         {
             CheckInitialised();
-            MySqlCommand Command = new MySqlCommand(Query, DBConnection);
-            MySqlDataReader Reader = Command.ExecuteReader();
+            SqlCommand Command = new SqlCommand(Query, DBConnection);
+            SqlDataReader Reader = Command.ExecuteReader();
             return Reader;
         }
 
         /// <summary>
-        /// Execute a non-query (a MySQL command that returns no rows) against the database connection.
+        /// Execute a non-query (a T-SQL command that returns no rows) against the database connection.
         /// </summary>
-        /// <param name="NonQuery">The MySql command.</param>
+        /// <param name="NonQuery">The T-SQL command.</param>
         /// <returns>Returns the number of rows affected as an int.</returns>
         public int ExecuteNonQuery(string NonQuery)
         {
             CheckInitialised();
-            MySqlCommand Command = new MySqlCommand(NonQuery, DBConnection);
+            SqlCommand Command = new SqlCommand(NonQuery, DBConnection);
             return Command.ExecuteNonQuery();
         }
 
@@ -104,11 +106,11 @@ namespace AADWebApp.Services
         /// Performs "SELECT * FROM {TableName}" against the database connection.
         /// </summary>
         /// <param name="TableName">The name of the table to query.</param>
-        /// <returns>Returns a MySqlDataReader object containing the results of the query.</returns>
-        public MySqlDataReader RetrieveTable(string TableName)
+        /// <returns>Returns a SqlDataReader object containing the results of the query.</returns>
+        public SqlDataReader RetrieveTable(string TableName)
         {
             CheckInitialised();
-            MySqlCommand SelectTableCommand = new MySqlCommand($"SELECT * FROM {TableName};", DBConnection);
+            SqlCommand SelectTableCommand = new SqlCommand($"SELECT * FROM {TableName};", DBConnection);
             return SelectTableCommand.ExecuteReader();
         }
     }
