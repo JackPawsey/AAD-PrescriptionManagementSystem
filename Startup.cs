@@ -26,12 +26,13 @@ namespace AADWebApp
                     .AddRazorRuntimeCompilation();
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
-            //Source: https://www.c-sharpcorner.com/article/using-asp-net-core-3-0-identity-with-mysql/
-            services.AddDbContext<AuthDbContext>(options =>
-            options.UseMySql(
-                Configuration.GetConnectionString("AuthDbContextConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<AuthDbContext>();
+            
+            //Killing these in favour of the same lines in IdenityHostingStartup.cs.
+            //services.AddDbContext<AuthDbContext>(options =>
+            //options.UseSqlServer(
+            //    Configuration.GetConnectionString("AuthDbContextConnection")));
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<AuthDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
