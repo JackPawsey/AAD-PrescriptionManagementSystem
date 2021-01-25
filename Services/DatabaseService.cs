@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 namespace AADWebApp.Services
 {
-    public class DatabaseService
+    public class DatabaseService : IDatabaseService
     {
         public string ServerName;
         public string Username;

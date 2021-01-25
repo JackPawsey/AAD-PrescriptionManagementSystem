@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Data.SqlClient;
 
 namespace AADWebApp.Services
 {
-    interface IDatabaseService
+    public interface IDatabaseService
     {
+        bool IsInitialised { get; }
+
+        void ConnectToMSSQLServer();
+        int ExecuteNonQuery(string NonQuery);
+        SqlDataReader ExecuteQuery(string Query);
+        SqlDataReader RetrieveTable(string TableName);
     }
 }
