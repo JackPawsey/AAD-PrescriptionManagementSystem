@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-using System.Data.Sql;
 using System.Data.SqlClient;
 
 namespace AADWebApp.Services
