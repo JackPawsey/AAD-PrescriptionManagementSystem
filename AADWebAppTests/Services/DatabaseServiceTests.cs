@@ -1,9 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AADWebApp.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MySql.Data.MySqlClient;
+﻿using AADWebApp.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
