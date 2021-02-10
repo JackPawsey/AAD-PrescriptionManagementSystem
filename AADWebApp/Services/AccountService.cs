@@ -1,22 +1,14 @@
+using System.Collections.Generic;
 using AADWebApp.Models;
 using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
 
 namespace AADWebApp.Services
 {
     public class AccountService
     {
-        public IWebHostEnvironment WebHostEnvironment { get; }
-
-        public AccountService(IWebHostEnvironment webHostEnvironment)
+        public string Login(string email, string password)
         {
-            WebHostEnvironment = webHostEnvironment;
-        }
-
-        public String Login(String Email, String Password)
-        {
-            String Result;
+            string result;
 
             try
             {
@@ -24,98 +16,93 @@ namespace AADWebApp.Services
                 //FOR OVER TABLE, CHECK IF EMAIL AND PASSWORD BOTH MATCH ROW
 
                 if (true)
-                {
-                    Result = "Login succuessful";
-                }
+                    result = "Login successful";
                 else
-                {
-                    Result = "Error login failed - incorrect credentials";
-                }
-                
+                    result = "Error login failed - incorrect credentials";
             }
             catch
             {
-                Result = "Error login failed - server error";
+                result = "Error login failed - server error";
             }
 
-            return Result;
+            return result;
         }
 
-        public String Logout(int AccountID)
+        public string Logout(int accountId)
         {
-            String Result = "";
+            var result = "";
 
             //NOT SURE WE NEED THIS OR WHAT IT MIGHT NEED TO DO
 
-            return Result;
+            return result;
         }
 
         public IEnumerable<Account> GetUsers()
         {
-            IEnumerable<Account> Users;
+            IEnumerable<Account> users;
 
             try
             {
                 //GET ACCOUNTS TABLE
-                Users = null; //*** TEMPORARY ***
+                users = null; //*** TEMPORARY ***
             }
             catch
             {
-                Users = null;
+                users = null;
             }
 
-            return Users;
+            return users;
         }
 
-        public String AddUser(String Email, String Password, String AccountType)
+        public string AddUser(string email, string password, string accountType)
         {
-            String Result;
+            string result;
 
             try
             {
-                //CREATE ACCOUNT TABEL ROW
-                Result = "User created succuessfully";
+                //CREATE ACCOUNT TABLE ROW
+                result = "User created successfully";
             }
             catch
             {
-                Result = "Error user not created";
+                result = "Error user not created";
             }
 
-            return Result;
+            return result;
         }
 
-        public String RemoveUser(int AccountID)
+        public string RemoveUser(int accountId)
         {
-            String Result;
+            string result;
 
             try
             {
                 //DELETE ACCOUNT TABLE ROW
-                Result = "User deleted succuessfully";
+                result = "User deleted successfully";
             }
             catch
             {
-                Result = "Error user not deleted";
+                result = "Error user not deleted";
             }
 
-            return Result;
+            return result;
         }
 
-        public String SetPassword(int AccountID, String Password)
+        public string SetPassword(int accountId, string password)
         {
-            String Result;
+            string result;
 
             try
             {
                 //UPDATE ACCOUNT TABLE ROW
-                Result = "Account password updated succuessfully";
+                result = "Account password updated successfully";
             }
             catch
             {
-                Result = "Error account password not updated";
+                result = "Error account password not updated";
             }
 
-            return Result;
+            return result;
         }
     }
 }

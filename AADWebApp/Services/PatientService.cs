@@ -1,51 +1,43 @@
+using System.Collections.Generic;
 using AADWebApp.Models;
 using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
 
 namespace AADWebApp.Services
 {
     public class PatientService
     {
-        public IWebHostEnvironment WebHostEnvironment { get; }
-
-        public PatientService(IWebHostEnvironment webHostEnvironment)
-        {
-            WebHostEnvironment = webHostEnvironment;
-        }
-
         public IEnumerable<Patient> GetPatients()
         {
-            IEnumerable<Patient> Patients;
+            IEnumerable<Patient> patients;
 
             try
             {
                 //GET PATIENT TABLE
-                Patients = null; //*** TEMPORARY ***
+                patients = null; //*** TEMPORARY ***
             }
             catch
             {
-                Patients = null;
+                patients = null;
             }
 
-            return Patients;
+            return patients;
         }
 
-        public String SetCommunicationPreferences(int PatientID, String CommunicationPreferences)
+        public string SetCommunicationPreferences(int patientId, string communicationPreferences)
         {
-            String Result;
+            string result;
 
             try
             {
                 //UPDATE PATIENT TABLE ROW
-                Result = "Communication preferences updated succuessfully";
+                result = "Communication preferences updated successfully";
             }
             catch
             {
-                Result = "Error communication preferences not updated";
+                result = "Error communication preferences not updated";
             }
 
-            return Result;
+            return result;
         }
     }
 }

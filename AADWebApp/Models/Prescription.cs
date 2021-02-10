@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Models
 {
@@ -13,11 +10,11 @@ namespace AADWebApp.Models
 
         public DateTime PrescriptionEnd { get; set; }
 
-        public String MedicationType { get; set; }
+        public string MedicationType { get; set; }
 
         public int Dosage { get; set; }
 
-        public String PrescriptionStatus { get; set; }
+        public string PrescriptionStatus { get; set; }
 
         public DateTime CollectionDateTime { get; set; }
     }

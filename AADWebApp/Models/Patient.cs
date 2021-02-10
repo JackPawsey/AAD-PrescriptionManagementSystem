@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace AADWebApp.Models
@@ -9,11 +8,11 @@ namespace AADWebApp.Models
 
         public Account Account { get; set; }
 
-        public String FirstName { get; set; }
+        public string FirstName { get; set; }
 
-        public String LastName { get; set; }
+        public string LastName { get; set; }
 
-        public String Age { get; set; }
+        public string Age { get; set; }
 
         public IEnumerable<BloodTestResult> BloodTestResults { get; set; }
     }

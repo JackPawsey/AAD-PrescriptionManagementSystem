@@ -1,85 +1,78 @@
-using AADWebApp.Models;
-using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
+using AADWebApp.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
     public class BloodTestService
     {
-        public IWebHostEnvironment WebHostEnvironment { get; }
-
-        public BloodTestService(IWebHostEnvironment webHostEnvironment)
-        {
-            WebHostEnvironment = webHostEnvironment;
-        }
-
         public IEnumerable<BloodTest> GetBloodTests()
         {
-            IEnumerable<BloodTest> BloodTests;
+            IEnumerable<BloodTest> bloodTests;
 
             try
             {
                 //GET BLOODTEST TABLE
-                BloodTests = null; //*** TEMPORARY ***
+                bloodTests = null; //*** TEMPORARY ***
             }
             catch
             {
-                BloodTests = null;
+                bloodTests = null;
             }
 
-            return BloodTests;
+            return bloodTests;
         }
 
-        public String RequestBloodTest(int PatientID, String BloodTestType)
+        public string RequestBloodTest(int patientId, string bloodTestType)
         {
-            String Result;
+            string result;
 
             try
             {
                 //CREATE BLOODTEST TABLE ROW
-                Result = "Blood test request created succuessfully";
+                result = "Blood test request created successfully";
             }
             catch
             {
-                Result = "Error blood test request not created";
+                result = "Error blood test request not created";
             }
 
-            return Result;
+            return result;
         }
 
-        public String SetBloodTestDateTime(int BloodTestID, DateTime DateTime)
+        public string SetBloodTestDateTime(int bloodTestId, DateTime dateTime)
         {
-            String Result;
+            string result;
 
             try
             {
                 //UPDATE BLOODTEST TABLE ROW
-                Result = "Blood test date/time updated succuessfully";
+                result = "Blood test date/time updated successfully";
             }
             catch
             {
-                Result = "Error blood test date/time not updated";
+                result = "Error blood test date/time not updated";
             }
 
-            return Result;
+            return result;
         }
 
-        public String SetBloodTestResults(BloodTestResult TestResult)
+        public string SetBloodTestResults(BloodTestResult testResult)
         {
-            String Result;
+            string result;
 
             try
             {
                 //UPDATE BLOODTEST TABLE ROW
-                Result = "Blood test results updated succuessfully";
+                result = "Blood test results updated successfully";
             }
             catch
             {
-                Result = "Error blood test results not updated";
+                result = "Error blood test results not updated";
             }
 
-            return Result;
+            return result;
         }
     }
 }

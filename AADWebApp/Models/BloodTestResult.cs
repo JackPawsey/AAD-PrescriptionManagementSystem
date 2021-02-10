@@ -6,7 +6,7 @@ namespace AADWebApp.Models
     {
         public DateTime Occurance { get; set; }
 
-        public String BloodTestType { get; set; }
+        public string BloodTestType { get; set; }
 
         public int Result { get; set; }
     }

@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Models
 {
@@ -11,7 +8,7 @@ namespace AADWebApp.Models
 
         public int PatientId { get; set; }
 
-        public String BloodTestType { get; set; }
+        public string BloodTestType { get; set; }
 
         public DateTime DateRequested { get; set; }
     }

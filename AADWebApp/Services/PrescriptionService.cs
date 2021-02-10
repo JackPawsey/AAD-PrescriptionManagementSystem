@@ -1,120 +1,113 @@
-using AADWebApp.Models;
-using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
+using AADWebApp.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
     public class PrescriptionService
     {
-        public IWebHostEnvironment WebHostEnvironment { get; }
-
-        public PrescriptionService(IWebHostEnvironment webHostEnvironment)
-        {
-            WebHostEnvironment = webHostEnvironment;
-        }
-
         public IEnumerable<Prescription> GetPrescriptions()
         {
-            IEnumerable<Prescription> Prescriptions;
+            IEnumerable<Prescription> prescriptions;
 
             try
             {
                 //GET PRESCRIPTIONS TABLE
-                Prescriptions = null; //*** TEMPORARY ***
+                prescriptions = null; //*** TEMPORARY ***
             }
             catch
             {
-                Prescriptions = null;
+                prescriptions = null;
             }
 
-            return Prescriptions;
+            return prescriptions;
         }
 
-        public String CreatePrescription(int PatientID, String MedicationType, int Dosage, DateTime PrescriptionEnd)
+        public string CreatePrescription(int patientId, string medicationType, int dosage, DateTime prescriptionEnd)
         {
-            String Result;
+            string result;
 
             try
             {
                 //CREATE PRESCRIPTION TABLE ROW
-                Result = "Prescription created succuessfully";
+                result = "Prescription created successfully";
             }
             catch
             {
-                Result = "Error prescription not created";
+                result = "Error prescription not created";
             }
 
-            return Result;
+            return result;
         }
 
-        public String CancelPrescription(int PrescriptionID)
+        public string CancelPrescription(int prescriptionId)
         {
-            String Result;
+            string result;
 
             try
             {
-                //DELETE PRESCRIPTION TABLE ROW or SET PrescriptionEnd to currenct date/time?
+                //DELETE PRESCRIPTION TABLE ROW or SET PrescriptionEnd to current date/time?
                 //UPDATE PRESCRIPTION TABLE ROW
-                Result = "Task failed succuessfully";
+                result = "Task failed successfully";
             }
             catch
             {
-                Result = "Error prescription not cancelled";
+                result = "Error prescription not cancelled";
             }
 
-            return Result;
+            return result;
         }
 
-        public String SetPrescriptionMedication(int PrescriptionID, int Doasge)
+        public string SetPrescriptionMedication(int prescriptionId, int dosage)
         {
-            String Result;
-
-            try
-            {
-                //UPDATE PRESCRIPTION TABLE ROW
-                Result = "Prescription medication updated succuessfully";
-            }
-            catch
-            {
-                Result = "Error prescription medication not updated";
-            }
-
-            return Result;
-        }
-
-        public String SetPrescriptionCollectionDateTime(int PrescriptionID, DateTime DateTime)
-        {
-            String Result;
+            string result;
 
             try
             {
                 //UPDATE PRESCRIPTION TABLE ROW
-                Result = "Prescription collection date/time updated succuessfully";
+                result = "Prescription medication updated successfully";
             }
             catch
             {
-                Result = "Error prescription collection date/time not updated";
+                result = "Error prescription medication not updated";
             }
 
-            return Result;
+            return result;
         }
 
-        public String SetPrescriptionStatus(int PrescriptionID, String Status)
+        public string SetPrescriptionCollectionDateTime(int prescriptionId, DateTime dateTime)
         {
-            String Result;
+            string result;
 
             try
             {
                 //UPDATE PRESCRIPTION TABLE ROW
-                Result = "Prescription status updated succuessfully";
+                result = "Prescription collection date/time updated successfully";
             }
             catch
             {
-                Result = "Error prescription status not updated";
+                result = "Error prescription collection date/time not updated";
             }
 
-            return Result;
+            return result;
+        }
+
+        public string SetPrescriptionStatus(int prescriptionId, string status)
+        {
+            string result;
+
+            try
+            {
+                //UPDATE PRESCRIPTION TABLE ROW
+                result = "Prescription status updated successfully";
+            }
+            catch
+            {
+                result = "Error prescription status not updated";
+            }
+
+            return result;
         }
     }
 }
