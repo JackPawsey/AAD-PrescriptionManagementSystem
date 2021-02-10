@@ -28,7 +28,7 @@ namespace AADWebApp
             services.AddTransient<ISendSmsService, SendSmsService>();
             
             //To-Do: Inject these properly by sourcing them from appsettings / secrets.
-            string Server = "cloud-crusaders-project-database.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
+            string Server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
             string UserName = "admin";
             string Password = "uPjz58%4";
             string DatabaseName = "program_data";
