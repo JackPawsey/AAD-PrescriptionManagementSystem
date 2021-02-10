@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
-namespace AADWebApp.Services.Tests
+namespace AADWebAppTests.Services
 {
     [TestClass()]
     public class DatabaseServiceTests

@@ -27,12 +27,7 @@ namespace AADWebApp
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
             
-            //Killing these in favour of the same lines in IdenityHostingStartup.cs.
-            //services.AddDbContext<AuthDbContext>(options =>
-            //options.UseSqlServer(
-            //    Configuration.GetConnectionString("AuthDbContextConnection")));
-            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<AuthDbContext>();
+            services.AddTransient<IDatabaseService, DatabaseService>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

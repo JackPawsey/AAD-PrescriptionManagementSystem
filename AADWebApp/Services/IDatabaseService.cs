@@ -4,11 +4,11 @@ namespace AADWebApp.Services
 {
     public interface IDatabaseService
     {
-        bool IsInitialised { get; }
+        public bool IsInitialised { get; }
 
-        void ConnectToMSSQLServer();
-        int ExecuteNonQuery(string NonQuery);
-        SqlDataReader ExecuteQuery(string Query);
-        SqlDataReader RetrieveTable(string TableName);
+        public void ConnectToMSSQLServer();
+        public int ExecuteNonQuery(string NonQuery);
+        public SqlDataReader ExecuteQuery(string Query);
+        public SqlDataReader RetrieveTable(string TableName);
     }
 }
