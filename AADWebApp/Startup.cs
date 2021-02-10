@@ -27,7 +27,12 @@ namespace AADWebApp
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
             
-            services.AddTransient<IDatabaseService, DatabaseService>();
+            //To-Do: Inject these properly by sourcing them from appsettings / secrets.
+            string Server = "cloud-crusaders-project-database.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
+            string UserName = "admin";
+            string Password = "uPjz58%4";
+            string DatabaseName = "program_data";
+            services.AddTransient<IDatabaseService, DatabaseService>(_ => new DatabaseService(Server, UserName, Password, DatabaseName));
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
