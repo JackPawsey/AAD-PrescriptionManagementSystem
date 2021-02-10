@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
+using AADWebApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +14,17 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {
-        private readonly IEmailSender _emailSender;
+        private readonly ISendEmailService _sendEmailService;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public EmailModel(
-            UserManager<ApplicationUser> userManager,
+        public EmailModel(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            ISendEmailService sendSendEmailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _emailSender = emailSender;
+            _sendEmailService = sendSendEmailService;
         }
 
         public string Username { get; set; }
@@ -87,10 +87,10 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                         code
                     },
                     Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
+                _sendEmailService.SendEmail(
+                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
                     "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    Input.NewEmail);
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
@@ -125,10 +125,10 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                     code
                 },
                 Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
+            _sendEmailService.SendEmail(
+                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
                 "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                email);
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();
