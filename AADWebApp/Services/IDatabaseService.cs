@@ -11,5 +11,6 @@ namespace AADWebApp.Services
         public int ExecuteNonQuery(string NonQuery);
         public SqlDataReader ExecuteQuery(string Query);
         public SqlDataReader RetrieveTable(string TableName);
+        public void CloseConnection();
     }
 }

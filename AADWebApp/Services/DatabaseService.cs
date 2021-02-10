@@ -111,5 +111,13 @@ namespace AADWebApp.Services
             SqlCommand SelectTableCommand = new SqlCommand($"SELECT * FROM {TableName};", DBConnection);
             return SelectTableCommand.ExecuteReader();
         }
+
+        /// <summary>
+        /// Close the DBConnection.
+        /// </summary>
+        public void CloseConnection()
+        {
+            DBConnection.Close();
+        }
     }
 }
