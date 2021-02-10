@@ -5,10 +5,15 @@ namespace AADWebApp.Services
 {
     public class DatabaseService : IDatabaseService
     {
+        public enum Databases
+        {
+            Identity,
+            program_data
+        }
+
         public string ServerName;
         public string Username;
         public string Password;
-        public string DatabaseName;
 
         private bool Initialised = false;
         public bool IsInitialised => Initialised;
@@ -21,12 +26,11 @@ namespace AADWebApp.Services
         /// <param name="ServerName">The IP address/endpoint of the server.</param>
         /// <param name="Username"></param>
         /// <param name="Password"></param>
-        public DatabaseService(string ServerName, string Username, string Password, string DatabaseName)
+        public DatabaseService(string ServerName, string Username, string Password)
         {
             this.ServerName = ServerName;
             this.Username = Username;
             this.Password = Password;
-            this.DatabaseName = DatabaseName;
         }
 
         private void CheckInitialised()
@@ -40,10 +44,10 @@ namespace AADWebApp.Services
         /// <summary>
         /// Open a connection to a MSSQLServer database using the class variables.
         /// </summary>
-        public void ConnectToMSSQLServer()
+        public void ConnectToMSSQLServer(Databases DatabaseName)
         {
             Initialised = false;
-            if (string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(DatabaseName))
+            if (string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
             {
                 throw new InvalidOperationException("ServerName, Username, Password or DatabaseName is NullOrEmpty.");
             }
@@ -53,7 +57,7 @@ namespace AADWebApp.Services
                 DataSource = ServerName,
                 UserID = Username,
                 Password = Password,
-                InitialCatalog = DatabaseName
+                InitialCatalog = DatabaseName.ToString()
             };
             string ConnectionString = ConnectionStringBuilder.ToString();
             DBConnection = new SqlConnection(ConnectionString);

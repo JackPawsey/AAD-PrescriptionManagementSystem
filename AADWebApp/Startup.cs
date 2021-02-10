@@ -31,8 +31,7 @@ namespace AADWebApp
             string Server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
             string UserName = "admin";
             string Password = "uPjz58%4";
-            string DatabaseName = "program_data";
-            services.AddTransient<IDatabaseService, DatabaseService>(_ => new DatabaseService(Server, UserName, Password, DatabaseName));
+            services.AddTransient<IDatabaseService, DatabaseService>(_ => new DatabaseService(Server, UserName, Password));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
