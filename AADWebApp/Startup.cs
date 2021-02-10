@@ -33,8 +33,6 @@ namespace AADWebApp
             string Password = "uPjz58%4";
             string DatabaseName = "program_data";
             services.AddTransient<IDatabaseService, DatabaseService>(_ => new DatabaseService(Server, UserName, Password, DatabaseName));
-            services.AddControllersWithViews();
-            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
