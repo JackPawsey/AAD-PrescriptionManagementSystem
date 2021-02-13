@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AADWebApp.Models;
-using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
