@@ -30,8 +30,13 @@ namespace AADWebApp
 
             services.AddRazorPages()
                     .AddRazorRuntimeCompilation();
+
+            // Add services
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
+            services.AddTransient<IBloodTestService, BloodTestService>();
+            services.AddTransient<IPatientService, PatientService>();
+            services.AddTransient<IPrescriptionService, PrescriptionService>();
             services.AddTransient<IDatabaseNameResolver, DatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(

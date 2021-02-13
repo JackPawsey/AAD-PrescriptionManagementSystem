@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
-    public class BloodTestService
+    public class BloodTestService : IBloodTestService
     {
         public IEnumerable<BloodTest> GetBloodTests()
         {

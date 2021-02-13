@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
-    public class PrescriptionService
+    public class PrescriptionService : IPrescriptionService
     {
         public IEnumerable<Prescription> GetPrescriptions()
         {

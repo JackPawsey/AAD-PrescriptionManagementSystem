@@ -3,7 +3,7 @@ using AADWebApp.Models;
 
 namespace AADWebApp.Services
 {
-    public class PatientService
+    public class PatientService : IPatientService
     {
         public IEnumerable<Patient> GetPatients()
         {
