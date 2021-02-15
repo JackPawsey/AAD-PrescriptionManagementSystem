@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("AADWebAppTests.Services")]
 namespace AADWebApp.Services
 {
     public class DatabaseService : IDatabaseService
@@ -31,7 +36,7 @@ namespace AADWebApp.Services
 
         private void CheckInitialised()
         {
-            if (Initialised == false)
+            if (!Initialised)
             {
                 throw new InvalidOperationException("Connection has not been initialised.");
             }
@@ -72,6 +77,15 @@ namespace AADWebApp.Services
         }
 
         /// <summary>
+        /// Changes the catalog (database) currently selected for commands.
+        /// </summary>
+        /// <param name="DatabaseName">The name of the target database.</param>
+        public void ChangeDatabase(string DatabaseName)
+        {
+            DBConnection.ChangeDatabase(DatabaseName);
+        }
+
+        /// <summary>
         /// Execute a query (a T-SQL command that returns rows) against the database connection.
         /// </summary>
         /// <param name="Query">The T-SQL command.</param>
@@ -106,6 +120,120 @@ namespace AADWebApp.Services
             CheckInitialised();
             SqlCommand SelectTableCommand = new SqlCommand($"SELECT * FROM {TableName};", DBConnection);
             return SelectTableCommand.ExecuteReader();
+        }
+
+        ~DatabaseService()
+        {
+            DBConnection.Close();
+        }
+    }
+
+    public class ColumnResult
+    {
+        public string ColumnName;
+        public List<object> Items;
+
+        public ColumnResult()
+        {
+            ColumnName = string.Empty;
+            Items = new List<object>();
+        }
+    }
+
+    public class RowResult
+    {
+        public List<object> Items;
+
+        public RowResult()
+        {
+            Items = new List<object>();
+        }
+    }
+
+    public class QueryResult
+    {
+        private DataTable SourceTable;
+        private SqlDataReader SourceReader;
+
+        public QueryResult(SqlDataReader SourceReader)
+        {
+            this.SourceReader = SourceReader;
+            SourceTable = new DataTable();
+            SourceTable.Load(this.SourceReader);
+        }
+
+        
+
+        /// <summary>
+        /// Gets the contents of a cell from the query.
+        /// </summary>
+        /// <param name="RowIndex">The index of the row.</param>
+        /// <param name="ColumnIndex">The index of the column.</param>
+        /// <returns>Returns the contents of the specified cell. The result will be converted to the type specified for it by the SqlDataReader passed into the class.</returns>
+        public object GetCell(int RowIndex, int ColumnIndex)
+        {
+            string CellData = SourceTable.Rows[RowIndex][ColumnIndex].ToString();
+            return CellData;
+        }
+
+        /// <summary>
+        /// Gets the contents of a cell from the query.
+        /// </summary>
+        /// <param name="RowIndex">The index of the row.</param>
+        /// <param name="ColumnName">The name of the column.</param>
+        /// <returns>Returns the contents of the specified cell. The result will be converted to the type specified for it by the SqlDataReader passed into the class.</returns>
+        public object GetCell(int RowIndex, string ColumnName)
+        {
+            int ColumnIndex = ConvertColumnNameToIndex(ColumnName);
+            return GetCell(RowIndex, ColumnIndex);
+        }
+
+        /// <summary>
+        /// Gets the contents of an entire column from the query.
+        /// </summary>
+        /// <param name="ColumnIndex">The index of the column.</param>
+        /// <returns>Returns a ColumnResult containing the cells of the column.</returns>
+        public ColumnResult GetColumn(int ColumnIndex)
+        {
+            ColumnResult Output = new ColumnResult();
+            Output.ColumnName = SourceTable.Columns[ColumnIndex].ColumnName;
+            var RowCount = SourceTable.Rows.Count;
+            for (int i = 0; i < RowCount; i++)
+            {
+                Output.Items.Add(GetCell(i, ColumnIndex));
+            }
+
+            return Output;
+        }
+
+        /// <summary>
+        /// Gets the contents of an entire column from the query.
+        /// </summary>
+        /// <param name="ColumnName">The name of the column.</param>
+        /// <returns>Returns a ColumnResult containing the cells of the column.</returns>
+        public ColumnResult GetColumn(string ColumnName)
+        {
+            int ColumnIndex = ConvertColumnNameToIndex(ColumnName);
+            return GetColumn(ColumnIndex);
+        }
+
+        /// <summary>
+        /// Gets the contents of an entire row from the query.
+        /// </summary>
+        /// <param name="RowIndex">The index of the row.</param>
+        /// <returns>Returns a RowResult containing the cells of the row.</returns>
+        public RowResult GetRow(int RowIndex)
+        {
+            RowResult Output = new RowResult();
+            var Row = SourceTable.Rows[RowIndex];
+            Output.Items = Row.ItemArray.ToList();
+            return Output;
+        }
+
+        private int ConvertColumnNameToIndex(string ColumnName)
+        {
+            DataColumnCollection Columns = SourceTable.Columns;
+            return Columns.IndexOf(ColumnName);
         }
     }
 }
