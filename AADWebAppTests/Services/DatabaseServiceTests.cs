@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using static AADWebApp.Services.DatabaseService;
 
 namespace AADWebAppTests.Services
 {
@@ -13,13 +14,12 @@ namespace AADWebAppTests.Services
         string Username = "admin";
         //To-Do: Figure out secrets, change password.
         string Password = "uPjz58%4";
-        string DatabaseName = "program_data";
 
         DatabaseService TestService;
 
         private DatabaseService CreateService()
         {
-            return new DatabaseService(Server, Username, Password, DatabaseName);
+            return new DatabaseService(Server, Username, Password);
         }
 
         [TestMethod()]
@@ -32,7 +32,7 @@ namespace AADWebAppTests.Services
         public void ConnectToMSSQLServerTest()
         {
             TestService = CreateService();
-            TestService.ConnectToMSSQLServer();
+            TestService.ConnectToMSSQLServer(AvailableDatabases.program_data);
         }
 
         [TestMethod()]
@@ -129,6 +129,7 @@ namespace AADWebAppTests.Services
                     }
                     output += Reader.GetValue(i);
                 }
+
                 Debug.WriteLine(output);
             }
         }
