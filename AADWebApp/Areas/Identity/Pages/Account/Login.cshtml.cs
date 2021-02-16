@@ -86,15 +86,18 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                     if (await _userManager.IsInRoleAsync(user, "Pharmacist"))
                     {
                         return Redirect("/Pharmacist");
-                    } else
-                    if (await _userManager.IsInRoleAsync(user, "General Practitioner"))
+                    } 
+                    else if (await _userManager.IsInRoleAsync(user, "General Practitioner"))
                     {
                         return Redirect("/GeneralPractitioner");
                     }
-                    else
-                    if (await _userManager.IsInRoleAsync(user, "Technician"))
+                    else if (await _userManager.IsInRoleAsync(user, "Technician"))
                     {
                         return Redirect("/Technician");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "Patient") || await _userManager.IsInRoleAsync(user, "Authorised Carer"))
+                    {
+                        return Redirect("/Patient");
                     }
                     else
                     {
