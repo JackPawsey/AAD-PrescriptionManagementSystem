@@ -81,28 +81,32 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
                     var user = await _userManager.FindByEmailAsync(Input.Email);
 
-                    if (await _userManager.IsInRoleAsync(user, "Pharmacist"))
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    if (userRoles.Contains("Pharmacist"))
                     {
                         return Redirect("/Pharmacist");
-                    } 
-                    else if (await _userManager.IsInRoleAsync(user, "General Practitioner"))
+                    }
+
+                    if (userRoles.Contains("General Practitioner"))
                     {
                         return Redirect("/GeneralPractitioner");
                     }
-                    else if (await _userManager.IsInRoleAsync(user, "Technician"))
+
+                    if (userRoles.Contains("Technician"))
                     {
                         return Redirect("/Technician");
                     }
-                    else if (await _userManager.IsInRoleAsync(user, "Patient") || await _userManager.IsInRoleAsync(user, "Authorised Carer"))
+
+                    if (userRoles.Contains("Patient") || userRoles.Contains("Authorised Carer"))
                     {
                         return Redirect("/Patient");
                     }
-                    else
-                    {
-                        return LocalRedirect(returnUrl);
-                    }
+
+                    return LocalRedirect(returnUrl);
                 }
 
                 if (result.RequiresTwoFactor)
