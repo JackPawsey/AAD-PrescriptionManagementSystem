@@ -1,14 +1,18 @@
 ﻿@inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="register" asp-area="Admin" asp-page="ListUsers">Manage Users</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="login" asp-area="Admin" asp-page="ListRoles">Manage Roles</a>
-        </li>
-    }
-</ul>
+
+@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link text-dark" id="register" asp-area="Admin" asp-page="ListUsers">Manage Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" id="login" asp-area="Admin" asp-page="ListRoles">Manage Roles</a>
+            </li>
+
+        </ul>
+    </div>
+}

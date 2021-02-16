@@ -1,16 +1,18 @@
 ﻿@inject SignInManager<ApplicationUser> SignInManager
 
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Pharmacist"))
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Pharmacist" asp-page="Index">Home</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Pharmacist" asp-page="RequestBloodwork">Request Bloodwork</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Pharmacist" asp-page="ReviewPrescriptions">Review Prescriptions</a>
-        </li>
-    }
-</ul>
+@if (SignInManager.IsSignedIn(User) && User.IsInRole("Pharmacist"))
+{
+    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Pharmacist" asp-page="Index">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Pharmacist" asp-page="RequestBloodwork">Request Bloodwork</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Pharmacist" asp-page="ReviewPrescriptions">Review Prescriptions</a>
+            </li>
+        </ul>
+    </div>
+}

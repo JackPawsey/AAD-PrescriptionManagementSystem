@@ -14,24 +14,12 @@
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container">
             <a class="navbar-brand" asp-area="" asp-page="/Index">AADWebApp</a>
-            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <partial name="~/Areas/Admin/Pages/_AdminPartial.cshtml" />
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <partial name="~/Areas/Pharmacist/Pages/_PharmacistPartial.cshtml" />
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <partial name="~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerPartial.cshtml" />
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <partial name="~/Areas/Technician/Pages/_TechnicianPartial.cshtml" />
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <partial name="~/Areas/Patient/Pages/_PatientPartial.cshtml" />
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <partial name="_LoginPartial.cshtml" />
-            </div>
+            <partial name="~/Areas/Admin/Pages/_AdminPartial.cshtml" />
+            <partial name="~/Areas/Pharmacist/Pages/_PharmacistPartial.cshtml" />
+            <partial name="~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerPartial.cshtml" />
+            <partial name="~/Areas/Technician/Pages/_TechnicianPartial.cshtml" />
+            <partial name="~/Areas/Patient/Pages/_PatientPartial.cshtml" />
+            <partial name="_LoginPartial.cshtml" />
         </div>
     </nav>
 </header>
