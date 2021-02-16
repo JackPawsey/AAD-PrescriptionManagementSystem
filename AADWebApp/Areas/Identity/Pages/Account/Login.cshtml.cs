@@ -77,9 +77,35 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, false);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    if (userRoles.Contains("Pharmacist"))
+                    {
+                        return Redirect("/Pharmacist");
+                    }
+
+                    if (userRoles.Contains("General Practitioner"))
+                    {
+                        return Redirect("/GeneralPractitioner");
+                    }
+
+                    if (userRoles.Contains("Technician"))
+                    {
+                        return Redirect("/Technician");
+                    }
+
+                    if (userRoles.Contains("Patient") || userRoles.Contains("Authorised Carer"))
+                    {
+                        return Redirect("/Patient");
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
 

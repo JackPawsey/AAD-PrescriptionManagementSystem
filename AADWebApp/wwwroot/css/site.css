@@ -92,3 +92,8 @@ div.login-logout-tab a.nav-link {
     color: #495057;
     text-align: center;
 }
+
+/* Navigation */
+.btn-no-border {
+    border: 0;
+}
