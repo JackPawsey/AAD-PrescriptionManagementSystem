@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +47,8 @@ namespace AADWebApp.Areas.Admin.Pages
                 roleModel.Id = role.Id;
                 roleModel.RoleName = role.Name;
 
-                foreach (var user in _userManager.Users)
+                //userManager can only have one connection going at a time, so the info we need is cast to a seperate list object, see https://stackoverflow.com/a/60730238
+                foreach (var user in _userManager.Users.ToList())
                     if (await _userManager.IsInRoleAsync(user, role.Name))
                         roleModel.Users.Add(user.UserName);
             }

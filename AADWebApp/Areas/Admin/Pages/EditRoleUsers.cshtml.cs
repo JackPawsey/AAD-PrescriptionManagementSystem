@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +45,8 @@ namespace AADWebApp.Areas.Admin.Pages
 
             RoleName = role.Name;
 
-            foreach (var user in _userManager.Users)
+            //Same fix as EditRole, see https://stackoverflow.com/a/60730238
+            foreach (var user in _userManager.Users.ToList())
             {
                 UserRoleModels.Add(new UserRoleModel
                 {
