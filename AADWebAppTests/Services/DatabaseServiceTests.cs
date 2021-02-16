@@ -1,133 +1,140 @@
-﻿using AADWebApp.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data.Common;
 using System.Diagnostics;
+using AADWebApp.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static AADWebApp.Services.DatabaseService;
 
 namespace AADWebAppTests.Services
 {
-    [TestClass()]
+    [TestClass]
     public class DatabaseServiceTests
     {
-        string Server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
-        string Username = "admin";
         //To-Do: Figure out secrets, change password.
-        string Password = "uPjz58%4";
+        private const string Password = "uPjz58%4";
+        private const string Server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
+        private const string Username = "admin";
 
-        DatabaseService TestService;
+        private DatabaseService _testService;
 
-        private DatabaseService CreateService()
+        private static DatabaseService CreateService()
         {
             return new DatabaseService(Server, Username, Password);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DatabaseServiceTest()
         {
             CreateService();
         }
 
-        [TestMethod()]
-        public void ConnectToMSSQLServerTest()
+        [TestMethod]
+        public void ConnectToMssqlServerTest()
         {
-            TestService = CreateService();
-            TestService.ConnectToMSSQLServer(AvailableDatabases.program_data);
+            _testService = CreateService();
+            _testService.ConnectToMssqlServer(AvailableDatabases.program_data);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void ExecuteQueryTest()
         {
-            ConnectToMSSQLServerTest();
-            string Query = "SELECT * FROM TestData";
-            SqlDataReader DataReader = TestService.ExecuteQuery(Query);
-            PrintDataReaderToConsole(DataReader);
+            ConnectToMssqlServerTest();
+            var query = "SELECT * FROM TestData";
+            var dataReader = _testService.ExecuteQuery(query);
+            PrintDataReaderToConsole(dataReader);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void ExecuteNonQueryTest()
         {
-            ConnectToMSSQLServerTest();
-            string NonQuery = "UPDATE TestData SET Value = 'ValueUpdated' WHERE Name = 'UpdateMe'";
-            Debug.WriteLine(TestService.ExecuteNonQuery(NonQuery));
+            ConnectToMssqlServerTest();
+            var nonQuery = "UPDATE TestData SET Value = 'ValueUpdated' WHERE Name = 'UpdateMe'";
+            Debug.WriteLine(_testService.ExecuteNonQuery(nonQuery));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void RetrieveTableTest()
         {
-            ConnectToMSSQLServerTest();
-            SqlDataReader DataReader = TestService.RetrieveTable("TestData");
-            PrintDataReaderToConsole(DataReader);
+            ConnectToMssqlServerTest();
+            var dataReader = _testService.RetrieveTable("TestData");
+            PrintDataReaderToConsole(dataReader);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void QueryResultTest()
         {
-            QueryResult TestResult = ConstructQueryResultUsingTestData();
+            var testResult = ConstructQueryResultUsingTestData();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void GetCellTest()
         {
-            const string ExpectedName = "Location";
-            const string ExpectedValue = "Nottingham";
-            QueryResult TestResult = ConstructQueryResultUsingTestData();
-            var Result1 = TestResult.GetCell(3, 0);
-            var Result2 = TestResult.GetCell(3, "Value");
+            var expectedName = "Location";
+            var expectedValue = "Nottingham";
+            var testResult = ConstructQueryResultUsingTestData();
+            var result1 = testResult.GetCell(3, 0);
+            var result2 = testResult.GetCell(3, "Value");
 
-            Assert.AreEqual(Result1.ToString(), ExpectedName);
-            Assert.AreEqual(Result2.ToString(), ExpectedValue);
+            Assert.AreEqual(result1.ToString(), expectedName);
+            Assert.AreEqual(result2.ToString(), expectedValue);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void GetColumnTest()
         {
-            string[] ExpectedValues = { "1", "2", "3", "Nottingham", "SQLSERVER", "ValueUpdated"};
-            QueryResult TestResult = ConstructQueryResultUsingTestData();
-            ColumnResult TestColumnResult = TestResult.GetColumn(1);
-            ColumnResult TestColumnResult2 = TestResult.GetColumn("Value");
-
-            Assert.AreEqual("Value", TestColumnResult.ColumnName);
-
-            for (int i = 0; i < ExpectedValues.Length; i++)
+            string[] expectedValues =
             {
-                Assert.AreEqual(ExpectedValues[i], TestColumnResult.Items[i]);
-                Assert.AreEqual(ExpectedValues[i], TestColumnResult2.Items[i]);
+                "1",
+                "2",
+                "3",
+                "Nottingham",
+                "SQLSERVER",
+                "ValueUpdated"
+            };
+            var testResult = ConstructQueryResultUsingTestData();
+            var testColumnResult = testResult.GetColumn(1);
+            var testColumnResult2 = testResult.GetColumn("Value");
+
+            Assert.AreEqual("Value", testColumnResult.ColumnName);
+
+            for (var i = 0; i < expectedValues.Length; i++)
+            {
+                Assert.AreEqual(expectedValues[i], testColumnResult.Items[i]);
+                Assert.AreEqual(expectedValues[i], testColumnResult2.Items[i]);
             }
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void GetRowTest()
         {
-            string ExpectedName = "Test1";
-            string ExpectedValue = "1";
-            QueryResult TestResult = ConstructQueryResultUsingTestData();
-            RowResult RowResult = TestResult.GetRow(0);
+            var expectedName = "Test1";
+            var expectedValue = "1";
+            var testResult = ConstructQueryResultUsingTestData();
+            var rowResult = testResult.GetRow(0);
 
-            Assert.AreEqual(ExpectedName, RowResult.Items[0]);
-            Assert.AreEqual(ExpectedValue, RowResult.Items[1]);
+            Assert.AreEqual(expectedName, rowResult.Items[0]);
+            Assert.AreEqual(expectedValue, rowResult.Items[1]);
         }
 
         private QueryResult ConstructQueryResultUsingTestData()
         {
-            ConnectToMSSQLServerTest();
-            string Query = "SELECT * FROM TestData";
-            SqlDataReader DataReader = TestService.ExecuteQuery(Query);
-            return new QueryResult(DataReader);
+            ConnectToMssqlServerTest();
+            var query = "SELECT * FROM TestData";
+            var dataReader = _testService.ExecuteQuery(query);
+            return new QueryResult(dataReader);
         }
 
-        private void PrintDataReaderToConsole(SqlDataReader Reader)
+        private static void PrintDataReaderToConsole(DbDataReader reader)
         {
-            while (Reader.Read())
+            while (reader.Read())
             {
-                string output = "";
-                for (int i = 0; i < Reader.VisibleFieldCount; i++)
+                var output = "";
+                for (var i = 0; i < reader.VisibleFieldCount; i++)
                 {
                     if (i != 0)
                     {
                         output += ", ";
                     }
-                    output += Reader.GetValue(i);
+                    output += reader.GetValue(i);
                 }
 
                 Debug.WriteLine(output);

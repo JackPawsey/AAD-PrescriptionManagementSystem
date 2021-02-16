@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AADWebAppTests.Services")]
+
 namespace AADWebApp.Services
 {
     public class DatabaseService : IDatabaseService
@@ -16,134 +17,135 @@ namespace AADWebApp.Services
             program_data
         }
 
-        public string ServerName;
-        public string Username;
-        public string Password;
+        private readonly string _password;
+        private readonly string _serverName;
+        private readonly string _username;
 
-        private bool Initialised = false;
-        public bool IsInitialised => Initialised;
+        public bool IsInitialised { get; private set; }
 
-        private SqlConnection DBConnection { get; set; }
+        private SqlConnection DbConnection { get; set; }
 
         /// <summary>
-        /// Construct a DatabaseService object.
+        ///     Construct a DatabaseService object.
         /// </summary>
-        /// <param name="ServerName">The IP address/endpoint of the server.</param>
-        /// <param name="Username"></param>
-        /// <param name="Password"></param>
-        public DatabaseService(string ServerName, string Username, string Password)
+        /// <param name="serverName">The IP address/endpoint of the server.</param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        public DatabaseService(string serverName, string username, string password)
         {
-            this.ServerName = ServerName;
-            this.Username = Username;
-            this.Password = Password;
+            _serverName = serverName;
+            _username = username;
+            _password = password;
         }
 
         private void CheckInitialised()
         {
-            if (!Initialised)
+            if (!IsInitialised)
             {
                 throw new InvalidOperationException("Connection has not been initialised.");
             }
         }
 
         /// <summary>
-        /// Open a connection to a MSSQLServer database using the class variables.
+        ///     Open a connection to a MSSQLServer database using the class variables.
         /// </summary>
-        public void ConnectToMSSQLServer(AvailableDatabases DatabaseName)
+        public void ConnectToMssqlServer(AvailableDatabases databaseName)
         {
-            Initialised = false;
-            if (string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+            IsInitialised = false;
+            
+            if (string.IsNullOrEmpty(_serverName) || string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password))
             {
                 throw new InvalidOperationException("ServerName, Username, Password or DatabaseName is NullOrEmpty.");
             }
 
-            SqlConnectionStringBuilder ConnectionStringBuilder = new SqlConnectionStringBuilder()
+            var connectionStringBuilder = new SqlConnectionStringBuilder
             {
-                DataSource = ServerName,
-                UserID = Username,
-                Password = Password,
-                InitialCatalog = DatabaseName.ToString()
+                DataSource = _serverName,
+                UserID = _username,
+                Password = _password,
+                InitialCatalog = databaseName.ToString()
             };
-            string ConnectionString = ConnectionStringBuilder.ToString();
-            DBConnection = new SqlConnection(ConnectionString);
+
+            var connectionString = connectionStringBuilder.ToString();
+            DbConnection = new SqlConnection(connectionString);
 
             try
             {
-                DBConnection.Open();
-                Initialised = true;
+                DbConnection.Open();
+                IsInitialised = true;
             }
-            catch (SqlException Ex)
+            catch (SqlException ex)
             {
-                Exception CustomException = new Exception("Connection to MSSQLServer failed. See inner exception and ensure arguments are correct.", Ex);
-                CustomException.Data.Add("Connection String", ConnectionString);
-                throw CustomException;
+                var customException = new Exception("Connection to MSSQLServer failed. See inner exception and ensure arguments are correct.", ex);
+                customException.Data.Add("Connection String", connectionString);
+                throw customException;
             }
         }
 
         /// <summary>
-        /// Changes the catalog (database) currently selected for commands.
+        ///     Changes the catalog (database) currently selected for commands.
         /// </summary>
-        /// <param name="DatabaseName">The name of the target database.</param>
-        public void ChangeDatabase(AvailableDatabases DatabaseName)
+        /// <param name="databaseName">The name of the target database.</param>
+        public void ChangeDatabase(AvailableDatabases databaseName)
         {
-            DBConnection.ChangeDatabase(DatabaseName.ToString());
+            DbConnection.ChangeDatabase(databaseName.ToString());
         }
 
         /// <summary>
-        /// Execute a query (a T-SQL command that returns rows) against the database connection.
+        ///     Execute a query (a T-SQL command that returns rows) against the database connection.
         /// </summary>
-        /// <param name="Query">The T-SQL command.</param>
+        /// <param name="query">The T-SQL command.</param>
         /// <returns>Returns a SqlDataReader object containing the results of the query.</returns>
-        public SqlDataReader ExecuteQuery(string Query)
+        public SqlDataReader ExecuteQuery(string query)
         {
             CheckInitialised();
-            SqlCommand Command = new SqlCommand(Query, DBConnection);
-            SqlDataReader Reader = Command.ExecuteReader();
-            return Reader;
+            var command = new SqlCommand(query, DbConnection);
+            var reader = command.ExecuteReader();
+            return reader;
         }
 
         /// <summary>
-        /// Execute a non-query (a T-SQL command that returns no rows) against the database connection.
+        ///     Execute a non-query (a T-SQL command that returns no rows) against the database connection.
         /// </summary>
-        /// <param name="NonQuery">The T-SQL command.</param>
+        /// <param name="nonQuery">The T-SQL command.</param>
         /// <returns>Returns the number of rows affected as an int.</returns>
-        public int ExecuteNonQuery(string NonQuery)
+        public int ExecuteNonQuery(string nonQuery)
         {
             CheckInitialised();
-            SqlCommand Command = new SqlCommand(NonQuery, DBConnection);
-            return Command.ExecuteNonQuery();
+            var command = new SqlCommand(nonQuery, DbConnection);
+            return command.ExecuteNonQuery();
         }
 
         /// <summary>
-        /// Performs "SELECT * FROM {TableName}" against the database connection.
+        ///     Performs "SELECT * FROM {TableName}" against the database connection.
         /// </summary>
-        /// <param name="TableName">The name of the table to query.</param>
+        /// <param name="tableName">The name of the table to query.</param>
         /// <returns>Returns a SqlDataReader object containing the results of the query.</returns>
-        public SqlDataReader RetrieveTable(string TableName)
+        public SqlDataReader RetrieveTable(string tableName)
         {
             CheckInitialised();
-            SqlCommand SelectTableCommand = new SqlCommand($"SELECT * FROM {TableName};", DBConnection);
-            return SelectTableCommand.ExecuteReader();
+            var selectTableCommand = new SqlCommand($"SELECT * FROM {tableName};", DbConnection);
+            return selectTableCommand.ExecuteReader();
         }
 
         /// <summary>
-        /// Close the DBConnection.
+        ///     Close the DBConnection.
         /// </summary>
         public void CloseConnection()
         {
-            DBConnection.Close();
+            DbConnection.Close();
         }
 
         ~DatabaseService()
         {
-            DBConnection.Close();
+            DbConnection.Close();
         }
     }
 
     public class ColumnResult
     {
         public string ColumnName;
-        public List<object> Items;
+        public readonly List<object> Items;
 
         public ColumnResult()
         {
@@ -164,88 +166,94 @@ namespace AADWebApp.Services
 
     public class QueryResult
     {
-        private DataTable SourceTable;
-        private SqlDataReader SourceReader;
+        private readonly DataTable _sourceTable;
 
-        public QueryResult(SqlDataReader SourceReader)
+        public QueryResult(IDataReader sourceReader)
         {
-            this.SourceReader = SourceReader;
-            SourceTable = new DataTable();
-            SourceTable.Load(this.SourceReader);
+            _sourceTable = new DataTable();
+            _sourceTable.Load(sourceReader);
         }
 
-        
 
         /// <summary>
-        /// Gets the contents of a cell from the query.
+        ///     Gets the contents of a cell from the query.
         /// </summary>
-        /// <param name="RowIndex">The index of the row.</param>
-        /// <param name="ColumnIndex">The index of the column.</param>
-        /// <returns>Returns the contents of the specified cell. The result will be converted to the type specified for it by the SqlDataReader passed into the class.</returns>
-        public object GetCell(int RowIndex, int ColumnIndex)
+        /// <param name="rowIndex">The index of the row.</param>
+        /// <param name="columnIndex">The index of the column.</param>
+        /// <returns>
+        ///     Returns the contents of the specified cell. The result will be converted to the type specified for it by the
+        ///     SqlDataReader passed into the class.
+        /// </returns>
+        public object GetCell(int rowIndex, int columnIndex)
         {
-            string CellData = SourceTable.Rows[RowIndex][ColumnIndex].ToString();
-            return CellData;
-        }
-
-        /// <summary>
-        /// Gets the contents of a cell from the query.
-        /// </summary>
-        /// <param name="RowIndex">The index of the row.</param>
-        /// <param name="ColumnName">The name of the column.</param>
-        /// <returns>Returns the contents of the specified cell. The result will be converted to the type specified for it by the SqlDataReader passed into the class.</returns>
-        public object GetCell(int RowIndex, string ColumnName)
-        {
-            int ColumnIndex = ConvertColumnNameToIndex(ColumnName);
-            return GetCell(RowIndex, ColumnIndex);
+            var cellData = _sourceTable.Rows[rowIndex][columnIndex].ToString();
+            return cellData;
         }
 
         /// <summary>
-        /// Gets the contents of an entire column from the query.
+        ///     Gets the contents of a cell from the query.
         /// </summary>
-        /// <param name="ColumnIndex">The index of the column.</param>
+        /// <param name="rowIndex">The index of the row.</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <returns>
+        ///     Returns the contents of the specified cell. The result will be converted to the type specified for it by the
+        ///     SqlDataReader passed into the class.
+        /// </returns>
+        public object GetCell(int rowIndex, string columnName)
+        {
+            var columnIndex = ConvertColumnNameToIndex(columnName);
+            return GetCell(rowIndex, columnIndex);
+        }
+
+        /// <summary>
+        ///     Gets the contents of an entire column from the query.
+        /// </summary>
+        /// <param name="columnIndex">The index of the column.</param>
         /// <returns>Returns a ColumnResult containing the cells of the column.</returns>
-        public ColumnResult GetColumn(int ColumnIndex)
+        public ColumnResult GetColumn(int columnIndex)
         {
-            ColumnResult Output = new ColumnResult();
-            Output.ColumnName = SourceTable.Columns[ColumnIndex].ColumnName;
-            var RowCount = SourceTable.Rows.Count;
-            for (int i = 0; i < RowCount; i++)
+            var output = new ColumnResult
             {
-                Output.Items.Add(GetCell(i, ColumnIndex));
+                ColumnName = _sourceTable.Columns[columnIndex].ColumnName
+            };
+
+            var rowCount = _sourceTable.Rows.Count;
+            for (var i = 0; i < rowCount; i++)
+            {
+                output.Items.Add(GetCell(i, columnIndex));
             }
 
-            return Output;
+            return output;
         }
 
         /// <summary>
-        /// Gets the contents of an entire column from the query.
+        ///     Gets the contents of an entire column from the query.
         /// </summary>
-        /// <param name="ColumnName">The name of the column.</param>
+        /// <param name="columnName">The name of the column.</param>
         /// <returns>Returns a ColumnResult containing the cells of the column.</returns>
-        public ColumnResult GetColumn(string ColumnName)
+        public ColumnResult GetColumn(string columnName)
         {
-            int ColumnIndex = ConvertColumnNameToIndex(ColumnName);
-            return GetColumn(ColumnIndex);
+            var columnIndex = ConvertColumnNameToIndex(columnName);
+            return GetColumn(columnIndex);
         }
 
         /// <summary>
-        /// Gets the contents of an entire row from the query.
+        ///     Gets the contents of an entire row from the query.
         /// </summary>
-        /// <param name="RowIndex">The index of the row.</param>
+        /// <param name="rowIndex">The index of the row.</param>
         /// <returns>Returns a RowResult containing the cells of the row.</returns>
-        public RowResult GetRow(int RowIndex)
+        public RowResult GetRow(int rowIndex)
         {
-            RowResult Output = new RowResult();
-            var Row = SourceTable.Rows[RowIndex];
-            Output.Items = Row.ItemArray.ToList();
-            return Output;
+            var output = new RowResult();
+            var row = _sourceTable.Rows[rowIndex];
+            output.Items = row.ItemArray.ToList();
+            return output;
         }
 
-        private int ConvertColumnNameToIndex(string ColumnName)
+        private int ConvertColumnNameToIndex(string columnName)
         {
-            DataColumnCollection Columns = SourceTable.Columns;
-            return Columns.IndexOf(ColumnName);
+            var columns = _sourceTable.Columns;
+            return columns.IndexOf(columnName);
         }
     }
 }

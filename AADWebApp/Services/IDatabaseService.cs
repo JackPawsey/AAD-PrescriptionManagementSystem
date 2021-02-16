@@ -7,11 +7,11 @@ namespace AADWebApp.Services
     {
         public bool IsInitialised { get; }
 
-        public void ConnectToMSSQLServer(AvailableDatabases DatabaseName);
-        public void ChangeDatabase(AvailableDatabases DatabaseName);
-        public int ExecuteNonQuery(string NonQuery);
-        public SqlDataReader ExecuteQuery(string Query);
-        public SqlDataReader RetrieveTable(string TableName);
+        public void ConnectToMssqlServer(AvailableDatabases databaseName);
+        public void ChangeDatabase(AvailableDatabases databaseName);
+        public int ExecuteNonQuery(string nonQuery);
+        public SqlDataReader ExecuteQuery(string query);
+        public SqlDataReader RetrieveTable(string tableName);
         public void CloseConnection();
     }
 }
