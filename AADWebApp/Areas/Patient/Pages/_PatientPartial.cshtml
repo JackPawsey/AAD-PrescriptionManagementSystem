@@ -1,7 +1,7 @@
 ﻿@inject SignInManager<ApplicationUser> SignInManager
 
 
-@if (SignInManager.IsSignedIn(User) && ((User.IsInRole("Patient") || User.IsInRole("Authorised Carer"))))
+@if (SignInManager.IsSignedIn(User) && (User.IsInRole("Patient") || User.IsInRole("Authorised Carer")))
 {
     <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
         <ul class="navbar-nav">
