@@ -60,15 +60,15 @@ namespace AADWebApp.Areas.Identity.Data
             // Harsher to hash password for default administrator user creation
             var passwordHasher = new PasswordHasher<ApplicationUser>();
 
-            addUser("be2497f5-ab1f-4824-9a94-a14747bcccd7", "cloudcrusaderssystems@gmail.com", "CloudCrusaders@2021", "7bdb12d3-caf8-4d43-a2e9-ef6ebe8f4b31", builder, passwordHasher);
-            addUser("fd064d4e-7457-4287-a3f4-5b99580ef2ab", "cloudcrusaderssystems+pharmacist@gmail.com", "CloudCrusaders@2021", "a0abf262-1a77-4b9d-bac5-ec293928f9ae", builder, passwordHasher);
-            addUser("01734a51-05b1-4c95-8d21-6820014332e9", "cloudcrusaderssystems+technician@gmail.com", "CloudCrusaders@2021", "5cf92bcd-61c7-40be-bf40-857cd7e94679", builder, passwordHasher);
-            addUser("c299b237-a197-454d-b474-587e7fe61656", "cloudcrusaderssystems+general.practitioner@gmail.com", "CloudCrusaders@2021", "dac4ae7a-4b01-4865-8f3d-66e4cb0bdb42", builder, passwordHasher);
-            addUser("250f3fea-59bd-4f65-ba6a-a08b7afad55a", "cloudcrusaderssystems+patient@gmail.com", "CloudCrusaders@2021", "89363d4b-e187-4c02-8959-c3fa597d0846", builder, passwordHasher);
-            addUser("33a728ad-f9f0-414b-a0d7-4d3cda8dbd6b", "cloudcrusaderssystems+authorised.carer@gmail.com", "CloudCrusaders@2021", "4d2715ee-88a0-4631-8339-cf24311bafbc", builder, passwordHasher);
+            addUser("be2497f5-ab1f-4824-9a94-a14747bcccd7", "cloudcrusaderssystems@gmail.com", "CloudCrusaders@2021", "7bdb12d3-caf8-4d43-a2e9-ef6ebe8f4b31", builder, passwordHasher, "Demo", "Admin", "Nottingham", "Steve", "1", "07123456789");
+            addUser("fd064d4e-7457-4287-a3f4-5b99580ef2ab", "cloudcrusaderssystems+pharmacist@gmail.com", "CloudCrusaders@2021", "a0abf262-1a77-4b9d-bac5-ec293928f9ae", builder, passwordHasher, "Demo", "Pharmacist", "Nottingham", "Steve", "2", "07123456789");
+            addUser("01734a51-05b1-4c95-8d21-6820014332e9", "cloudcrusaderssystems+technician@gmail.com", "CloudCrusaders@2021", "5cf92bcd-61c7-40be-bf40-857cd7e94679", builder, passwordHasher, "Demo", "Technician", "Nottingham", "Steve", "3", "07123456789");
+            addUser("c299b237-a197-454d-b474-587e7fe61656", "cloudcrusaderssystems+general.practitioner@gmail.com", "CloudCrusaders@2021", "dac4ae7a-4b01-4865-8f3d-66e4cb0bdb42", builder, passwordHasher, "Demo", "G.P", "Nottingham", "Steve", "4", "07123456789");
+            addUser("250f3fea-59bd-4f65-ba6a-a08b7afad55a", "cloudcrusaderssystems+patient@gmail.com", "CloudCrusaders@2021", "89363d4b-e187-4c02-8959-c3fa597d0846", builder, passwordHasher, "Demo", "Patient", "Nottingham", "Steve", "5", "07123456789");
+            addUser("33a728ad-f9f0-414b-a0d7-4d3cda8dbd6b", "cloudcrusaderssystems+authorised.carer@gmail.com", "CloudCrusaders@2021", "4d2715ee-88a0-4631-8339-cf24311bafbc", builder, passwordHasher, "Demo", "Authorised Carer", "Nottingham", "Steve", "6", "07123456789");
         }
 
-        private void addUser(string id, string email, string password, string targetRoleId, ModelBuilder builder, PasswordHasher<ApplicationUser> passwordHasher)
+        private void addUser(string id, string email, string password, string targetRoleId, ModelBuilder builder, IPasswordHasher<ApplicationUser> passwordHasher, string firstName, string lastName, string city, string generalPractitioner, string nhsNumber, string phoneNumber)
         {
             // Add Admin user with default password to users table
             builder.Entity<ApplicationUser>().HasData(
@@ -79,7 +79,13 @@ namespace AADWebApp.Areas.Identity.Data
                     NormalizedUserName = email.ToUpper(),
                     PasswordHash = passwordHasher.HashPassword(null, password),
                     Email = email.ToLower(),
-                    NormalizedEmail = email.ToUpper()
+                    NormalizedEmail = email.ToUpper(),
+                    FirstName = firstName,
+                    LastName = lastName,
+                    City = city,
+                    GeneralPractioner = generalPractitioner,
+                    NHSNumber = nhsNumber,
+                    PhoneNumber = phoneNumber
                 }
             );
 
