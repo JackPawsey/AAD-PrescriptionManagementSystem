@@ -1,28 +1,83 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AADWebApp.Models;
-using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
     public class BloodTestService : IBloodTestService
     {
+        private readonly IDatabaseService _databaseService;
+
+
+        public BloodTestService(IDatabaseService databaseService)
+        {
+            _databaseService = databaseService;
+        }
+
+        public IEnumerable<Medication> GetMedications()
+        {
+            List<Medication> medications = new List<Medication>();
+
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+
+            //GET BLOODTEST TABLE
+            var result = _databaseService.RetrieveTable("medications");
+
+            while (result.Read())
+            {
+                Medication medication = new Medication();
+
+                medication.id = (Int16)result.GetValue(0);
+                medication.medication = (string)result.GetValue(1);
+
+                if (Convert.IsDBNull(result.GetValue(2)))
+                {
+                    medication.blood_work_restriction_level = null;
+                }
+                else
+                {
+                    medication.blood_work_restriction_level = (Int16)result.GetValue(2);
+                }
+
+                medications.Add(medication);
+            }
+
+            return medications.AsEnumerable();
+        }
+
         public IEnumerable<BloodTest> GetBloodTests()
         {
-            IEnumerable<BloodTest> bloodTests;
+            List<BloodTest> bloodTests = new List<BloodTest>();
 
-            try
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+
+            //GET BLOODTEST TABLE
+            var result = _databaseService.RetrieveTable("blood_tests");
+
+            while (result.Read())
             {
-                //GET BLOODTEST TABLE
-                bloodTests = null; //*** TEMPORARY ***
-            }
-            catch
-            {
-                bloodTests = null;
+                BloodTest bloodTest = new BloodTest();
+
+                bloodTest.id = (Int16)result.GetValue(0);
+                bloodTest.abbreviated_title = (string)result.GetValue(1);
+                bloodTest.full_title = (string)result.GetValue(2);
+
+                if (Convert.IsDBNull(result.GetValue(3)))
+                {
+                    bloodTest.restriction_level = null;
+                }
+                else
+                {
+                    bloodTest.restriction_level = (Int16)result.GetValue(3);
+                }
+
+                bloodTests.Add(bloodTest);
             }
 
-            return bloodTests;
+            return bloodTests.AsEnumerable();
         }
+
 
         public string RequestBloodTest(int patientId, string bloodTestType)
         {
