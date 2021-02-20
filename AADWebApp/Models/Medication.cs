@@ -2,8 +2,8 @@
 {
     public class Medication
     {
-        public int id { get; set; }
-        public string medication { get; set; }
-        public int? blood_work_restriction_level { get; set; }
+        public int Id { get; set; }
+        public string MedicationName { get; set; }
+        public int? BloodWorkRestrictionLevel { get; set; }
     }
 }

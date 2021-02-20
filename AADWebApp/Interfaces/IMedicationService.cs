@@ -1,5 +1,5 @@
-﻿using AADWebApp.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AADWebApp.Models;
 
 namespace AADWebApp.Interfaces
 {

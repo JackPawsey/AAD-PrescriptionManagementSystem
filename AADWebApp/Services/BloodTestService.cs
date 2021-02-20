@@ -17,7 +17,7 @@ namespace AADWebApp.Services
 
         public IEnumerable<BloodTest> GetBloodTests(short? id = null)
         {
-            List<BloodTest> bloodTests = new List<BloodTest>();
+            var bloodTests = new List<BloodTest>();
 
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
@@ -28,10 +28,10 @@ namespace AADWebApp.Services
             {
                 bloodTests.Add(new BloodTest
                 {
-                    id = (Int16)result.GetValue(0),
-                    abbreviated_title = (string)result.GetValue(1),
-                    full_title = (string)result.GetValue(2),
-                    restriction_level = Convert.IsDBNull(result.GetValue(3)) ? (short?)null : (Int16)result.GetValue(3)
+                    Id = (short) result.GetValue(0),
+                    AbbreviatedTitle = (string) result.GetValue(1),
+                    FullTitle = (string) result.GetValue(2),
+                    RestrictionLevel = Convert.IsDBNull(result.GetValue(3)) ? (short?) null : (short) result.GetValue(3)
                 });
             }
 
@@ -40,7 +40,7 @@ namespace AADWebApp.Services
 
         public IEnumerable<BloodTestResult> GetBloodTestResults(short? bloodTestId = null)
         {
-            List<BloodTestResult> BloodTestResults = new List<BloodTestResult>();
+            var bloodTestResults = new List<BloodTestResult>();
 
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
@@ -49,20 +49,21 @@ namespace AADWebApp.Services
 
             while (result.Read())
             {
-                BloodTestResults.Add(new BloodTestResult
+                bloodTestResults.Add(new BloodTestResult
                 {
-                    id = (Int16)result.GetValue(0),
-                    blood_test_id = (Int16)result.GetValue(1),
-                    result = (bool)result.GetValue(2),
-                    resultTime = (DateTime)result.GetValue(3)
+                    Id = (short) result.GetValue(0),
+                    BloodTestId = (short) result.GetValue(1),
+                    Result = (bool) result.GetValue(2),
+                    ResultTime = (DateTime) result.GetValue(3)
                 });
             }
 
-            return BloodTestResults.AsEnumerable();
+            return bloodTestResults.AsEnumerable();
         }
+
         public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? prescriptionId = null)
         {
-            List<BloodTestRequest> BloodTestRequests = new List<BloodTestRequest>();
+            var bloodTestRequests = new List<BloodTestRequest>();
 
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
@@ -71,16 +72,16 @@ namespace AADWebApp.Services
 
             while (result.Read())
             {
-                BloodTestRequests.Add(new BloodTestRequest
+                bloodTestRequests.Add(new BloodTestRequest
                 {
-                    id = (Int16)result.GetValue(0),
-                    prescription_id = (Int16)result.GetValue(1),
-                    blood_test_id = (Int16)result.GetValue(2),
-                    appointment_time = (DateTime)result.GetValue(3)
+                    Id = (short) result.GetValue(0),
+                    PrescriptionId = (short) result.GetValue(1),
+                    BloodTestId = (short) result.GetValue(2),
+                    AppointmentTime = (DateTime) result.GetValue(3)
                 });
             }
 
-            return BloodTestRequests.AsEnumerable();
+            return bloodTestRequests.AsEnumerable();
         }
 
 

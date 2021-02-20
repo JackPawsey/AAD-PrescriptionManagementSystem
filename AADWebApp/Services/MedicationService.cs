@@ -1,8 +1,8 @@
-﻿using AADWebApp.Interfaces;
-using AADWebApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AADWebApp.Interfaces;
+using AADWebApp.Models;
 
 namespace AADWebApp.Services
 {
@@ -17,7 +17,7 @@ namespace AADWebApp.Services
 
         public IEnumerable<Medication> GetMedications(short? id = null)
         {
-            List<Medication> medications = new List<Medication>();
+            var medications = new List<Medication>();
 
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
@@ -28,9 +28,9 @@ namespace AADWebApp.Services
             {
                 medications.Add(new Medication
                 {
-                    id = (Int16)result.GetValue(0),
-                    medication = (string)result.GetValue(1),
-                    blood_work_restriction_level = Convert.IsDBNull(result.GetValue(2)) ? (short?)null : (Int16)result.GetValue(2)
+                    Id = (short) result.GetValue(0),
+                    MedicationName = (string) result.GetValue(1),
+                    BloodWorkRestrictionLevel = Convert.IsDBNull(result.GetValue(2)) ? (short?) null : (short) result.GetValue(2)
                 });
             }
 

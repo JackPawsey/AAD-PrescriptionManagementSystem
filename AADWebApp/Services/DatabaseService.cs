@@ -1,10 +1,10 @@
-﻿using AADWebApp.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using AADWebApp.Interfaces;
 using AADWebApp.Resolver;
 
 [assembly: InternalsVisibleTo("AADWebAppTests.Services")]
@@ -52,7 +52,7 @@ namespace AADWebApp.Services
         public void ConnectToMssqlServer(AvailableDatabases databaseName)
         {
             IsInitialised = false;
-            
+
             if (string.IsNullOrEmpty(_connectionString))
             {
                 throw new InvalidOperationException("Connection string is null or empty.");
@@ -128,6 +128,7 @@ namespace AADWebApp.Services
             {
                 selectTableCommand = new SqlCommand($"SELECT * FROM {tableName};", DbConnection);
             }
+
             return selectTableCommand.ExecuteReader();
         }
 

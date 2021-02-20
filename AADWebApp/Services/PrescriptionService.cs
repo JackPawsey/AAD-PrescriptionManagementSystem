@@ -10,7 +10,7 @@ namespace AADWebApp.Services
         public enum PrescriptionStatus
         {
             PendingApproval,
-            AwaitingBloodwork,
+            AwaitingBloodWork,
             Approved,
             Declined
         }

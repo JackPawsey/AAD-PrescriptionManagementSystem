@@ -1,10 +1,10 @@
-﻿using AADWebApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using AADWebApp.Models;
 
 namespace AADWebApp.Interfaces
 {
-    interface IPrescriptionService
+    public interface IPrescriptionService
     {
         public IEnumerable<Prescription> GetPrescriptions();
         public string CreatePrescription(int patientId, string medicationType, int dosage, DateTime prescriptionEnd);
