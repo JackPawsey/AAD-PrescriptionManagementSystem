@@ -1,4 +1,5 @@
 ﻿using System;
+using AADWebApp.Interfaces;
 using Amazon;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;

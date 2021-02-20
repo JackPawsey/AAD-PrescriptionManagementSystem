@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AADWebApp.Interfaces;
 using AADWebApp.Models;
 
 namespace AADWebApp.Services
@@ -9,125 +10,102 @@ namespace AADWebApp.Services
     {
         private readonly IDatabaseService _databaseService;
 
-
         public BloodTestService(IDatabaseService databaseService)
         {
             _databaseService = databaseService;
         }
 
-        public IEnumerable<Medication> GetMedications()
-        {
-            List<Medication> medications = new List<Medication>();
-
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
-
-            //GET BLOODTEST TABLE
-            var result = _databaseService.RetrieveTable("medications");
-
-            while (result.Read())
-            {
-                Medication medication = new Medication();
-
-                medication.id = (Int16)result.GetValue(0);
-                medication.medication = (string)result.GetValue(1);
-
-                if (Convert.IsDBNull(result.GetValue(2)))
-                {
-                    medication.blood_work_restriction_level = null;
-                }
-                else
-                {
-                    medication.blood_work_restriction_level = (Int16)result.GetValue(2);
-                }
-
-                medications.Add(medication);
-            }
-
-            return medications.AsEnumerable();
-        }
-
-        public IEnumerable<BloodTest> GetBloodTests()
+        public IEnumerable<BloodTest> GetBloodTests(short? id = null)
         {
             List<BloodTest> bloodTests = new List<BloodTest>();
 
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
-            //GET BLOODTEST TABLE
-            var result = _databaseService.RetrieveTable("blood_tests");
+            //GET blood_tests TABLE
+            var result = _databaseService.RetrieveTable("blood_tests", "id", id);
 
             while (result.Read())
             {
-                BloodTest bloodTest = new BloodTest();
-
-                bloodTest.id = (Int16)result.GetValue(0);
-                bloodTest.abbreviated_title = (string)result.GetValue(1);
-                bloodTest.full_title = (string)result.GetValue(2);
-
-                if (Convert.IsDBNull(result.GetValue(3)))
+                bloodTests.Add(new BloodTest
                 {
-                    bloodTest.restriction_level = null;
-                }
-                else
-                {
-                    bloodTest.restriction_level = (Int16)result.GetValue(3);
-                }
-
-                bloodTests.Add(bloodTest);
+                    id = (Int16)result.GetValue(0),
+                    abbreviated_title = (string)result.GetValue(1),
+                    full_title = (string)result.GetValue(2),
+                    restriction_level = Convert.IsDBNull(result.GetValue(3)) ? (short?)null : (Int16)result.GetValue(3)
+                });
             }
 
             return bloodTests.AsEnumerable();
         }
 
-
-        public string RequestBloodTest(int patientId, string bloodTestType)
+        public IEnumerable<BloodTestResult> GetBloodTestResults(short? bloodTestId = null)
         {
-            string result;
+            List<BloodTestResult> BloodTestResults = new List<BloodTestResult>();
 
-            try
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+
+            //GET blood_test_results TABLE
+            var result = _databaseService.RetrieveTable("blood_test_results", "blood_test_id", bloodTestId);
+
+            while (result.Read())
             {
-                //CREATE BLOODTEST TABLE ROW
-                result = "Blood test request created successfully";
-            }
-            catch
-            {
-                result = "Error blood test request not created";
+                BloodTestResults.Add(new BloodTestResult
+                {
+                    id = (Int16)result.GetValue(0),
+                    blood_test_id = (Int16)result.GetValue(1),
+                    result = (bool)result.GetValue(2),
+                    resultTime = (DateTime)result.GetValue(3)
+                });
             }
 
-            return result;
+            return BloodTestResults.AsEnumerable();
+        }
+        public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? prescriptionId = null)
+        {
+            List<BloodTestRequest> BloodTestRequests = new List<BloodTestRequest>();
+
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+
+            //GET blood_test_requests TABLE
+            var result = _databaseService.RetrieveTable("blood_test_requests", "prescription_id", prescriptionId);
+
+            while (result.Read())
+            {
+                BloodTestRequests.Add(new BloodTestRequest
+                {
+                    id = (Int16)result.GetValue(0),
+                    prescription_id = (Int16)result.GetValue(1),
+                    blood_test_id = (Int16)result.GetValue(2),
+                    appointment_time = (DateTime)result.GetValue(3)
+                });
+            }
+
+            return BloodTestRequests.AsEnumerable();
         }
 
-        public string SetBloodTestDateTime(int bloodTestId, DateTime dateTime)
+
+        public int RequestBloodTest(int prescriptionId, int bloodTestId, DateTime appointmentTime)
         {
-            string result;
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
-            try
-            {
-                //UPDATE BLOODTEST TABLE ROW
-                result = "Blood test date/time updated successfully";
-            }
-            catch
-            {
-                result = "Error blood test date/time not updated";
-            }
-
-            return result;
+            //CREATE blood_test_requests TABLE ROW
+            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_requests (prescription_id, blood_test_id, appointment_time) VALUES ({prescriptionId}, {bloodTestId}, '{appointmentTime.ToString("yyyy-MM-dd HH:mm:ss")}')");
         }
 
-        public string SetBloodTestResults(BloodTestResult testResult)
+        public int SetBloodTestDateTime(int id, DateTime appointmentTime)
         {
-            string result;
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
-            try
-            {
-                //UPDATE BLOODTEST TABLE ROW
-                result = "Blood test results updated successfully";
-            }
-            catch
-            {
-                result = "Error blood test results not updated";
-            }
+            //UPDATE blood_test_requests TABLE ROW appointmentTime COLUMN
+            return _databaseService.ExecuteNonQuery($"UPDATE blood_test_requests SET appointment_time = '{appointmentTime.ToString("yyyy-MM-dd HH:mm:ss")}' WHERE id = {id}");
+        }
 
-            return result;
+        public int SetBloodTestResults(int bloodTestId, bool result, DateTime resultTime)
+        {
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+
+            //CREATE blood_test_results TABLE ROW
+            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_results (blood_test_id, result, result_time) VALUES ({bloodTestId}, {(result ? 1 : 0)}, '{resultTime.ToString("yyyy-MM-dd HH:mm:ss")}')");
         }
     }
 }

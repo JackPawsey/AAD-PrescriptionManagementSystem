@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AADWebApp.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -112,11 +113,21 @@ namespace AADWebApp.Services
         ///     Performs "SELECT * FROM {TableName}" against the database connection.
         /// </summary>
         /// <param name="tableName">The name of the table to query.</param>
+        /// <param name="whereColumn">Optional. The column name by which to filter by.</param>
+        /// <param name="whereValue">Optional. The column value by which to filter by.</param>
         /// <returns>Returns a SqlDataReader object containing the results of the query.</returns>
-        public SqlDataReader RetrieveTable(string tableName)
+        public SqlDataReader RetrieveTable(string tableName, string whereColumn = null, object whereValue = null)
         {
             CheckInitialised();
-            var selectTableCommand = new SqlCommand($"SELECT * FROM {tableName};", DbConnection);
+            SqlCommand selectTableCommand;
+            if (whereColumn != null && whereValue != null)
+            {
+                selectTableCommand = new SqlCommand($"SELECT * FROM {tableName} WHERE {whereColumn} = {whereValue};", DbConnection);
+            }
+            else
+            {
+                selectTableCommand = new SqlCommand($"SELECT * FROM {tableName};", DbConnection);
+            }
             return selectTableCommand.ExecuteReader();
         }
 

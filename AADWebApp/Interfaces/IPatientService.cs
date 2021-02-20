@@ -1,7 +1,7 @@
 ﻿using AADWebApp.Models;
 using System.Collections.Generic;
 
-namespace AADWebApp.Services
+namespace AADWebApp.Interfaces
 {
     interface IPatientService
     {

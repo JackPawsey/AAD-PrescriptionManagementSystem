@@ -1,4 +1,5 @@
 using AADWebApp.Resolver;
+using AADWebApp.Interfaces;
 using AADWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,7 @@ namespace AADWebApp
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
             services.AddTransient<IBloodTestService, BloodTestService>();
+            services.AddTransient<IMedicationService, MedicationService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPrescriptionService, PrescriptionService>();
             services.AddTransient<IDatabaseNameResolver, DatabaseNameResolver>();

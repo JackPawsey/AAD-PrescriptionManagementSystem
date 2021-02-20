@@ -1,12 +1,27 @@
 using System;
 using System.Collections.Generic;
+using AADWebApp.Interfaces;
 using AADWebApp.Models;
-using Microsoft.AspNetCore.Hosting;
 
 namespace AADWebApp.Services
 {
     public class PrescriptionService : IPrescriptionService
     {
+        public enum PrescriptionStatus
+        {
+            PendingApproval,
+            AwaitingBloodwork,
+            Approved,
+            Declined
+        }
+
+        public enum CollectionStatus
+        {
+            BeingPrepared,
+            CollectionReady,
+            Collected
+        }
+
         public IEnumerable<Prescription> GetPrescriptions()
         {
             IEnumerable<Prescription> prescriptions;

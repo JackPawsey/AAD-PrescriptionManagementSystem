@@ -1,4 +1,5 @@
 ﻿using System;
+using AADWebApp.Interfaces;
 using AADWebApp.Resolver;
 using AADWebApp.Services;
 using AADWebAppTests.Resolver;

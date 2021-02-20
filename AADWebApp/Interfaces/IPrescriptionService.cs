@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AADWebApp.Services
+namespace AADWebApp.Interfaces
 {
     interface IPrescriptionService
     {

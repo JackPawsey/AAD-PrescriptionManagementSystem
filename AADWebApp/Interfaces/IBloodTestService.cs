@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace AADWebApp.Services
+namespace AADWebApp.Interfaces
 {
     public interface IBloodTestService
     {
-        public IEnumerable<BloodTest> GetBloodTests();
-        public IEnumerable<Medication> GetMedications();
-        public string RequestBloodTest(int patientId, string bloodTestType);
-        public string SetBloodTestDateTime(int bloodTestId, DateTime dateTime);
-        public string SetBloodTestResults(BloodTestResult testResult);
+        public IEnumerable<BloodTest> GetBloodTests(short? id = null);
+        public IEnumerable<BloodTestResult> GetBloodTestResults(short? bloodTestId = null);
+        public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? prescriptionId = null);
+        public int RequestBloodTest(int prescriptionId, int bloodTestId, DateTime appointmentTime);
+        public int SetBloodTestDateTime(int id, DateTime appointmentTime);
+        public int SetBloodTestResults(int bloodTestId, bool result, DateTime resultTime);
     }
 }
