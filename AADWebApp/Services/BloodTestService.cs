@@ -90,7 +90,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //CREATE blood_test_requests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_requests (prescription_id, blood_test_id, appointment_time) VALUES ({prescriptionId}, {bloodTestId}, '{appointmentTime.ToString("yyyy-MM-dd HH:mm:ss")}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_requests (prescription_id, blood_test_id, appointment_time) VALUES ({prescriptionId}, {bloodTestId}, '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
         }
 
         public int SetBloodTestDateTime(int id, DateTime appointmentTime)
@@ -98,7 +98,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //UPDATE blood_test_requests TABLE ROW appointmentTime COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE blood_test_requests SET appointment_time = '{appointmentTime.ToString("yyyy-MM-dd HH:mm:ss")}' WHERE id = {id}");
+            return _databaseService.ExecuteNonQuery($"UPDATE blood_test_requests SET appointment_time = '{appointmentTime:yyyy-MM-dd HH:mm:ss}' WHERE id = {id}");
         }
 
         public int SetBloodTestResults(int bloodTestId, bool result, DateTime resultTime)
@@ -106,7 +106,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //CREATE blood_test_results TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_results (blood_test_id, result, result_time) VALUES ({bloodTestId}, {(result ? 1 : 0)}, '{resultTime.ToString("yyyy-MM-dd HH:mm:ss")}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_results (blood_test_id, result, result_time) VALUES ({bloodTestId}, {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
         }
     }
 }
