@@ -17,8 +17,15 @@ namespace AADWebApp.Areas.Identity
         {
             builder.ConfigureServices((context, services) =>
             {
+                var rdsConfiguration = context.Configuration.GetSection("RdsConfiguration");
+                var sqlConnectionString = string.Format(
+                    context.Configuration.GetConnectionString("AuthDbContextConnection"),
+                    rdsConfiguration.GetValue<string>("RdsName"),
+                    rdsConfiguration.GetValue<string>("Username"),
+                    rdsConfiguration.GetValue<string>("Password"));
+    
                 services.AddDbContext<AuthDbContext>(options =>
-                    options.UseSqlServer(context.Configuration.GetConnectionString("AuthDbContextConnection")));
+                    options.UseSqlServer(sqlConnectionString));
 
                 services
                     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false) // Set true to require email confirmation

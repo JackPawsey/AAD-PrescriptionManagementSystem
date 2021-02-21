@@ -25,13 +25,21 @@ namespace AADWebAppTests.Services
             // Create a service collection for use in the tests
             IServiceCollection services = new ServiceCollection();
 
+            var rdsConfiguration = _configuration.GetSection("RdsConfiguration");
+            var sqlConnectionString = string.Format(
+                _configuration.GetConnectionString("SqlConnection"),
+                rdsConfiguration.GetValue<string>("RdsName"),
+                rdsConfiguration.GetValue<string>("Username"),
+                rdsConfiguration.GetValue<string>("Password"),
+                "{0}");
+
             // Add services for testing
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
             services.AddTransient<IDatabaseNameResolver, TestDatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(
-                    _configuration.GetConnectionString("SqlConnection"),
+                    sqlConnectionString,
                     serviceProvider.GetService<IDatabaseNameResolver>()
                 )
             );
