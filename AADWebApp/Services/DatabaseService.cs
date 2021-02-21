@@ -110,6 +110,18 @@ namespace AADWebApp.Services
         }
 
         /// <summary>
+        ///     Execute a scalar query (a T-SQL command that will return a scalar result) against the database connection.
+        /// </summary>
+        /// <param name="scalarQuery">T T-SQL command.</param>
+        /// <returns>Returns the result of the scalar query.</returns>
+        public int ExecuteScalarQuery(string scalarQuery)
+        {
+            CheckInitialised();
+            var command = new SqlCommand(scalarQuery, DbConnection);
+            return (int) command.ExecuteScalar();
+        }
+
+        /// <summary>
         ///     Performs "SELECT * FROM {TableName}" against the database connection.
         /// </summary>
         /// <param name="tableName">The name of the table to query.</param>

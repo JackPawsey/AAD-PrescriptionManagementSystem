@@ -10,6 +10,7 @@ namespace AADWebApp.Interfaces
         public void ConnectToMssqlServer(AvailableDatabases databaseName);
         public void ChangeDatabase(AvailableDatabases databaseName);
         public int ExecuteNonQuery(string nonQuery);
+        public int ExecuteScalarQuery(string scalarQuery);
         public SqlDataReader ExecuteQuery(string query);
         public SqlDataReader RetrieveTable(string tableName, string whereColumn = null, object whereValue = null);
         public void CloseConnection();
