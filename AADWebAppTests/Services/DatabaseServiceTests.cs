@@ -14,8 +14,7 @@ namespace AADWebAppTests.Services
 
         private static DatabaseService CreateService()
         {
-            var databaseNameProvider = new DatabaseNameResolver();
-            return new DatabaseService("Data Source=cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com;Initial Catalog={0};User ID=admin;Password=uPjz58%4", databaseNameProvider);
+            return new DatabaseService("Data Source=cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com;Initial Catalog={0};User ID=admin;Password=uPjz58%4", new DatabaseNameResolver());
         }
 
         [TestMethod]
