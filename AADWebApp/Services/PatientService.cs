@@ -23,13 +23,13 @@ namespace AADWebApp.Services
             Both
         }
 
-        public IEnumerable<Patient> GetPatients(string? id = null)
+        public IEnumerable<Patient> GetPatients(string? patientId = null)
         {
             var patients = new List<Patient>();
 
             _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
 
-            using var result = _databaseService.RetrieveTable("patients", "id", id);
+            using var result = _databaseService.RetrieveTable("patients", "id", patientId);
 
             while (result.Read())
             {
@@ -64,6 +64,13 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
 
             return _databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES ('{patientId}', '{(short) communicationPreferences}', '{nhsNumber}', '{generalPractitionerId}')");
+        }
+
+        public int DeletePatient(string patientId)
+        {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            return _databaseService.ExecuteNonQuery($"DELETE FROM patients WHERE id = '{patientId}'");
         }
     }
 }

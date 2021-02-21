@@ -243,6 +243,22 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedSerialised, thePatientSerialised);
         }
 
+        [TestMethod]
+        public void WhenDeletingAPatientTheRowIsDeleted()
+        {
+            AssertPatientsTableContainsXRows(0);
+
+            // Add a patient
+            AddSinglePatient("some-guid-1", CommunicationPreferences.Email, "1", "some-gp-1");
+
+            // Delete the patient
+            var affectedRows = _patientService.DeletePatient("some-guid-1");
+            Assert.AreEqual(1, affectedRows);
+
+            // Assert there's no rows left
+            AssertPatientsTableContainsXRows(0);
+        }
+
         private void AssertPatientsTableContainsXRows(int expectedRows)
         {
             // Check prior to make sure there are no patients
