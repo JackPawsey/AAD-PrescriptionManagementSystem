@@ -52,6 +52,7 @@ namespace AADWebApp.Services
         public void ConnectToMssqlServer(AvailableDatabases databaseName)
         {
             IsInitialised = false;
+            CloseConnection();
 
             if (string.IsNullOrEmpty(_connectionString))
             {
@@ -149,12 +150,21 @@ namespace AADWebApp.Services
         /// </summary>
         public void CloseConnection()
         {
-            DbConnection.Close();
+            if (DbConnection == null) return;
+
+            try
+            {
+                DbConnection.Close();
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Failed to close connection to MSSQLServer.", ex);
+            }
         }
 
         ~DatabaseService()
         {
-            DbConnection.Close();
+            CloseConnection();
         }
     }
 
