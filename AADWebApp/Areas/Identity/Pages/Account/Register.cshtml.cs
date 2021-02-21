@@ -7,6 +7,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
+using AADWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,19 +27,22 @@ namespace AADWebApp.Areas.Identity.Pages.Account
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly ISendEmailService _sendEmailService;
+        private readonly IPatientService _patientService;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            ISendEmailService sendEmailService)
+            ISendEmailService sendEmailService,
+            IPatientService patientService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _logger = logger;
             _sendEmailService = sendEmailService;
+            _patientService = patientService;
         }
 
         [BindProperty]
@@ -134,6 +138,8 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                     GeneralPractioner = Input.GeneralPractitioner
                 };
                 var createResult = await _userManager.CreateAsync(user, Input.Password);
+                var createPatientRecord = _patientService.CreateNewPatientEntry(user.Id, Input.CommunicationPreference, Input.NHSNumber, Input.GeneralPractitioner);
+
                 var addToRoleResult = new IdentityResult();
 
                 if (await _roleManager.RoleExistsAsync(DefaultRole))
@@ -189,6 +195,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                             return LocalRedirect(returnUrl);
                         }
                     }
+                }
+
+                if (createPatientRecord != 1)
+                {
+                    _logger.LogError("Failed to create a patient record in the patients table.");
                 }
 
                 foreach (var error in createResult.Errors) ModelState.AddModelError(string.Empty, error.Description);
