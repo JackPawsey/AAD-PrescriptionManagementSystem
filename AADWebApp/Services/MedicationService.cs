@@ -22,7 +22,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //GET medications TABLE
-            var result = _databaseService.RetrieveTable("medications", "id", id);
+            using var result = _databaseService.RetrieveTable("medications", "id", id);
 
             while (result.Read())
             {

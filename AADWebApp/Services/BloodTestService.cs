@@ -22,7 +22,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //GET blood_tests TABLE
-            var result = _databaseService.RetrieveTable("blood_tests", "id", id);
+            using var result = _databaseService.RetrieveTable("blood_tests", "id", id);
 
             while (result.Read())
             {
@@ -45,7 +45,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //GET blood_test_results TABLE
-            var result = _databaseService.RetrieveTable("blood_test_results", "blood_test_id", bloodTestId);
+            using var result = _databaseService.RetrieveTable("blood_test_results", "blood_test_id", bloodTestId);
 
             while (result.Read())
             {
@@ -68,7 +68,7 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //GET blood_test_requests TABLE
-            var result = _databaseService.RetrieveTable("blood_test_requests", "prescription_id", prescriptionId);
+            using var result = _databaseService.RetrieveTable("blood_test_requests", "prescription_id", prescriptionId);
 
             while (result.Read())
             {
