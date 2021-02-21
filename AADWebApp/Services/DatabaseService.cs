@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using AADWebApp.Provider;
+using AADWebApp.Resolver;
 
 [assembly: InternalsVisibleTo("AADWebAppTests.Services")]
 

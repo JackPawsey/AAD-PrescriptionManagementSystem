@@ -1,6 +1,7 @@
-﻿using AADWebApp.Services;
+﻿using AADWebApp.Resolver;
+using AADWebApp.Services;
 
-namespace AADWebApp.Provider
+namespace AADWebAppTests.Resolver
 {
     public class TestDatabaseNameResolver : IDatabaseNameResolver
     {

@@ -1,6 +1,6 @@
 ﻿using AADWebApp.Services;
 
-namespace AADWebApp.Provider
+namespace AADWebApp.Resolver
 {
     public class DatabaseNameResolver : IDatabaseNameResolver
     {

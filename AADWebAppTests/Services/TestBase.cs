@@ -1,6 +1,7 @@
 ﻿using System;
-using AADWebApp.Provider;
+using AADWebApp.Resolver;
 using AADWebApp.Services;
+using AADWebAppTests.Resolver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

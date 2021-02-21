@@ -1,4 +1,4 @@
-using AADWebApp.Provider;
+using AADWebApp.Resolver;
 using AADWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
