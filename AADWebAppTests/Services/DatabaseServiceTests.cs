@@ -1,6 +1,5 @@
 ﻿using System.Data.Common;
 using System.Diagnostics;
-using AADWebApp.Provider;
 using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static AADWebApp.Services.DatabaseService;
@@ -8,26 +7,19 @@ using static AADWebApp.Services.DatabaseService;
 namespace AADWebAppTests.Services
 {
     [TestClass]
-    public class DatabaseServiceTests
+    public class DatabaseServiceTests : TestBase
     {
-        private DatabaseService _testService;
+        private readonly IDatabaseService _databaseService;
 
-        private static DatabaseService CreateService()
+        public DatabaseServiceTests()
         {
-            return new DatabaseService("Data Source=cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com;Initial Catalog={0};User ID=admin;Password=uPjz58%4", new DatabaseNameResolver());
-        }
-
-        [TestMethod]
-        public void DatabaseServiceTest()
-        {
-            CreateService();
+            _databaseService = Get<IDatabaseService>();
         }
 
         [TestMethod]
         public void ConnectToMssqlServerTest()
         {
-            _testService = CreateService();
-            _testService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
         }
 
         [TestMethod]
@@ -35,7 +27,7 @@ namespace AADWebAppTests.Services
         {
             ConnectToMssqlServerTest();
             var query = "SELECT * FROM TestData";
-            var dataReader = _testService.ExecuteQuery(query);
+            var dataReader = _databaseService.ExecuteQuery(query);
             PrintDataReaderToConsole(dataReader);
         }
 
@@ -44,14 +36,14 @@ namespace AADWebAppTests.Services
         {
             ConnectToMssqlServerTest();
             var nonQuery = "UPDATE TestData SET Value = 'ValueUpdated' WHERE Name = 'UpdateMe'";
-            Debug.WriteLine(_testService.ExecuteNonQuery(nonQuery));
+            Debug.WriteLine(_databaseService.ExecuteNonQuery(nonQuery));
         }
 
         [TestMethod]
         public void RetrieveTableTest()
         {
             ConnectToMssqlServerTest();
-            var dataReader = _testService.RetrieveTable("TestData");
+            var dataReader = _databaseService.RetrieveTable("TestData");
             PrintDataReaderToConsole(dataReader);
         }
 
@@ -70,8 +62,8 @@ namespace AADWebAppTests.Services
             var result1 = testResult.GetCell(3, 0);
             var result2 = testResult.GetCell(3, "Value");
 
-            Assert.AreEqual(result1.ToString(), expectedName);
-            Assert.AreEqual(result2.ToString(), expectedValue);
+            Assert.AreEqual(expectedName, result1.ToString());
+            Assert.AreEqual(expectedValue, result2.ToString());
         }
 
         [TestMethod]
@@ -115,7 +107,7 @@ namespace AADWebAppTests.Services
         {
             ConnectToMssqlServerTest();
             var query = "SELECT * FROM TestData";
-            var dataReader = _testService.ExecuteQuery(query);
+            var dataReader = _databaseService.ExecuteQuery(query);
             return new QueryResult(dataReader);
         }
 
