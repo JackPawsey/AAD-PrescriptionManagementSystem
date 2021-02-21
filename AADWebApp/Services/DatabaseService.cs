@@ -135,7 +135,7 @@ namespace AADWebApp.Services
             SqlCommand selectTableCommand;
             if (whereColumn != null && whereValue != null)
             {
-                selectTableCommand = new SqlCommand($"SELECT * FROM {tableName} WHERE {whereColumn} = {whereValue};", DbConnection);
+                selectTableCommand = new SqlCommand($"SELECT * FROM {tableName} WHERE {whereColumn} = '{whereValue}';", DbConnection);
             }
             else
             {
@@ -160,11 +160,6 @@ namespace AADWebApp.Services
             {
                 throw new Exception("Failed to close connection to MSSQLServer.", ex);
             }
-        }
-
-        ~DatabaseService()
-        {
-            CloseConnection();
         }
     }
 

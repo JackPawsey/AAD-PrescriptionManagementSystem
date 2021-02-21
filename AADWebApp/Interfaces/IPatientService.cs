@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using AADWebApp.Models;
+using static AADWebApp.Services.PatientService;
 
 namespace AADWebApp.Interfaces
 {
     public interface IPatientService
     {
-        public IEnumerable<Patient> GetPatients();
-        public string SetCommunicationPreferences(int patientId, string communicationPreferences);
+        public IEnumerable<Patient> GetPatients(string? patientId = null);
+        public int SetCommunicationPreferences(string patientId, CommunicationPreferences communicationPreferences);
+        public int UpdateGeneralPractitioner(string patientId, string generalPractitionerId);
+        public int CreateNewPatientEntry(string patientId, CommunicationPreferences communicationPreferences, string nhsNumber, string generalPractitionerId);
+        public int DeletePatient(string patientId);
     }
 }

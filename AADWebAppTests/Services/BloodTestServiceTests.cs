@@ -22,46 +22,32 @@ namespace AADWebAppTests.Services
             _bloodTestService = new BloodTestService(_databaseService);
         }
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
-            var databaseService = Get<IDatabaseService>();
-
-            // Pre-populate a prescription for later tests, which means also creating a user due to the table constraints
-            databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
-            databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES (1, 1, 1, 'gp-name');");
-            databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
-            databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            var databaseService = Get<IDatabaseService>();
-
-            // Clear the tables
-            databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
-            databaseService.ExecuteNonQuery($"DELETE FROM prescriptions;");
-            databaseService.ExecuteNonQuery($"DELETE FROM patients;");
-
-            // Reset auto increment values ready for next tests
-            databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (prescriptions, RESEED, 0);");
-        }
-
         [TestInitialize]
         public void TestInitialize()
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            // Populate a prescription for some tests, which means also creating a user due to the table constraints
+            _databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES (1, 1, 1, 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            // Clear the tables
             _databaseService.ExecuteNonQuery($"DELETE FROM blood_test_results");
             _databaseService.ExecuteNonQuery($"DELETE FROM blood_test_requests");
+            _databaseService.ExecuteNonQuery($"DELETE FROM prescriptions;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM patients;");
+
+            // Reset auto increment values for next test
             _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (blood_test_results, RESEED, 0);");
             _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (blood_test_requests, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (prescriptions, RESEED, 0);");
         }
 
         [TestMethod]
