@@ -7,31 +7,19 @@ using static AADWebApp.Services.DatabaseService;
 namespace AADWebAppTests.Services
 {
     [TestClass]
-    public class DatabaseServiceTests
+    public class DatabaseServiceTests : TestBase
     {
-        //To-Do: Figure out secrets, change password.
-        private const string Password = "uPjz58%4";
-        private const string Server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
-        private const string Username = "admin";
+        private readonly IDatabaseService _databaseService;
 
-        private DatabaseService _testService;
-
-        private static DatabaseService CreateService()
+        public DatabaseServiceTests()
         {
-            return new DatabaseService(Server, Username, Password);
-        }
-
-        [TestMethod]
-        public void DatabaseServiceTest()
-        {
-            CreateService();
+            _databaseService = Get<IDatabaseService>();
         }
 
         [TestMethod]
         public void ConnectToMssqlServerTest()
         {
-            _testService = CreateService();
-            _testService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
         }
 
         [TestMethod]
@@ -39,7 +27,7 @@ namespace AADWebAppTests.Services
         {
             ConnectToMssqlServerTest();
             var query = "SELECT * FROM TestData";
-            var dataReader = _testService.ExecuteQuery(query);
+            var dataReader = _databaseService.ExecuteQuery(query);
             PrintDataReaderToConsole(dataReader);
         }
 
@@ -48,14 +36,14 @@ namespace AADWebAppTests.Services
         {
             ConnectToMssqlServerTest();
             var nonQuery = "UPDATE TestData SET Value = 'ValueUpdated' WHERE Name = 'UpdateMe'";
-            Debug.WriteLine(_testService.ExecuteNonQuery(nonQuery));
+            Debug.WriteLine(_databaseService.ExecuteNonQuery(nonQuery));
         }
 
         [TestMethod]
         public void RetrieveTableTest()
         {
             ConnectToMssqlServerTest();
-            var dataReader = _testService.RetrieveTable("TestData");
+            var dataReader = _databaseService.RetrieveTable("TestData");
             PrintDataReaderToConsole(dataReader);
         }
 
@@ -74,8 +62,8 @@ namespace AADWebAppTests.Services
             var result1 = testResult.GetCell(3, 0);
             var result2 = testResult.GetCell(3, "Value");
 
-            Assert.AreEqual(result1.ToString(), expectedName);
-            Assert.AreEqual(result2.ToString(), expectedValue);
+            Assert.AreEqual(expectedName, result1.ToString());
+            Assert.AreEqual(expectedValue, result2.ToString());
         }
 
         [TestMethod]
@@ -119,7 +107,7 @@ namespace AADWebAppTests.Services
         {
             ConnectToMssqlServerTest();
             var query = "SELECT * FROM TestData";
-            var dataReader = _testService.ExecuteQuery(query);
+            var dataReader = _databaseService.ExecuteQuery(query);
             return new QueryResult(dataReader);
         }
 
@@ -134,6 +122,7 @@ namespace AADWebAppTests.Services
                     {
                         output += ", ";
                     }
+
                     output += reader.GetValue(i);
                 }
 

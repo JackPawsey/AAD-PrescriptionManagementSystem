@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using AADWebApp.Resolver;
 
 [assembly: InternalsVisibleTo("AADWebAppTests.Services")]
 
@@ -17,9 +18,9 @@ namespace AADWebApp.Services
             program_data
         }
 
-        private readonly string _password;
-        private readonly string _serverName;
-        private readonly string _username;
+        private readonly IDatabaseNameResolver _databaseNameResolver;
+
+        private string _connectionString;
 
         public bool IsInitialised { get; private set; }
 
@@ -28,14 +29,12 @@ namespace AADWebApp.Services
         /// <summary>
         ///     Construct a DatabaseService object.
         /// </summary>
-        /// <param name="serverName">The IP address/endpoint of the server.</param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        public DatabaseService(string serverName, string username, string password)
+        /// <param name="connectionString">The connection string template to use</param>
+        /// <param name="databaseNameResolver">The database name resolver to use</param>
+        public DatabaseService(string connectionString, IDatabaseNameResolver databaseNameResolver)
         {
-            _serverName = serverName;
-            _username = username;
-            _password = password;
+            _connectionString = connectionString;
+            _databaseNameResolver = databaseNameResolver;
         }
 
         private void CheckInitialised()
@@ -53,21 +52,14 @@ namespace AADWebApp.Services
         {
             IsInitialised = false;
             
-            if (string.IsNullOrEmpty(_serverName) || string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password))
+            if (string.IsNullOrEmpty(_connectionString))
             {
-                throw new InvalidOperationException("ServerName, Username, Password or DatabaseName is NullOrEmpty.");
+                throw new InvalidOperationException("Connection string is null or empty.");
             }
 
-            var connectionStringBuilder = new SqlConnectionStringBuilder
-            {
-                DataSource = _serverName,
-                UserID = _username,
-                Password = _password,
-                InitialCatalog = databaseName.ToString()
-            };
+            _connectionString = string.Format(_connectionString, _databaseNameResolver.GetDatabaseName(databaseName));
 
-            var connectionString = connectionStringBuilder.ToString();
-            DbConnection = new SqlConnection(connectionString);
+            DbConnection = new SqlConnection(_connectionString);
 
             try
             {
@@ -77,7 +69,7 @@ namespace AADWebApp.Services
             catch (SqlException ex)
             {
                 var customException = new Exception("Connection to MSSQLServer failed. See inner exception and ensure arguments are correct.", ex);
-                customException.Data.Add("Connection String", connectionString);
+                customException.Data.Add("Connection String", _connectionString);
                 throw customException;
             }
         }
