@@ -20,6 +20,14 @@ namespace AADWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var rdsConfiguration = Configuration.GetSection("RdsConfiguration");
+            var sqlConnectionString = string.Format(
+                Configuration.GetConnectionString("SqlConnection"),
+                rdsConfiguration.GetValue<string>("RdsName"),
+                rdsConfiguration.GetValue<string>("Username"),
+                rdsConfiguration.GetValue<string>("Password"),
+                "{0}");
+
             services.AddRazorPages()
                     .AddRazorRuntimeCompilation();
             services.AddTransient<ISendEmailService, SendEmailService>();
@@ -27,7 +35,7 @@ namespace AADWebApp
             services.AddTransient<IDatabaseNameResolver, DatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(
-                    Configuration.GetConnectionString("SqlConnection"),
+                    sqlConnectionString,
                     serviceProvider.GetService<IDatabaseNameResolver>()
                 )
             );
