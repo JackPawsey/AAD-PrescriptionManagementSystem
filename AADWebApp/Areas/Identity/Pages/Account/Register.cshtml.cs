@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -41,6 +43,10 @@ namespace AADWebApp.Areas.Identity.Pages.Account
 
         [BindProperty]
         public InputModel Input { get; set; }
+
+        public SelectList CommunicationPreferences = new SelectList(
+            Enum.GetValues(typeof(PatientService.CommunicationPreferences))
+        );
 
         public string ReturnUrl { get; private set; }
 
@@ -84,6 +90,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account
             [DataType(DataType.Text)]
             [Display(Name = "General Practitioner")]
             public string GeneralPractitioner { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Communication Preference")]
+            public PatientService.CommunicationPreferences CommunicationPreference { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
