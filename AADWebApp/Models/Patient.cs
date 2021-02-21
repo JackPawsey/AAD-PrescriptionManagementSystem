@@ -1,10 +1,12 @@
-using System.Collections.Generic;
+using static AADWebApp.Services.PatientService;
 
 namespace AADWebApp.Models
 {
     public class Patient
     {
-        public int Id { get; set; }
-        public IEnumerable<Prescription> Prescriptions { get; set; }
+        public string Id { get; set; }
+        public CommunicationPreferences CommunicationPreferences { get; set; }
+        public string NhsNumber { get; set; }
+        public string GeneralPractitioner { get; set; }
     }
 }

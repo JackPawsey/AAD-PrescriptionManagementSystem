@@ -1,43 +1,69 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
+using static AADWebApp.Services.DatabaseService;
 
 namespace AADWebApp.Services
 {
     public class PatientService : IPatientService
     {
-        public IEnumerable<Patient> GetPatients()
+        private readonly IDatabaseService _databaseService;
+
+        public PatientService(IDatabaseService databaseService)
         {
-            IEnumerable<Patient> patients;
-
-            try
-            {
-                //GET PATIENT TABLE
-                patients = null; //*** TEMPORARY ***
-            }
-            catch
-            {
-                patients = null;
-            }
-
-            return patients;
+            _databaseService = databaseService;
         }
 
-        public string SetCommunicationPreferences(int patientId, string communicationPreferences)
+        public enum CommunicationPreferences
         {
-            string result;
+            Email,
+            Sms,
+            Both
+        }
 
-            try
+        public IEnumerable<Patient> GetPatients(string? id = null)
+        {
+            var patients = new List<Patient>();
+
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            using var result = _databaseService.RetrieveTable("patients", "id", id);
+
+            while (result.Read())
             {
-                //UPDATE PATIENT TABLE ROW
-                result = "Communication preferences updated successfully";
-            }
-            catch
-            {
-                result = "Error communication preferences not updated";
+                patients.Add(new Patient
+                {
+                    Id = (string) result.GetValue(0),
+                    CommunicationPreferences = (CommunicationPreferences) Enum.Parse(typeof(CommunicationPreferences), result.GetValue(1).ToString() ?? throw new InvalidOperationException()),
+                    NhsNumber = (string) result.GetValue(2),
+                    GeneralPractitioner = (string) result.GetValue(3)
+                });
             }
 
-            return result;
+            return patients.AsEnumerable();
+        }
+
+        public int SetCommunicationPreferences(string patientId, CommunicationPreferences communicationPreferences)
+        {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            return _databaseService.ExecuteNonQuery($"UPDATE patients SET comm_preferences = '{(short) communicationPreferences}' WHERE id = '{patientId}'");
+        }
+
+        public int UpdateGeneralPractitioner(string patientId, string generalPractitionerId)
+        {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            return _databaseService.ExecuteNonQuery($"UPDATE patients SET general_practitioner = '{generalPractitionerId}' WHERE id = '{patientId}'");
+        }
+
+        public int CreateNewPatientEntry(string patientId, CommunicationPreferences communicationPreferences, string nhsNumber, string generalPractitionerId)
+        {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+
+            return _databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES ('{patientId}', '{(short) communicationPreferences}', '{nhsNumber}', '{generalPractitionerId}')");
         }
     }
 }
