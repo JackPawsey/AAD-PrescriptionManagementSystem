@@ -9,16 +9,11 @@ namespace AADWebAppTests.Services
     [TestClass]
     public class DatabaseServiceTests
     {
-        //To-Do: Figure out secrets, change password.
-        private const string Password = "uPjz58%4";
-        private const string Server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
-        private const string Username = "admin";
-
         private DatabaseService _testService;
 
         private static DatabaseService CreateService()
         {
-            return new DatabaseService(Server, Username, Password);
+            return new DatabaseService("Data Source=cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com;Initial Catalog={0};User ID=admin;Password=uPjz58%4");
         }
 
         [TestMethod]
@@ -134,6 +129,7 @@ namespace AADWebAppTests.Services
                     {
                         output += ", ";
                     }
+
                     output += reader.GetValue(i);
                 }
 

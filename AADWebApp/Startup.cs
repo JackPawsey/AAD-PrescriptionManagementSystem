@@ -23,13 +23,11 @@ namespace AADWebApp
                     .AddRazorRuntimeCompilation();
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
-
-            //To-Do: Inject these properly by sourcing them from appsettings / secrets.
-            const string server = "cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com";
-            const string userName = "admin";
-            const string password = "uPjz58%4";
-
-            services.AddTransient<IDatabaseService, DatabaseService>(_ => new DatabaseService(server, userName, password));
+            services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
+                new DatabaseService(
+                    Configuration.GetConnectionString("SqlConnection")
+                )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
