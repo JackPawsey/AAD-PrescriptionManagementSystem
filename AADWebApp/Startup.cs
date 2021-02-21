@@ -1,3 +1,4 @@
+using AADWebApp.Provider;
 using AADWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,9 +24,11 @@ namespace AADWebApp
                     .AddRazorRuntimeCompilation();
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
+            services.AddTransient<IDatabaseNameResolver, DatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(
-                    Configuration.GetConnectionString("SqlConnection")
+                    Configuration.GetConnectionString("SqlConnection"),
+                    serviceProvider.GetService<IDatabaseNameResolver>()
                 )
             );
         }

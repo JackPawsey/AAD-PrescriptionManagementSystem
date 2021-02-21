@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using AADWebApp.Provider;
 
 [assembly: InternalsVisibleTo("AADWebAppTests.Services")]
 
@@ -17,6 +18,7 @@ namespace AADWebApp.Services
             program_data
         }
 
+        private readonly IDatabaseNameResolver _databaseNameResolver;
 
         private string _connectionString;
 
@@ -28,9 +30,11 @@ namespace AADWebApp.Services
         ///     Construct a DatabaseService object.
         /// </summary>
         /// <param name="connectionString">The connection string template to use</param>
-        public DatabaseService(string connectionString)
+        /// <param name="databaseNameResolver">The database name resolver to use</param>
+        public DatabaseService(string connectionString, IDatabaseNameResolver databaseNameResolver)
         {
             _connectionString = connectionString;
+            _databaseNameResolver = databaseNameResolver;
         }
 
         private void CheckInitialised()
@@ -53,7 +57,7 @@ namespace AADWebApp.Services
                 throw new InvalidOperationException("Connection string is null or empty.");
             }
 
-            _connectionString = string.Format(_connectionString, databaseName.ToString());
+            _connectionString = string.Format(_connectionString, _databaseNameResolver.GetDatabaseName(databaseName));
 
             DbConnection = new SqlConnection(_connectionString);
 

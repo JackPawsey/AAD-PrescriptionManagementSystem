@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using System.Diagnostics;
+using AADWebApp.Provider;
 using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static AADWebApp.Services.DatabaseService;
@@ -13,7 +14,8 @@ namespace AADWebAppTests.Services
 
         private static DatabaseService CreateService()
         {
-            return new DatabaseService("Data Source=cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com;Initial Catalog={0};User ID=admin;Password=uPjz58%4");
+            var databaseNameProvider = new DatabaseNameResolver();
+            return new DatabaseService("Data Source=cloud-crusaders-project-database-mssql.c8ratiay2jmd.eu-west-2.rds.amazonaws.com;Initial Catalog={0};User ID=admin;Password=uPjz58%4", databaseNameProvider);
         }
 
         [TestMethod]
