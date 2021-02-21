@@ -161,11 +161,6 @@ namespace AADWebApp.Services
                 throw new Exception("Failed to close connection to MSSQLServer.", ex);
             }
         }
-
-        ~DatabaseService()
-        {
-            CloseConnection();
-        }
     }
 
     public class ColumnResult
