@@ -244,22 +244,22 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedAfterUpdate.ElementAt(0).CollectionTime.ToShortTimeString(), afterUpdateResults.ElementAt(0).CollectionTime.ToShortTimeString());
         }
 
-        private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(int PrescriptionId, CollectionStatus CollectionStatus, DateTime CollectionStatusUpdated, DateTime CollectionTime)
+        private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(int prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)
         {
             IEnumerable<PrescriptionCollection> expected = new List<PrescriptionCollection>
             {
                 new PrescriptionCollection
                 {
                     Id = 1,
-                    PrescriptionId = PrescriptionId,
-                    CollectionStatus = CollectionStatus,
-                    CollectionStatusUpdated = CollectionStatusUpdated,
-                    CollectionTime = CollectionTime
+                    PrescriptionId = prescriptionId,
+                    CollectionStatus = collectionStatus,
+                    CollectionStatusUpdated = collectionStatusUpdated,
+                    CollectionTime = collectionTime
                 }
             };
 
             // Add prescription collection and verify
-            var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(PrescriptionId, CollectionStatus, CollectionStatusUpdated, CollectionTime);
+            var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(prescriptionId, collectionStatus, collectionStatusUpdated, collectionTime);
             Assert.AreEqual(1, affectedRows1);
 
             // Check amount of database rows

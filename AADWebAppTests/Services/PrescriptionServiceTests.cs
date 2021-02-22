@@ -250,25 +250,25 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
         }
 
-        private IEnumerable<Prescription> AddPrescription(int MedicationId, string PatientId, int Dosage, DateTime DateStart, DateTime DateEnd, PrescriptionStatus PrescriptionStatus, string IssueFrequency)
+        private IEnumerable<Prescription> AddPrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, PrescriptionStatus prescriptionStatus, string issueFrequency)
         {
             IEnumerable<Prescription> expected = new List<Prescription>
             {
                 new Prescription
                 {
                     Id = 1,
-                    MedicationId = MedicationId,
-                    PatientId = PatientId,
-                    Dosage = Dosage,
-                    DateStart = DateStart,
-                    DateEnd = DateEnd,
-                    PrescriptionStatus = PrescriptionStatus,
-                    IssueFrequency = IssueFrequency
+                    MedicationId = medicationId,
+                    PatientId = patientId,
+                    Dosage = dosage,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    PrescriptionStatus = prescriptionStatus,
+                    IssueFrequency = issueFrequency
                 }
             };
 
             // Add prescription and verify
-            var affectedRows1 = _prescriptionService.CreatePrescription(MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency);
+            var affectedRows1 = _prescriptionService.CreatePrescription(medicationId, patientId, dosage, dateStart, dateEnd, prescriptionStatus, issueFrequency);
             Assert.AreEqual(1, affectedRows1);
 
             // Check amount of database rows

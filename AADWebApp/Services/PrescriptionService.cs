@@ -37,39 +37,39 @@ namespace AADWebApp.Services
             {
                 prescriptions.Add(new Prescription
                 {
-                    Id = (short)result.GetValue(0),
-                    MedicationId = (short)result.GetValue(1),
-                    PatientId = (string)result.GetValue(2),
-                    Dosage = (short)result.GetValue(3),
-                    DateStart = (DateTime)result.GetValue(4),
-                    DateEnd = (DateTime)result.GetValue(5),
-                    PrescriptionStatus = (PrescriptionStatus)Enum.Parse(typeof(PrescriptionStatus), result.GetValue(6).ToString() ?? throw new InvalidOperationException()),
-                    IssueFrequency = (string)result.GetValue(7)
+                    Id = (short) result.GetValue(0),
+                    MedicationId = (short) result.GetValue(1),
+                    PatientId = (string) result.GetValue(2),
+                    Dosage = (short) result.GetValue(3),
+                    DateStart = (DateTime) result.GetValue(4),
+                    DateEnd = (DateTime) result.GetValue(5),
+                    PrescriptionStatus = (PrescriptionStatus) Enum.Parse(typeof(PrescriptionStatus), result.GetValue(6).ToString() ?? throw new InvalidOperationException()),
+                    IssueFrequency = (string) result.GetValue(7)
                 });
             }
 
             return prescriptions.AsEnumerable();
         }
 
-        public int CreatePrescription(int MedicationId, string PatientId, int Dosage, DateTime DateStart, DateTime DateEnd, PrescriptionStatus PrescriptionStatus, string IssueFrequency)
+        public int CreatePrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, PrescriptionStatus prescriptionStatus, string issueFrequency)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //CREATE prescriptions TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES ('{MedicationId}', '{PatientId}', '{Dosage}', '{DateStart:yyyy-MM-dd HH:mm:ss}', '{DateEnd:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus}', '{IssueFrequency}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{prescriptionStatus}', '{issueFrequency}')");
         }
 
-        public int CancelPrescription(int Id)
+        public int CancelPrescription(int id)
         {
-            return SetPrescriptionStatus(Id, PrescriptionStatus.Terminated);
+            return SetPrescriptionStatus(id, PrescriptionStatus.Terminated);
         }
 
-        public int SetPrescriptionStatus(int Id, PrescriptionStatus PrescriptionStatus)
+        public int SetPrescriptionStatus(int id, PrescriptionStatus prescriptionStatus)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
             //UPDATE prescriptions TABLE ROW prescription_status COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE prescriptions SET prescription_status = '{PrescriptionStatus}' WHERE id = '{Id}'");
+            return _databaseService.ExecuteNonQuery($"UPDATE prescriptions SET prescription_status = '{prescriptionStatus}' WHERE id = '{id}'");
         }
     }
 }

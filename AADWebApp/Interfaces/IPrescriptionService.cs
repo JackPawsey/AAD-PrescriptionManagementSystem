@@ -8,8 +8,8 @@ namespace AADWebApp.Interfaces
     public interface IPrescriptionService
     {
         public IEnumerable<Prescription> GetPrescriptions(short? id = null);
-        public int CreatePrescription(int MedicationId, string PatientId, int Dosage, DateTime DateStart, DateTime DateEnd, PrescriptionStatus PrescriptionStatus, string IssueFrequency);
-        public int CancelPrescription(int Id);
-        public int SetPrescriptionStatus(int Id, PrescriptionStatus PrescriptionStatus);
+        public int CreatePrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, PrescriptionStatus prescriptionStatus, string issueFrequency);
+        public int CancelPrescription(int id);
+        public int SetPrescriptionStatus(int id, PrescriptionStatus prescriptionStatus);
     }
 }
