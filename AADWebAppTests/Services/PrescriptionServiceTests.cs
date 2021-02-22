@@ -142,7 +142,7 @@ namespace AADWebAppTests.Services
             // Check results - GetPrescriptions with invalid id
             var afterCreateResultsByInvalidId = _prescriptionService.GetPrescriptions(99);
             var afterCreateResultsByInvalidIdSerialised = JsonConvert.SerializeObject(afterCreateResultsByInvalidId);
-            var expectedInvalidIdSerialised = JsonConvert.SerializeObject(new List<Patient>());
+            var expectedInvalidIdSerialised = JsonConvert.SerializeObject(new List<Prescription>());
 
             Assert.IsTrue(!afterCreateResultsByInvalidId.Any());
             Assert.AreEqual(expectedInvalidIdSerialised, afterCreateResultsByInvalidIdSerialised);

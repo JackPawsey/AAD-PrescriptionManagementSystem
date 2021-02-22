@@ -37,7 +37,7 @@ namespace AADWebApp.Services
                 {
                     Id = (short)result.GetValue(0),
                     PrescriptionId = (short)result.GetValue(1),
-                    CollectionStatus = (string)result.GetValue(2),
+                    CollectionStatus = (CollectionStatus)Enum.Parse(typeof(CollectionStatus), result.GetValue(2).ToString() ?? throw new InvalidOperationException()),
                     CollectionStatusUpdated = (DateTime)result.GetValue(3),
                     CollectionTime = (DateTime)result.GetValue(4)
                 });

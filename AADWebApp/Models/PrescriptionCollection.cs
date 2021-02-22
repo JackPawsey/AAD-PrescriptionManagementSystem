@@ -1,4 +1,5 @@
 ﻿using System;
+using static AADWebApp.Services.PrescriptionCollectionService;
 
 namespace AADWebApp.Models
 {
@@ -6,7 +7,7 @@ namespace AADWebApp.Models
     {
         public int Id { get; set; }
         public int PrescriptionId { get; set; }
-        public string CollectionStatus { get; set; }
+        public CollectionStatus CollectionStatus { get; set; }
         public DateTime CollectionStatusUpdated { get; set; }
         public DateTime CollectionTime { get; set; }
     }
