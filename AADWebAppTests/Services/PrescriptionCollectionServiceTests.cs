@@ -5,7 +5,6 @@ using AADWebApp.Interfaces;
 using AADWebApp.Models;
 using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using static AADWebApp.Services.DatabaseService;
 using static AADWebApp.Services.PrescriptionCollectionService;
 using static AADWebApp.Services.PrescriptionService;
@@ -218,12 +217,16 @@ namespace AADWebAppTests.Services
             // Check results via GetPrescriptionCollections with id
             var afterUpdateResults = _prescriptionCollectionService.GetPrescriptionCollections(1);
 
-            Assert.AreEqual(expectedAfterUpdate.ElementAt(0).Id, afterUpdateResults.ElementAt(0).Id);
-            Assert.AreEqual(expectedAfterUpdate.ElementAt(0).PrescriptionId, afterUpdateResults.ElementAt(0).PrescriptionId);
-            Assert.AreEqual(expectedAfterUpdate.ElementAt(0).CollectionStatus, afterUpdateResults.ElementAt(0).CollectionStatus);
-            Assert.IsFalse(expectedAfterUpdate.ElementAt(0).CollectionStatusUpdated.Equals(afterUpdateResults.ElementAt(0).CollectionStatusUpdated));
-            Assert.AreEqual(expectedAfterUpdate.ElementAt(0).CollectionTime.ToShortDateString(), afterUpdateResults.ElementAt(0).CollectionTime.ToShortDateString());
-            Assert.AreEqual(expectedAfterUpdate.ElementAt(0).CollectionTime.ToShortTimeString(), afterUpdateResults.ElementAt(0).CollectionTime.ToShortTimeString());
+            var expectedUpdatePrescription = expectedAfterUpdate.First(p => p.Id == 1);
+            var afterUpdatePrescription = afterUpdateResults.First(p => p.Id == 1);
+
+            Assert.AreEqual(expectedUpdatePrescription.Id, afterUpdatePrescription.Id);
+            Assert.AreEqual(expectedUpdatePrescription.PrescriptionId, afterUpdatePrescription.PrescriptionId);
+            Assert.AreEqual(expectedUpdatePrescription.CollectionStatus, afterUpdatePrescription.CollectionStatus);
+            Assert.IsFalse(expectedUpdatePrescription.CollectionStatusUpdated.Equals(afterUpdatePrescription.CollectionStatusUpdated));
+            Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
+            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
+            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
         }
 
         private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(int prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)
