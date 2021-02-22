@@ -17,13 +17,6 @@ namespace AADWebApp.Services
             Terminated
         }
 
-        public enum CollectionStatus
-        {
-            BeingPrepared,
-            CollectionReady,
-            Collected
-        }
-
         private readonly IDatabaseService _databaseService;
 
         public PrescriptionService(IDatabaseService databaseService)
