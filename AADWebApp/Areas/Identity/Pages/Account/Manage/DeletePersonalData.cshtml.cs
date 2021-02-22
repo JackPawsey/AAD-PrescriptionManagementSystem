@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
+using AADWebApp.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,15 +15,14 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly IPatientService _patientService;
 
-        public DeletePersonalDataModel(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+        public DeletePersonalDataModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<DeletePersonalDataModel> logger, IPatientService patientService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _patientService = patientService;
         }
 
         [BindProperty]
@@ -65,6 +65,20 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                     ModelState.AddModelError(string.Empty, "Incorrect password.");
                     return Page();
                 }
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            switch (userRoles)
+            {
+                case var i when userRoles.Contains("Patient"):
+                    var patientDataResult = _patientService.DeletePatient(user.Id);
+                    if (patientDataResult != 1)
+                    {
+                        throw new InvalidOperationException($"Unexpected error occurred deleting patient data with ID '{user.Id}'");
+                    }
+
+                    break;
             }
 
             var result = await _userManager.DeleteAsync(user);
