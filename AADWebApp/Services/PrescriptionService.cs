@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 
@@ -12,7 +13,8 @@ namespace AADWebApp.Services
             PendingApproval,
             AwaitingBloodWork,
             Approved,
-            Declined
+            Declined,
+            Terminated
         }
 
         public enum CollectionStatus
@@ -22,107 +24,59 @@ namespace AADWebApp.Services
             Collected
         }
 
-        public IEnumerable<Prescription> GetPrescriptions()
+        private readonly IDatabaseService _databaseService;
+
+        public PrescriptionService(IDatabaseService databaseService)
         {
-            IEnumerable<Prescription> prescriptions;
-
-            try
-            {
-                //GET PRESCRIPTIONS TABLE
-                prescriptions = null; //*** TEMPORARY ***
-            }
-            catch
-            {
-                prescriptions = null;
-            }
-
-            return prescriptions;
+            _databaseService = databaseService;
         }
 
-        public string CreatePrescription(int patientId, string medicationType, int dosage, DateTime prescriptionEnd)
+        public IEnumerable<Prescription> GetPrescriptions(short? id = null)
         {
-            string result;
+            var prescriptions = new List<Prescription>();
 
-            try
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+
+            //GET prescriptions TABLE
+            using var result = _databaseService.RetrieveTable("prescriptions", "id", id);
+
+            while (result.Read())
             {
-                //CREATE PRESCRIPTION TABLE ROW
-                result = "Prescription created successfully";
-            }
-            catch
-            {
-                result = "Error prescription not created";
+                prescriptions.Add(new Prescription
+                {
+                    Id = (short)result.GetValue(0),
+                    MedicationId = (short)result.GetValue(1),
+                    PatientId = (string)result.GetValue(2),
+                    Dosage = (short)result.GetValue(3),
+                    DateStart = (DateTime)result.GetValue(4),
+                    DateEnd = (DateTime)result.GetValue(5),
+                    PrescriptionStatus = (string)result.GetValue(6),
+                    IssueFrequency = (string)result.GetValue(7)
+                });
             }
 
-            return result;
+            return prescriptions.AsEnumerable();
         }
 
-        public string CancelPrescription(int prescriptionId)
+        public int CreatePrescription(int MedicationId, string PatientId, int Dosage, DateTime DateStart, DateTime DateEnd, PrescriptionStatus PrescriptionStatus, string IssueFrequency)
         {
-            string result;
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
-            try
-            {
-                //DELETE PRESCRIPTION TABLE ROW or SET PrescriptionEnd to current date/time?
-                //UPDATE PRESCRIPTION TABLE ROW
-                result = "Task failed successfully";
-            }
-            catch
-            {
-                result = "Error prescription not cancelled";
-            }
-
-            return result;
+            //CREATE prescriptions TABLE ROW
+            return _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES ('{MedicationId}', '{PatientId}', '{Dosage}', '{DateStart:yyyy-MM-dd HH:mm:ss}', '{DateEnd:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus}', '{IssueFrequency}')");
         }
 
-        public string SetPrescriptionMedication(int prescriptionId, int dosage)
+        public int CancelPrescription(int Id)
         {
-            string result;
-
-            try
-            {
-                //UPDATE PRESCRIPTION TABLE ROW
-                result = "Prescription medication updated successfully";
-            }
-            catch
-            {
-                result = "Error prescription medication not updated";
-            }
-
-            return result;
+            return SetPrescriptionStatus(Id, PrescriptionStatus.Terminated);
         }
 
-        public string SetPrescriptionCollectionDateTime(int prescriptionId, DateTime dateTime)
+        public int SetPrescriptionStatus(int Id, PrescriptionStatus PrescriptionStatus)
         {
-            string result;
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
 
-            try
-            {
-                //UPDATE PRESCRIPTION TABLE ROW
-                result = "Prescription collection date/time updated successfully";
-            }
-            catch
-            {
-                result = "Error prescription collection date/time not updated";
-            }
-
-            return result;
-        }
-
-        public string SetPrescriptionStatus(int prescriptionId, string status)
-        {
-            string result;
-
-            try
-            {
-                //UPDATE PRESCRIPTION TABLE ROW
-                result = "Prescription status updated successfully";
-            }
-            catch
-            {
-                result = "Error prescription status not updated";
-            }
-
-            return result;
+            //UPDATE prescriptions TABLE ROW prescription_status COLUMN
+            return _databaseService.ExecuteNonQuery($"UPDATE prescriptions SET prescription_status = '{PrescriptionStatus}' WHERE id = '{Id}'");
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using AADWebApp.Models;
+using static AADWebApp.Services.PrescriptionService;
 
 namespace AADWebApp.Interfaces
 {
     public interface IPrescriptionService
     {
-        public IEnumerable<Prescription> GetPrescriptions();
-        public string CreatePrescription(int patientId, string medicationType, int dosage, DateTime prescriptionEnd);
-        public string CancelPrescription(int prescriptionId);
-        public string SetPrescriptionMedication(int prescriptionId, int dosage);
-        public string SetPrescriptionCollectionDateTime(int prescriptionId, DateTime dateTime);
-        public string SetPrescriptionStatus(int prescriptionId, string status);
+        public IEnumerable<Prescription> GetPrescriptions(short? id = null);
+        public int CreatePrescription(int MedicationId, string PatientId, int Dosage, DateTime DateStart, DateTime DateEnd, PrescriptionStatus PrescriptionStatus, string IssueFrequency);
+        public int CancelPrescription(int Id);
+        public int SetPrescriptionStatus(int Id, PrescriptionStatus PrescriptionStatus);
     }
 }
