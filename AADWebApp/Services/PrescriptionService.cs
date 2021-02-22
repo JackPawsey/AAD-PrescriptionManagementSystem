@@ -43,7 +43,7 @@ namespace AADWebApp.Services
                     Dosage = (short)result.GetValue(3),
                     DateStart = (DateTime)result.GetValue(4),
                     DateEnd = (DateTime)result.GetValue(5),
-                    PrescriptionStatus = (string)result.GetValue(6),
+                    PrescriptionStatus = (PrescriptionStatus)Enum.Parse(typeof(PrescriptionStatus), result.GetValue(6).ToString() ?? throw new InvalidOperationException()),
                     IssueFrequency = (string)result.GetValue(7)
                 });
             }

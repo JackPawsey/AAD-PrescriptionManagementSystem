@@ -1,4 +1,5 @@
 using System;
+using static AADWebApp.Services.PrescriptionService;
 
 namespace AADWebApp.Models
 {
@@ -10,7 +11,7 @@ namespace AADWebApp.Models
         public int Dosage { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
-        public string PrescriptionStatus { get; set; }
+        public PrescriptionStatus PrescriptionStatus { get; set; }
         public string IssueFrequency { get; set; }
     }
 }
