@@ -102,14 +102,8 @@ namespace AADWebAppTests.Services
 
             IEnumerable<Prescription> singleExpected = allExpected.ToList().Where(p => p.Id == 2);
 
-            var allExpectedSerialised = JsonConvert.SerializeObject(allExpected, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
-            var singleSerialised = JsonConvert.SerializeObject(singleExpected, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var allExpectedSerialised = Serialize(allExpected);
+            var singleSerialised = Serialize(singleExpected);
 
             // Add prescriptions
             var affectedRows1 = _prescriptionService.CreatePrescription(1, "1", 77, now, now, PrescriptionStatus.Approved, "1frequency");
@@ -127,22 +121,22 @@ namespace AADWebAppTests.Services
 
             // Check results - GetPrescriptions with no id
             var afterCreateResults = _prescriptionService.GetPrescriptions();
-            var afterCreateResultsSerialised = JsonConvert.SerializeObject(afterCreateResults);
+            var afterCreateResultsSerialised = Serialize(afterCreateResults);
 
             Assert.IsTrue(afterCreateResults.Count() == 3);
             Assert.AreEqual(allExpectedSerialised, afterCreateResultsSerialised);
 
             // Check results - GetPrescriptions with valid id
             var afterCreateResultsByValidId = _prescriptionService.GetPrescriptions(2);
-            var afterCreateResultsByValidIdSerialised = JsonConvert.SerializeObject(afterCreateResultsByValidId);
+            var afterCreateResultsByValidIdSerialised = Serialize(afterCreateResultsByValidId);
 
             Assert.IsTrue(afterCreateResultsByValidId.Count() == 1);
             Assert.AreEqual(singleSerialised, afterCreateResultsByValidIdSerialised);
 
             // Check results - GetPrescriptions with invalid id
             var afterCreateResultsByInvalidId = _prescriptionService.GetPrescriptions(99);
-            var afterCreateResultsByInvalidIdSerialised = JsonConvert.SerializeObject(afterCreateResultsByInvalidId);
-            var expectedInvalidIdSerialised = JsonConvert.SerializeObject(new List<Prescription>());
+            var afterCreateResultsByInvalidIdSerialised = Serialize(afterCreateResultsByInvalidId);
+            var expectedInvalidIdSerialised = Serialize(new List<Prescription>());
 
             Assert.IsTrue(!afterCreateResultsByInvalidId.Any());
             Assert.AreEqual(expectedInvalidIdSerialised, afterCreateResultsByInvalidIdSerialised);
@@ -173,14 +167,8 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var originalExpectedSerialised = JsonConvert.SerializeObject(originalExpected, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
-            var updatedExpectedSerialised = JsonConvert.SerializeObject(expectedAfterUpdate, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var originalExpectedSerialised = Serialize(originalExpected);
+            var updatedExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Make sure they're not the same yet (as we haven't updated)
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
@@ -194,7 +182,7 @@ namespace AADWebAppTests.Services
 
             // Check results via GetPatients with id
             var afterUpdateResults = _prescriptionService.GetPrescriptions(1);
-            var afterUpdateResultsSerialised = JsonConvert.SerializeObject(afterUpdateResults);
+            var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
 
             Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
         }
@@ -224,14 +212,8 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var originalExpectedSerialised = JsonConvert.SerializeObject(originalExpected, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
-            var updatedExpectedSerialised = JsonConvert.SerializeObject(expectedAfterUpdate, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var originalExpectedSerialised = Serialize(originalExpected);
+            var updatedExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Make sure they're not the same yet (as we haven't updated)
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
@@ -245,7 +227,7 @@ namespace AADWebAppTests.Services
 
             // Check results via GetPatients with id
             var afterUpdateResults = _prescriptionService.GetPrescriptions(1);
-            var afterUpdateResultsSerialised = JsonConvert.SerializeObject(afterUpdateResults);
+            var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
 
             Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
         }

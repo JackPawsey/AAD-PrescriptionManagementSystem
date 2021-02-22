@@ -73,13 +73,13 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var expectedSerialised = JsonConvert.SerializeObject(expected);
+            var expectedSerialised = Serialize(expected);
 
             // GetBloodTests with id 6
             var results = _bloodTestService.GetBloodTests(6);
 
             // Check results
-            var resultSerialised = JsonConvert.SerializeObject(results);
+            var resultSerialised = Serialize(results);
 
             Assert.IsTrue(results.Count() == 1);
             Assert.AreEqual(expectedSerialised, resultSerialised);
@@ -181,20 +181,11 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var allExpectedSerialised = JsonConvert.SerializeObject(allExpected, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var allExpectedSerialised = Serialize(allExpected);
 
-            var expected1Serialised = JsonConvert.SerializeObject(expected1, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var expected1Serialised = Serialize(expected1);
 
-            var expected2Serialised = JsonConvert.SerializeObject(expected2, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var expected2Serialised = Serialize(expected2);
 
             // Request blood tests
             var affectedRows1 = _bloodTestService.RequestBloodTest(1, 1, now);
@@ -212,21 +203,21 @@ namespace AADWebAppTests.Services
 
             // Check results - GetBloodTestRequests with no id
             var afterRequestResults = _bloodTestService.GetBloodTestRequests();
-            var afterRequestResultSerialised = JsonConvert.SerializeObject(afterRequestResults);
+            var afterRequestResultSerialised = Serialize(afterRequestResults);
 
             Assert.IsTrue(afterRequestResults.Count() == 3);
             Assert.AreEqual(allExpectedSerialised, afterRequestResultSerialised);
 
             // Check results - GetBloodTestRequests with id expecting 2 results
             var afterRequestResultsById1 = _bloodTestService.GetBloodTestRequests(1);
-            var afterRequestResultsById1Serialised = JsonConvert.SerializeObject(afterRequestResultsById1);
+            var afterRequestResultsById1Serialised = Serialize(afterRequestResultsById1);
 
             Assert.IsTrue(afterRequestResultsById1.Count() == 2);
             Assert.AreEqual(expected1Serialised, afterRequestResultsById1Serialised);
 
             // Check results - GetBloodTestRequests with id expecting 1 result
             var afterRequestResultsById2 = _bloodTestService.GetBloodTestRequests(2);
-            var afterRequestResultsById2Serialised = JsonConvert.SerializeObject(afterRequestResultsById2);
+            var afterRequestResultsById2Serialised = Serialize(afterRequestResultsById2);
 
             Assert.IsTrue(afterRequestResultsById2.Count() == 1);
             Assert.AreEqual(expected2Serialised, afterRequestResultsById2Serialised);
@@ -259,10 +250,7 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var beforeExpectedSerialised = JsonConvert.SerializeObject(expectBeforeUpdate, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var beforeExpectedSerialised = Serialize(expectBeforeUpdate);
 
             IEnumerable<BloodTestRequest> expectedAfterUpdate = new List<BloodTestRequest>
             {
@@ -275,10 +263,7 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var afterExpectedSerialised = JsonConvert.SerializeObject(expectedAfterUpdate, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var afterExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Check prior to adding - via the database
             var priorAddingDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_requests");
@@ -286,7 +271,7 @@ namespace AADWebAppTests.Services
 
             // Check prior to adding
             var beforeUpdateResults = _bloodTestService.GetBloodTestRequests();
-            var beforeUpdateResultSerialised = JsonConvert.SerializeObject(beforeUpdateResults);
+            var beforeUpdateResultSerialised = Serialize(beforeUpdateResults);
 
             Assert.IsTrue(beforeUpdateResults.Count() == 1);
             Assert.AreEqual(beforeExpectedSerialised, beforeUpdateResultSerialised);
@@ -302,7 +287,7 @@ namespace AADWebAppTests.Services
 
             // Check results - GetBloodTestRequests with no id
             var afterUpdateResults = _bloodTestService.GetBloodTestRequests();
-            var afterUpdateResultSerialised = JsonConvert.SerializeObject(afterUpdateResults);
+            var afterUpdateResultSerialised = Serialize(afterUpdateResults);
 
             Assert.IsTrue(afterUpdateResults.Count() == 1);
             Assert.AreEqual(afterExpectedSerialised, afterUpdateResultSerialised);
@@ -310,7 +295,7 @@ namespace AADWebAppTests.Services
 
             // Check results - GetBloodTestRequests with id
             var afterUpdateResultsById = _bloodTestService.GetBloodTestRequests(1);
-            var afterUpdateResultByIdSerialised = JsonConvert.SerializeObject(afterUpdateResultsById);
+            var afterUpdateResultByIdSerialised = Serialize(afterUpdateResultsById);
 
             Assert.IsTrue(afterUpdateResultsById.Count() == 1);
             Assert.AreEqual(afterExpectedSerialised, afterUpdateResultByIdSerialised);
@@ -365,15 +350,9 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var allExpectedSerialised = JsonConvert.SerializeObject(allExpected, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var allExpectedSerialised = Serialize(allExpected);
 
-            var expected1Serialised = JsonConvert.SerializeObject(expected1, new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
-            });
+            var expected1Serialised = Serialize(expected1);
 
             // Check prior to adding blood tests - via the database
             var beforeAnyResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_results");
@@ -392,14 +371,14 @@ namespace AADWebAppTests.Services
 
             // Check results - GetBloodTestResults with no id
             var afterResultResults = _bloodTestService.GetBloodTestResults();
-            var afterResultResultsSerialised = JsonConvert.SerializeObject(afterResultResults);
+            var afterResultResultsSerialised = Serialize(afterResultResults);
 
             Assert.IsTrue(afterResultResults.Count() == 2);
             Assert.AreEqual(allExpectedSerialised, afterResultResultsSerialised);
 
             // Check results - GetBloodTestResults with id
             var afterResultResultsById = _bloodTestService.GetBloodTestResults(2);
-            var afterResultResultsByIdSerialised = JsonConvert.SerializeObject(afterResultResultsById);
+            var afterResultResultsByIdSerialised = Serialize(afterResultResultsById);
 
             Assert.IsTrue(afterResultResultsById.Count() == 1);
             Assert.AreEqual(expected1Serialised, afterResultResultsByIdSerialised);

@@ -91,8 +91,8 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var allExpectedSerialised = JsonConvert.SerializeObject(allExpected);
-            var singleSerialised = JsonConvert.SerializeObject(singleExpected);
+            var allExpectedSerialised = Serialize(allExpected);
+            var singleSerialised = Serialize(singleExpected);
 
             // Add patients
             var affectedRows1 = _patientService.CreateNewPatientEntry("some-guid-1", CommunicationPreferences.Email, "1", "some-gp-1");
@@ -110,22 +110,22 @@ namespace AADWebAppTests.Services
 
             // Check results - GetPatients with no id
             var afterCreateResults = _patientService.GetPatients();
-            var afterCreateResultsSerialised = JsonConvert.SerializeObject(afterCreateResults);
+            var afterCreateResultsSerialised = Serialize(afterCreateResults);
 
             Assert.IsTrue(afterCreateResults.Count() == 3);
             Assert.AreEqual(allExpectedSerialised, afterCreateResultsSerialised);
 
             // Check results - GetPatients with valid id
             var afterCreateResultsByValidId = _patientService.GetPatients("some-guid-2");
-            var afterCreateResultsByValidIdSerialised = JsonConvert.SerializeObject(afterCreateResultsByValidId);
+            var afterCreateResultsByValidIdSerialised = Serialize(afterCreateResultsByValidId);
 
             Assert.IsTrue(afterCreateResultsByValidId.Count() == 1);
             Assert.AreEqual(singleSerialised, afterCreateResultsByValidIdSerialised);
 
             // Check results - GetPatients with invalid id
             var afterCreateResultsByInvalidId = _patientService.GetPatients("some-invalid-guid");
-            var afterCreateResultsByInvalidIdSerialised = JsonConvert.SerializeObject(afterCreateResultsByInvalidId);
-            var expectedInvalidIdSerialised = JsonConvert.SerializeObject(new List<Patient>());
+            var afterCreateResultsByInvalidIdSerialised = Serialize(afterCreateResultsByInvalidId);
+            var expectedInvalidIdSerialised = Serialize(new List<Patient>());
 
             Assert.IsTrue(!afterCreateResultsByInvalidId.Any());
             Assert.AreEqual(expectedInvalidIdSerialised, afterCreateResultsByInvalidIdSerialised);
@@ -168,8 +168,8 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var originalExpectedSerialised = JsonConvert.SerializeObject(originalExpected);
-            var updatedExpectedSerialised = JsonConvert.SerializeObject(expectedAfterUpdate);
+            var originalExpectedSerialised = Serialize(originalExpected);
+            var updatedExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Make sure they're not the same yet (as we haven't updated)
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
@@ -183,7 +183,7 @@ namespace AADWebAppTests.Services
 
             // Check results via GetPatients with id
             var afterUpdateResults = _patientService.GetPatients("some-guid-1");
-            var afterUpdateResultsSerialised = JsonConvert.SerializeObject(afterUpdateResults);
+            var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
 
             Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
         }
@@ -207,8 +207,8 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var originalExpectedSerialised = JsonConvert.SerializeObject(originalExpected);
-            var updatedExpectedSerialised = JsonConvert.SerializeObject(expectedAfterUpdate);
+            var originalExpectedSerialised = Serialize(originalExpected);
+            var updatedExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Make sure they're not the same yet (as we haven't updated)
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
@@ -222,7 +222,7 @@ namespace AADWebAppTests.Services
 
             // Check results via GetPatients with id
             var afterUpdateResults = _patientService.GetPatients("some-guid-1");
-            var afterUpdateResultsSerialised = JsonConvert.SerializeObject(afterUpdateResults);
+            var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
 
             Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
         }
@@ -234,11 +234,11 @@ namespace AADWebAppTests.Services
 
             // Prep expected
             var expected = AddSinglePatient("some-guid-1", CommunicationPreferences.Email, "1", "some-gp-1");
-            var expectedSerialised = JsonConvert.SerializeObject(expected);
+            var expectedSerialised = Serialize(expected);
 
             // Check the entry matches the expected
             var thePatient = _patientService.GetPatients("some-guid-1");
-            var thePatientSerialised = JsonConvert.SerializeObject(thePatient);
+            var thePatientSerialised = Serialize(thePatient);
 
             Assert.AreEqual(expectedSerialised, thePatientSerialised);
         }

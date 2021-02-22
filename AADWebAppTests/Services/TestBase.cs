@@ -6,6 +6,7 @@ using AADWebAppTests.Resolver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace AADWebAppTests.Services
 {
@@ -53,7 +54,20 @@ namespace AADWebAppTests.Services
         /// Get a service of type T from the test service provider.
         /// </summary>
         /// <typeparam name="T">The interface definition of the class to retrieve via the service container.</typeparam>
-        /// <returns></returns>
+        /// <returns>The registered service implementation for the given interface.</returns>
         protected static T Get<T>() => _testServiceProvider.GetService<T>();
+
+        /// <summary>
+        /// Serialize the provided input string, applying data formatting.
+        /// </summary>
+        /// <param name="input">The string to serialize.</param>
+        /// <returns>The serialized string.</returns>
+        protected static string Serialize<T>(T input)
+        {
+            return JsonConvert.SerializeObject(input, new JsonSerializerSettings
+            {
+                DateFormatString = "yyyy-MM-ddTHH:mm:ss"
+            });
+        }
     }
 }

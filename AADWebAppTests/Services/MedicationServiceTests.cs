@@ -4,7 +4,6 @@ using AADWebApp.Interfaces;
 using AADWebApp.Models;
 using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 
 namespace AADWebAppTests.Services
 {
@@ -40,13 +39,13 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            var expectedSerialised = JsonConvert.SerializeObject(expected);
+            var expectedSerialised = Serialize(expected);
 
             // GetMedications with id 2
             var results = _medicationService.GetMedications(2);
 
             // Check results
-            var resultSerialised = JsonConvert.SerializeObject(results);
+            var resultSerialised = Serialize(results);
 
             Assert.IsTrue(results.Count() == 1);
             Assert.AreEqual(expectedSerialised, resultSerialised);
