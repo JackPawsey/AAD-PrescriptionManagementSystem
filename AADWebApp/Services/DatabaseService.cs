@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using AADWebApp.Interfaces;
 using AADWebApp.Resolver;
 
 [assembly: InternalsVisibleTo("AADWebAppTests.Services")]
@@ -51,7 +52,8 @@ namespace AADWebApp.Services
         public void ConnectToMssqlServer(AvailableDatabases databaseName)
         {
             IsInitialised = false;
-            
+            CloseConnection();
+
             if (string.IsNullOrEmpty(_connectionString))
             {
                 throw new InvalidOperationException("Connection string is null or empty.");
@@ -109,14 +111,37 @@ namespace AADWebApp.Services
         }
 
         /// <summary>
+        ///     Execute a scalar query (a T-SQL command that will return a scalar result) against the database connection.
+        /// </summary>
+        /// <param name="scalarQuery">T T-SQL command.</param>
+        /// <returns>Returns the result of the scalar query.</returns>
+        public int ExecuteScalarQuery(string scalarQuery)
+        {
+            CheckInitialised();
+            var command = new SqlCommand(scalarQuery, DbConnection);
+            return (int) command.ExecuteScalar();
+        }
+
+        /// <summary>
         ///     Performs "SELECT * FROM {TableName}" against the database connection.
         /// </summary>
         /// <param name="tableName">The name of the table to query.</param>
+        /// <param name="whereColumn">Optional. The column name by which to filter by.</param>
+        /// <param name="whereValue">Optional. The column value by which to filter by.</param>
         /// <returns>Returns a SqlDataReader object containing the results of the query.</returns>
-        public SqlDataReader RetrieveTable(string tableName)
+        public SqlDataReader RetrieveTable(string tableName, string whereColumn = null, object whereValue = null)
         {
             CheckInitialised();
-            var selectTableCommand = new SqlCommand($"SELECT * FROM {tableName};", DbConnection);
+            SqlCommand selectTableCommand;
+            if (whereColumn != null && whereValue != null)
+            {
+                selectTableCommand = new SqlCommand($"SELECT * FROM {tableName} WHERE {whereColumn} = '{whereValue}';", DbConnection);
+            }
+            else
+            {
+                selectTableCommand = new SqlCommand($"SELECT * FROM {tableName};", DbConnection);
+            }
+
             return selectTableCommand.ExecuteReader();
         }
 
@@ -125,12 +150,16 @@ namespace AADWebApp.Services
         /// </summary>
         public void CloseConnection()
         {
-            DbConnection.Close();
-        }
+            if (DbConnection == null) return;
 
-        ~DatabaseService()
-        {
-            DbConnection.Close();
+            try
+            {
+                DbConnection.Close();
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Failed to close connection to MSSQLServer.", ex);
+            }
         }
     }
 

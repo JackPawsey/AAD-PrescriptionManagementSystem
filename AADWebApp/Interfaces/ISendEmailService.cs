@@ -1,4 +1,4 @@
-﻿namespace AADWebApp.Services
+﻿namespace AADWebApp.Interfaces
 {
     public interface ISendEmailService
     {

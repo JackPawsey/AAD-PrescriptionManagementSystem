@@ -1,7 +1,7 @@
 ﻿using System.Data.SqlClient;
 using static AADWebApp.Services.DatabaseService;
 
-namespace AADWebApp.Services
+namespace AADWebApp.Interfaces
 {
     public interface IDatabaseService
     {
@@ -10,8 +10,9 @@ namespace AADWebApp.Services
         public void ConnectToMssqlServer(AvailableDatabases databaseName);
         public void ChangeDatabase(AvailableDatabases databaseName);
         public int ExecuteNonQuery(string nonQuery);
+        public int ExecuteScalarQuery(string scalarQuery);
         public SqlDataReader ExecuteQuery(string query);
-        public SqlDataReader RetrieveTable(string tableName);
+        public SqlDataReader RetrieveTable(string tableName, string whereColumn = null, object whereValue = null);
         public void CloseConnection();
     }
 }

@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
+using AADWebApp.Interfaces;
 using AADWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -24,23 +27,30 @@ namespace AADWebApp.Areas.Identity.Pages.Account
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly ISendEmailService _sendEmailService;
+        private readonly IPatientService _patientService;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            ISendEmailService sendEmailService)
+            ISendEmailService sendEmailService,
+            IPatientService patientService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _logger = logger;
             _sendEmailService = sendEmailService;
+            _patientService = patientService;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
+
+        public SelectList CommunicationPreferences = new SelectList(
+            Enum.GetValues(typeof(PatientService.CommunicationPreferences))
+        );
 
         public string ReturnUrl { get; private set; }
 
@@ -86,6 +96,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account
             public string GeneralPractitioner { get; set; }
 
             [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Communication Preference")]
+            public PatientService.CommunicationPreferences CommunicationPreference { get; set; }
+
+            [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
@@ -123,6 +138,8 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                     GeneralPractioner = Input.GeneralPractitioner
                 };
                 var createResult = await _userManager.CreateAsync(user, Input.Password);
+                var createPatientRecord = _patientService.CreateNewPatientEntry(user.Id, Input.CommunicationPreference, Input.NHSNumber, Input.GeneralPractitioner);
+
                 var addToRoleResult = new IdentityResult();
 
                 if (await _roleManager.RoleExistsAsync(DefaultRole))
@@ -178,6 +195,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                             return LocalRedirect(returnUrl);
                         }
                     }
+                }
+
+                if (createPatientRecord != 1)
+                {
+                    _logger.LogError("Failed to create a patient record in the patients table.");
                 }
 
                 foreach (var error in createResult.Errors) ModelState.AddModelError(string.Empty, error.Description);
