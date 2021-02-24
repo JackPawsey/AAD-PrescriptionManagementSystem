@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AADWebApp.Areas.GeneralPractitioner.Pages
 {
-    public class    ChoosePatient : PageModel
+    public class    PatientSearch: PageModel
     {
         public void OnGet()
         {
