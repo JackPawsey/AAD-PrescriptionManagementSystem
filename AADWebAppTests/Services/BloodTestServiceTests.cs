@@ -25,29 +25,29 @@ namespace AADWebAppTests.Services
         [TestInitialize]
         public void TestInitialize()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
             // Populate a prescription for some tests, which means also creating a user due to the table constraints
-            _databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES (1, 1, 1, 'gp-name');");
-            _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
-            _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES (1, 1, 1, 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES (1, 1, 1, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'Approved', 'Weekly');");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
             // Clear the tables
-            _databaseService.ExecuteNonQuery($"DELETE FROM blood_test_results");
-            _databaseService.ExecuteNonQuery($"DELETE FROM blood_test_requests");
-            _databaseService.ExecuteNonQuery($"DELETE FROM prescriptions;");
-            _databaseService.ExecuteNonQuery($"DELETE FROM patients;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestResults;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestRequests;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Prescriptions;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Patients;");
 
             // Reset auto increment values for next test
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (blood_test_results, RESEED, 0);");
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (blood_test_requests, RESEED, 0);");
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (prescriptions, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (BloodTestResults, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (BloodTestRequests, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (Prescriptions, RESEED, 0);");
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace AADWebAppTests.Services
         public void WhenRequestingBloodTestsRowsAreAdded()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_requests");
+            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
             Assert.IsTrue(preSetupRows == 0);
 
             var beforeRequestResults = _bloodTestService.GetBloodTestRequests().ToList();
@@ -198,7 +198,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
-            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_requests");
+            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
             Assert.IsTrue(databaseRows == 3);
 
             // Check results - GetBloodTestRequests with no id
@@ -228,7 +228,7 @@ namespace AADWebAppTests.Services
         public void WhenSettingsAnAppointmentTimeTheRowIsUpdated()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_requests");
+            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
             Assert.IsTrue(preSetupRows == 0);
 
             // Prerequisite setup
@@ -266,7 +266,7 @@ namespace AADWebAppTests.Services
             var afterExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Check prior to adding - via the database
-            var priorAddingDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_requests");
+            var priorAddingDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
             Assert.IsTrue(priorAddingDatabaseRows == 1);
 
             // Check prior to adding
@@ -282,7 +282,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows);
 
             // Check results to adding - via the database
-            var afterUpdateDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_requests");
+            var afterUpdateDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
             Assert.IsTrue(afterUpdateDatabaseRows == 1);
 
             // Check results - GetBloodTestRequests with no id
@@ -307,7 +307,7 @@ namespace AADWebAppTests.Services
         public void WhenAddingBloodTestResultsRowsAreAdded()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_results");
+            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
             Assert.IsTrue(preSetupRows == 0);
 
             // Prerequisite setup
@@ -326,14 +326,14 @@ namespace AADWebAppTests.Services
                 new BloodTestResult
                 {
                     Id = 1,
-                    BloodTestId = 1,
+                    BloodTestRequestId = 1,
                     Result = false,
                     ResultTime = now
                 },
                 new BloodTestResult
                 {
                     Id = 2,
-                    BloodTestId = 2,
+                    BloodTestRequestId = 2,
                     Result = true,
                     ResultTime = now
                 }
@@ -344,7 +344,7 @@ namespace AADWebAppTests.Services
                 new BloodTestResult
                 {
                     Id = 2,
-                    BloodTestId = 2,
+                    BloodTestRequestId = 2,
                     Result = true,
                     ResultTime = now
                 }
@@ -355,7 +355,7 @@ namespace AADWebAppTests.Services
             var expected1Serialised = Serialize(expected1);
 
             // Check prior to adding blood tests - via the database
-            var beforeAnyResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_results");
+            var beforeAnyResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
             Assert.IsTrue(beforeAnyResultsDatabaseRows == 0);
 
             // Set blood test results
@@ -366,7 +366,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows2);
 
             // Check prior to adding blood tests - via the database
-            var afterAddingResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM blood_test_results");
+            var afterAddingResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
             Assert.IsTrue(afterAddingResultsDatabaseRows == 2);
 
             // Check results - GetBloodTestResults with no id

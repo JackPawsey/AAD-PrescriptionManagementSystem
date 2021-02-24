@@ -20,7 +20,7 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void ConnectToMssqlServerTest()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
         }
 
         [TestMethod]

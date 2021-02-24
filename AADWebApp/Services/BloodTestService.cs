@@ -19,10 +19,10 @@ namespace AADWebApp.Services
         {
             var bloodTests = new List<BloodTest>();
 
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //GET blood_tests TABLE
-            using var result = _databaseService.RetrieveTable("blood_tests", "id", id);
+            using var result = _databaseService.RetrieveTable("BloodTests", "Id", id);
 
             while (result.Read())
             {
@@ -38,21 +38,21 @@ namespace AADWebApp.Services
             return bloodTests.AsEnumerable();
         }
 
-        public IEnumerable<BloodTestResult> GetBloodTestResults(short? bloodTestId = null)
+        public IEnumerable<BloodTestResult> GetBloodTestResults(short? bloodTestRequestId = null)
         {
             var bloodTestResults = new List<BloodTestResult>();
 
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //GET blood_test_results TABLE
-            using var result = _databaseService.RetrieveTable("blood_test_results", "blood_test_id", bloodTestId);
+            //GET BloodTestResults TABLE
+            using var result = _databaseService.RetrieveTable("BloodTestResults", "BloodTestRequestId", bloodTestRequestId);
 
             while (result.Read())
             {
                 bloodTestResults.Add(new BloodTestResult
                 {
                     Id = (short) result.GetValue(0),
-                    BloodTestId = (short) result.GetValue(1),
+                    BloodTestRequestId = (short) result.GetValue(1),
                     Result = (bool) result.GetValue(2),
                     ResultTime = (DateTime) result.GetValue(3)
                 });
@@ -65,10 +65,10 @@ namespace AADWebApp.Services
         {
             var bloodTestRequests = new List<BloodTestRequest>();
 
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //GET blood_test_requests TABLE
-            using var result = _databaseService.RetrieveTable("blood_test_requests", "prescription_id", prescriptionId);
+            using var result = _databaseService.RetrieveTable("BloodTestRequests", "PrescriptionId", prescriptionId);
 
             while (result.Read())
             {
@@ -87,26 +87,26 @@ namespace AADWebApp.Services
 
         public int RequestBloodTest(int prescriptionId, int bloodTestId, DateTime appointmentTime)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //CREATE blood_test_requests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_requests (prescription_id, blood_test_id, appointment_time) VALUES ('{prescriptionId}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
+            //CREATE BloodTestRequests TABLE ROW
+            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime) VALUES ('{prescriptionId}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
         }
 
         public int SetBloodTestDateTime(int id, DateTime appointmentTime)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //UPDATE blood_test_requests TABLE ROW appointmentTime COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE blood_test_requests SET appointment_time = '{appointmentTime:yyyy-MM-dd HH:mm:ss}' WHERE id = '{id}'");
+            //UPDATE BloodTestRequests TABLE ROW appointmentTime COLUMN
+            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
         }
 
-        public int SetBloodTestResults(int bloodTestId, bool result, DateTime resultTime)
+        public int SetBloodTestResults(int bloodRequestTestId, bool result, DateTime resultTime)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //CREATE blood_test_results TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO blood_test_results (blood_test_id, result, result_time) VALUES ('{bloodTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
+            //CREATE BloodTestResults TABLE ROW
+            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
         }
     }
 }

@@ -28,10 +28,10 @@ namespace AADWebApp.Services
         {
             var prescriptions = new List<Prescription>();
 
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //GET prescriptions TABLE
-            using var result = _databaseService.RetrieveTable("prescriptions", "id", id);
+            using var result = _databaseService.RetrieveTable("Prescriptions", "Id", id);
 
             while (result.Read())
             {
@@ -53,10 +53,10 @@ namespace AADWebApp.Services
 
         public int CreatePrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, PrescriptionStatus prescriptionStatus, string issueFrequency)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //CREATE prescriptions TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{prescriptionStatus}', '{issueFrequency}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{prescriptionStatus}', '{issueFrequency}')");
         }
 
         public int CancelPrescription(int id)
@@ -66,10 +66,10 @@ namespace AADWebApp.Services
 
         public int SetPrescriptionStatus(int id, PrescriptionStatus prescriptionStatus)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //UPDATE prescriptions TABLE ROW prescription_status COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE prescriptions SET prescription_status = '{prescriptionStatus}' WHERE id = '{id}'");
+            return _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
         }
     }
 }

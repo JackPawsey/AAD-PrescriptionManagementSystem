@@ -27,20 +27,20 @@ namespace AADWebAppTests.Services
         [TestInitialize]
         public void TestInitialize()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            _databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES (1, 1, 1, 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES (1, 1, 1, 'gp-name');");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            _databaseService.ExecuteNonQuery($"DELETE FROM prescriptions;");
-            _databaseService.ExecuteNonQuery($"DELETE FROM patients;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Prescriptions;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Patients;");
 
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (prescriptions, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (Prescriptions, RESEED, 0);");
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
-            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM prescriptions");
+            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM Prescriptions");
             Assert.IsTrue(databaseRows == 3);
 
             // Check results - GetPrescriptions with no id
@@ -262,7 +262,7 @@ namespace AADWebAppTests.Services
         private void AssertPrescriptionsTableContainsXRows(int expectedRows)
         {
             // Check prior to make sure there are no prescriptions
-            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM prescriptions");
+            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM Prescriptions");
             var methodResults = _prescriptionService.GetPrescriptions();
 
             Assert.AreEqual(methodResults.Count(), databaseResults);

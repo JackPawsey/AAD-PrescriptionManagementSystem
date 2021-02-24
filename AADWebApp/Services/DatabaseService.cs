@@ -16,7 +16,7 @@ namespace AADWebApp.Services
         public enum AvailableDatabases
         {
             Identity,
-            program_data
+            ProgramData
         }
 
         private readonly IDatabaseNameResolver _databaseNameResolver;

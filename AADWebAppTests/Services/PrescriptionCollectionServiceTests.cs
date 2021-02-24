@@ -27,29 +27,29 @@ namespace AADWebAppTests.Services
         [TestInitialize]
         public void TestInitialize()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            _databaseService.ExecuteNonQuery($"INSERT INTO patients (id, comm_preferences, nhs_number, general_practitioner) VALUES (1, 1, 1, 'gp-name');");
-            _databaseService.ExecuteNonQuery($"INSERT INTO prescriptions (medication_id, patient_id, dosage, date_start, date_end, prescription_status, issue_frequency) VALUES (1, 1, 99, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus.PendingApproval}', 'frequency')");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES (1, 1, 1, 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES (1, 1, 99, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus.PendingApproval}', 'frequency')");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            _databaseService.ConnectToMssqlServer(AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            _databaseService.ExecuteNonQuery($"DELETE FROM prescription_collections;");
-            _databaseService.ExecuteNonQuery($"DELETE FROM prescriptions;");
-            _databaseService.ExecuteNonQuery($"DELETE FROM patients;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM PrescriptionCollections;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Prescriptions;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Patients;");
 
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (prescriptions, RESEED, 0);");
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (prescription_collections, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (Prescriptions, RESEED, 0);");
+            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (PrescriptionCollections, RESEED, 0);");
         }
 
         [TestMethod]
         public void WhenThereAreNoPrescriptionCollections()
         {
-            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM prescription_collections");
+            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM PrescriptionCollections");
             var methodResults = _prescriptionCollectionService.GetPrescriptionCollections();
 
             var enumerable = methodResults.ToList();
@@ -110,7 +110,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
-            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM prescription_collections");
+            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM PrescriptionCollections");
             Assert.IsTrue(databaseRows == 3);
 
             // Check results - get prescription collections with no id
@@ -256,7 +256,7 @@ namespace AADWebAppTests.Services
         private void AssertPrescriptionCollectionTableContainsXRows(int expectedRows)
         {
             // Check prior to make sure there are no prescription_collections
-            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM prescription_collections");
+            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM PrescriptionCollections");
             var methodResults = _prescriptionCollectionService.GetPrescriptionCollections();
 
             Assert.AreEqual(methodResults.Count(), databaseResults);
