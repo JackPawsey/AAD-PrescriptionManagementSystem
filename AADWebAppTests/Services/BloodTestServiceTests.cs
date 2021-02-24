@@ -39,11 +39,12 @@ namespace AADWebAppTests.Services
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
             // Clear the tables
-            _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestResults");
-            _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestRequests");
+            _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestResults;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestRequests;");
             _databaseService.ExecuteNonQuery($"DELETE FROM Prescriptions;");
+            _databaseService.ExecuteNonQuery($"DELETE FROM Patients;");
 
-            _databaseService.ExecuteNonQuery($"DELETE FROM Patients;"); // Reset auto increment values for next test
+            // Reset auto increment values for next test
             _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (BloodTestResults, RESEED, 0);");
             _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (BloodTestRequests, RESEED, 0);");
             _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (Prescriptions, RESEED, 0);");

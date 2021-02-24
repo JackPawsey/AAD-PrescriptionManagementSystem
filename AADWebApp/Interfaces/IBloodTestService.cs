@@ -11,6 +11,6 @@ namespace AADWebApp.Interfaces
         public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? prescriptionId = null);
         public int RequestBloodTest(int prescriptionId, int bloodTestId, DateTime appointmentTime);
         public int SetBloodTestDateTime(int id, DateTime appointmentTime);
-        public int SetBloodTestResults(int bloodTestId, bool result, DateTime resultTime);
+        public int SetBloodTestResults(int bloodRequestTestId, bool result, DateTime resultTime);
     }
 }
