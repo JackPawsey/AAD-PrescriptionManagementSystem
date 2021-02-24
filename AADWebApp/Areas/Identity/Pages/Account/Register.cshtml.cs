@@ -140,66 +140,72 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                 var createResult = await _userManager.CreateAsync(user, Input.Password);
                 var createPatientRecord = _patientService.CreateNewPatientEntry(user.Id, Input.CommunicationPreference, Input.NHSNumber, Input.GeneralPractitioner);
 
-                var addToRoleResult = new IdentityResult();
-
-                if (await _roleManager.RoleExistsAsync(DefaultRole))
-                {
-                    addToRoleResult = await _userManager.AddToRoleAsync(user, DefaultRole);
-
-                    if (!addToRoleResult.Succeeded)
-                        foreach (var error in addToRoleResult.Errors)
-                            ModelState.AddModelError("", error.Description);
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Default role does not exist");
-                }
-
-                if (createResult.Succeeded && addToRoleResult.Succeeded)
-                {
-                    _logger.LogInformation("User created a new account with password.");
-
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        null,
-                        new
-                        {
-                            area = "Identity",
-                            userId = user.Id,
-                            code = code,
-                            returnUrl = returnUrl
-                        },
-                        Request.Scheme);
-
-                    _sendEmailService.SendEmail($"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.", "Confirm your email", Input.Email);
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new
-                        {
-                            email = Input.Email,
-                            returnUrl = returnUrl
-                        });
-                    }
-                    else
-                    {
-                        if (User.IsInRole("Admin"))
-                        {
-                            Response.Redirect("/Admin/ListUsers");
-                        }
-                        else
-                        {
-                            await _signInManager.SignInAsync(user, false);
-                            return LocalRedirect(returnUrl);
-                        }
-                    }
-                }
-
                 if (createPatientRecord != 1)
                 {
                     _logger.LogError("Failed to create a patient record in the patients table.");
+
+                    ModelState.AddModelError("", "Account registration failed, please make sure your NHS number is your unique number.");
+
+                    await _userManager.DeleteAsync(user);
+                }
+                else
+                {
+                    var addToRoleResult = new IdentityResult();
+
+                    if (await _roleManager.RoleExistsAsync(DefaultRole))
+                    {
+                        addToRoleResult = await _userManager.AddToRoleAsync(user, DefaultRole);
+
+                        if (!addToRoleResult.Succeeded)
+                            foreach (var error in addToRoleResult.Errors)
+                                ModelState.AddModelError("", error.Description);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Default role does not exist");
+                    }
+
+                    if (createResult.Succeeded && addToRoleResult.Succeeded)
+                    {
+                        _logger.LogInformation("User created a new account with password.");
+
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        var callbackUrl = Url.Page(
+                            "/Account/ConfirmEmail",
+                            null,
+                            new
+                            {
+                                area = "Identity",
+                                userId = user.Id,
+                                code = code,
+                                returnUrl = returnUrl
+                            },
+                            Request.Scheme);
+
+                        _sendEmailService.SendEmail($"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.", "Confirm your email", Input.Email);
+
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            return RedirectToPage("RegisterConfirmation", new
+                            {
+                                email = Input.Email,
+                                returnUrl = returnUrl
+                            });
+                        }
+                        else
+                        {
+                            if (User.IsInRole("Admin"))
+                            {
+                                Response.Redirect("/Admin/ListUsers");
+                            }
+                            else
+                            {
+                                await _signInManager.SignInAsync(user, false);
+                                return LocalRedirect(returnUrl);
+                            }
+                        }
+                    }
                 }
 
                 foreach (var error in createResult.Errors) ModelState.AddModelError(string.Empty, error.Description);
