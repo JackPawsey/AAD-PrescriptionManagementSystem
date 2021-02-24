@@ -5,4 +5,74 @@
     Layout = "~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerLayout.cshtml";
 }
 
-<h1>Schedule Bloodwork</h1>
+<h1 class="mb-5">Schedule Bloodwork</h1>
+
+<h3 class="mb-5">Search</h3>
+<div id=" Search" class="form-group form-inline mb-5">
+    <form class="form-inline">
+        <div class="form-group">
+            <label class=" control-label ml-3"><b>ID</b></label>
+            <input type="text" class="form-control ml-5 " placeholder="ID" />
+        </div>
+        <div class="form-group">
+            <label class=" control-label ml-3"><b>First Name</b></label>
+            <input type="text" class="form-control ml-5 " placeholder="First Name" />
+        </div>
+        <div class="form-group">
+            <label class=" control-label ml-3 "><b>Last Name</b></label>
+            <input type="text" class="form-control ml-5 " placeholder="Last Name" />
+        </div>
+
+
+
+        <button class="input-group-addon btn btn-primary float-right ml-5">Search</button>
+    </form>
+
+
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Patient ID</th>
+            <th scope="col"> First Name</th>
+            <th scope="col"> Last Name</th>
+            <th scope="col">Date of Birth</th>
+            <th scope="col">Bloodwork Type</th>
+            <th scope="col">Appointment Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < 6; i++)
+        {
+            <tr>
+                <th scope="row">@(i+1)</th>
+                <td>Text</td>
+                <td>Text</td>
+                <td>Text</td>
+                <td>
+                    <div id="Date">
+                        <input type="date" class="form-control-sm" name="BirthDate"id="BirthDate" />
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <select class="custom-select-sm">
+                            <option selected> Choose Test</option>
+                            <option> </option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div id="Date">
+                        <input type="date" class="form-control-sm" name="Appointment"id="Appointment" />
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-primary float-right">Confirm</button>
