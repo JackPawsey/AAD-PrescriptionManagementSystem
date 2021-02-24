@@ -19,10 +19,10 @@ namespace AADWebApp.Services
         {
             var medications = new List<Medication>();
 
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.program_data);
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //GET medications TABLE
-            using var result = _databaseService.RetrieveTable("medications", "id", id);
+            //GET Medications TABLE
+            using var result = _databaseService.RetrieveTable("Medications", "Id", id);
 
             while (result.Read())
             {

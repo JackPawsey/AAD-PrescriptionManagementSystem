@@ -7,7 +7,7 @@ namespace AADWebAppTests.Resolver
     {
         public string GetDatabaseName(DatabaseService.AvailableDatabases database)
         {
-            return database + "_test";
+            return database + "Tests";
         }
     }
 }
