@@ -33,8 +33,7 @@ namespace AADWebApp.Services
             {
                 var response = client.PublishAsync(request);
 
-                Console.WriteLine("Message sent to " + phoneNumber + ":");
-                Console.WriteLine(message);
+                Console.WriteLine("Message sent successfully");
             }
             catch (Exception ex)
             {
