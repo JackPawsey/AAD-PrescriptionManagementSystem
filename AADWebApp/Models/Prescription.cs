@@ -12,6 +12,6 @@ namespace AADWebApp.Models
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
         public PrescriptionStatus PrescriptionStatus { get; set; }
-        public string IssueFrequency { get; set; }
+        public IssueFrequency IssueFrequency { get; set; }
     }
 }

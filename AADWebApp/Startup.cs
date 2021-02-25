@@ -40,6 +40,8 @@ namespace AADWebApp
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPrescriptionService, PrescriptionService>();
             services.AddTransient<IPrescriptionCollectionService, PrescriptionCollectionService>();
+            services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<INotificationScheduleService, NotficationScheduleService>();
             services.AddTransient<IDatabaseNameResolver, DatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(
