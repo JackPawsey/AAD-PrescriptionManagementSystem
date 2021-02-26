@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using AADWebApp.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using static AADWebApp.Services.PrescriptionCollectionService;
 using static AADWebApp.Services.PrescriptionService.IssueFrequency;
 
 namespace AADWebApp.Models
@@ -26,8 +27,6 @@ namespace AADWebApp.Models
         {
             var prescriptionDuration = Prescription.DateEnd - Prescription.DateStart;
 
-            //Console.WriteLine("prescription days: " + prescriptionDuration.Days);
-
             Interval = Prescription.IssueFrequency switch
             {
                 Minutely => TimeSpan.FromMinutes(1).TotalMilliseconds,
@@ -36,8 +35,6 @@ namespace AADWebApp.Models
                 Monthly => TimeSpan.FromDays(30).TotalMilliseconds, // Average number of days per month
                 _ => TimeSpan.FromDays(60).TotalMilliseconds
             };
-
-            Console.WriteLine("monthly interval: " + TimeSpan.FromDays(prescriptionDuration.Days).TotalMilliseconds);
 
             Occurances = (int) (prescriptionDuration.TotalMilliseconds / Interval);
 
@@ -50,22 +47,39 @@ namespace AADWebApp.Models
             {
                 Occurances--;
                 Timer = new Timer(Interval); //Timer duration in Milliseconds
-                Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurances); };
+                Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurances, Interval); };
                 Timer.Start();
                 Console.WriteLine("Schedule for prescription " + Prescription.Id + " started");
             }
         }
 
-        private async Task TimerElapsed(Prescription prescription, int occurrences)
+        private async Task TimerElapsed(Prescription prescription, int occurrences, double interval)
         {
             Timer.Stop();
             Timer.Dispose();
 
             Console.WriteLine("Prescription " + prescription.Id + " interval has been reached. " + occurrences + " occurrences remaining");
 
-            var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
+            var prescriptionCollectionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionCollectionService>();
+            
+            var result = prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?) prescription.Id);
 
-            await notificationService.SendPrescriptionNotification(prescription, occurrences);
+            PrescriptionCollection prescriptionCollection = null;
+
+            foreach (var item in result)
+            {
+                if (item.CollectionStatus != CollectionStatus.Collected)
+                {
+                    prescriptionCollection = item;
+                }
+            }
+
+            var nextCollectionTime = DateTime.Now.AddMilliseconds(interval);
+
+            await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescriptionCollection, nextCollectionTime);
+
+            var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
+            await notificationService.SendPrescriptionNotification(prescription, occurrences, nextCollectionTime);
 
             CreateTimer();
         }

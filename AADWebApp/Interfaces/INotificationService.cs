@@ -7,7 +7,7 @@ namespace AADWebApp.Interfaces
 {
     public interface INotificationService
     {
-        public Task SendPrescriptionNotification(Prescription Prescription, int Occurances);
+        public Task SendPrescriptionNotification(Prescription Prescription, int Occurances, DateTime nextCollectionTime);
         public Task SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime);
     }
 }

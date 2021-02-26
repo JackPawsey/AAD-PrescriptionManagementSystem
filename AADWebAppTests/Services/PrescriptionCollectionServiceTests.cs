@@ -16,12 +16,16 @@ namespace AADWebAppTests.Services
     public class PrescriptionCollectionServiceTests : TestBase
     {
         private readonly IDatabaseService _databaseService;
+        private readonly INotificationService _notificationService;
+        private readonly IPrescriptionService _prescriptionService;
         private readonly IPrescriptionCollectionService _prescriptionCollectionService;
 
         public PrescriptionCollectionServiceTests()
         {
             _databaseService = Get<IDatabaseService>();
-            _prescriptionCollectionService = new PrescriptionCollectionService(_databaseService);
+            _notificationService = Get <INotificationService>();
+            _prescriptionService = Get<IPrescriptionService>();
+            _prescriptionCollectionService = new PrescriptionCollectionService(_databaseService, _prescriptionService, _notificationService);
         }
 
         [TestInitialize]
@@ -100,13 +104,13 @@ namespace AADWebAppTests.Services
             var singleSerialised = Serialize(singleExpected);
 
             // Add prescription collections
-            var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.BeingPrepared, now, now);
+            var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.BeingPrepared, now);
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.Collected, now, now);
+            var affectedRows2 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.Collected, now);
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.CollectionReady, now, now);
+            var affectedRows3 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.CollectionReady, now);
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -166,7 +170,16 @@ namespace AADWebAppTests.Services
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
 
             // Update
-            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(1, updatedTime);
+            PrescriptionCollection prescriptionCollection = new PrescriptionCollection 
+            {
+                Id = 1,
+                PrescriptionId = 1,
+                CollectionStatus = CollectionStatus.BeingPrepared,
+                CollectionStatusUpdated = now,
+                CollectionTime = updatedTime
+            };
+
+            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescriptionCollection, updatedTime);
             Assert.AreEqual(1, affectedRows);
 
             // Check there's one database row
@@ -244,7 +257,7 @@ namespace AADWebAppTests.Services
             };
 
             // Add prescription collection and verify
-            var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(prescriptionId, collectionStatus, collectionStatusUpdated, collectionTime);
+            var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(prescriptionId, collectionStatus, collectionTime);
             Assert.AreEqual(1, affectedRows1);
 
             // Check amount of database rows
