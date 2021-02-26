@@ -33,8 +33,6 @@ namespace AADWebAppTests.Services
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
             _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('patientId', '{CommunicationPreferences.Email}', 'nhs-number', 'gp-name');");
-
-                                           //($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('{patientId}', '{communicationPreferences}', '{nhsNumber}', '{generalPractitionerName}')");
         }
 
         [TestCleanup]

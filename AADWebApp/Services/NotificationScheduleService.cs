@@ -17,21 +17,44 @@ namespace AADWebApp.Services
             _serviceProvider = serviceProvider;
         }
 
-        public void CreatePrescriptionSchedule(Prescription prescription)
+        public IEnumerable<IPrescriptionSchedule> GetPrescriptionSchedules()
         {
-            var prescriptionSchedule = _serviceProvider.GetService<IPrescriptionSchedule>();
-            prescriptionSchedule.Prescription = prescription;
-            prescriptionSchedule.SetupTimer();
-
-            _prescriptionSchedules.Add(prescriptionSchedule);
+            return _prescriptionSchedules.AsEnumerable();
         }
 
-        public void CancelPrescriptionSchedule(int id)
+        public bool CreatePrescriptionSchedule(Prescription prescription)
         {
-            foreach (var prescriptionSchedule in _prescriptionSchedules.Where(schedule => schedule.Prescription.Id == id))
+            try
             {
-                prescriptionSchedule.CancelSchedule();
+                var prescriptionSchedule = _serviceProvider.GetService<IPrescriptionSchedule>();
+                prescriptionSchedule.Prescription = prescription;
+                prescriptionSchedule.SetupTimer();
+
+                _prescriptionSchedules.Add(prescriptionSchedule);
+
+                return true;
             }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool CancelPrescriptionSchedule(int id)
+        {
+            for (int i = 0; i < _prescriptionSchedules.Count(); i++)
+            {
+                if (_prescriptionSchedules[i].Prescription.Id == id)
+                {
+                    _prescriptionSchedules[i].CancelSchedule();
+
+                    _prescriptionSchedules.RemoveAt(i);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
