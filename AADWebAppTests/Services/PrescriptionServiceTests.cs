@@ -7,6 +7,7 @@ using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using static AADWebApp.Services.DatabaseService;
+using static AADWebApp.Services.PatientService;
 using static AADWebApp.Services.PrescriptionService;
 
 namespace AADWebAppTests.Services
@@ -31,7 +32,9 @@ namespace AADWebAppTests.Services
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES (1, 1, 1, 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('patientId', '{CommunicationPreferences.Email}', 'nhs-number', 'gp-name');");
+
+                                           //($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('{patientId}', '{communicationPreferences}', '{nhsNumber}', '{generalPractitionerName}')");
         }
 
         [TestCleanup]
@@ -72,7 +75,7 @@ namespace AADWebAppTests.Services
                 {
                     Id = 1,
                     MedicationId = 1,
-                    PatientId = "1",
+                    PatientId = "patientId",
                     Dosage = 77,
                     DateStart = TimeNow,
                     DateEnd = TimeTomorrow,
@@ -83,7 +86,7 @@ namespace AADWebAppTests.Services
                 {
                     Id = 2,
                     MedicationId = 2,
-                    PatientId = "1",
+                    PatientId = "patientId",
                     Dosage = 88,
                     DateStart = TimeNow,
                     DateEnd = TimeTomorrow,
@@ -94,7 +97,7 @@ namespace AADWebAppTests.Services
                 {
                     Id = 3,
                     MedicationId = 3,
-                    PatientId = "1",
+                    PatientId = "patientId",
                     Dosage = 99,
                     DateStart = TimeNow,
                     DateEnd = TimeTomorrow,
@@ -109,13 +112,13 @@ namespace AADWebAppTests.Services
             var singleSerialised = Serialize(singleExpected);
 
             // Add prescriptions
-            var affectedRows1 = _prescriptionService.CreatePrescription(1, "1", 77, TimeNow, TimeTomorrow, PrescriptionStatus.AwaitingBloodWork, IssueFrequency.Weekly);
+            var affectedRows1 = _prescriptionService.CreatePrescription(1, "patientId", 77, TimeNow, TimeTomorrow, PrescriptionStatus.AwaitingBloodWork, IssueFrequency.Weekly);
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _prescriptionService.CreatePrescription(2, "1", 88, TimeNow, TimeTomorrow, PrescriptionStatus.Declined, IssueFrequency.BiWeekly);
+            var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, TimeNow, TimeTomorrow, PrescriptionStatus.Declined, IssueFrequency.BiWeekly);
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _prescriptionService.CreatePrescription(3, "1", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
+            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -154,7 +157,7 @@ namespace AADWebAppTests.Services
             AssertPrescriptionsTableContainsXRows(0);
 
             // Prep expected
-            var originalExpected = AddPrescription(1, "1", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
+            var originalExpected = AddPrescription(1, "patientId", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
 
             IEnumerable<Prescription> expectedAfterUpdate = new List<Prescription>
             {
@@ -162,11 +165,11 @@ namespace AADWebAppTests.Services
                 {
                     Id = 1,
                     MedicationId = 1,
-                    PatientId = "1",
+                    PatientId = "patientId",
                     Dosage = 99,
                     DateStart = TimeNow,
                     DateEnd = TimeTomorrow,
-                    PrescriptionStatus = PrescriptionStatus.PendingApproval,
+                    PrescriptionStatus = PrescriptionStatus.Approved,
                     IssueFrequency = IssueFrequency.Monthly
                 }
             };
@@ -200,7 +203,7 @@ namespace AADWebAppTests.Services
             AssertPrescriptionsTableContainsXRows(0);
 
             // Prep expected
-            var originalExpected = AddPrescription(1, "1", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
+            var originalExpected = AddPrescription(1, "patientId", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
 
             IEnumerable<Prescription> expectedAfterUpdate = new List<Prescription>
             {
@@ -208,7 +211,7 @@ namespace AADWebAppTests.Services
                 {
                     Id = 1,
                     MedicationId = 1,
-                    PatientId = "1",
+                    PatientId = "patientId",
                     Dosage = 99,
                     DateStart = TimeNow,
                     DateEnd = TimeTomorrow,

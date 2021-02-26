@@ -26,14 +26,18 @@ namespace AADWebApp.Models
         {
             var prescriptionDuration = Prescription.DateEnd - Prescription.DateStart;
 
+            //Console.WriteLine("prescription days: " + prescriptionDuration.Days);
+
             Interval = Prescription.IssueFrequency switch
             {
                 Minutely => TimeSpan.FromMinutes(1).TotalMilliseconds,
                 Weekly => TimeSpan.FromDays(7).TotalMilliseconds,
                 BiWeekly => TimeSpan.FromDays(14).TotalMilliseconds,
-                Monthly => TimeSpan.FromDays(28).TotalMilliseconds,
-                _ => TimeSpan.FromDays(56).TotalMilliseconds
+                Monthly => TimeSpan.FromDays(30).TotalMilliseconds, // Average number of days per month
+                _ => TimeSpan.FromDays(60).TotalMilliseconds
             };
+
+            Console.WriteLine("monthly interval: " + TimeSpan.FromDays(prescriptionDuration.Days).TotalMilliseconds);
 
             Occurances = (int) (prescriptionDuration.TotalMilliseconds / Interval);
 
@@ -48,7 +52,7 @@ namespace AADWebApp.Models
                 Timer = new Timer(Interval); //Timer duration in Milliseconds
                 Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurances); };
                 Timer.Start();
-                Console.WriteLine("Timer " + Prescription.Id + " started");
+                Console.WriteLine("Schedule for prescription " + Prescription.Id + " started");
             }
         }
 
@@ -57,7 +61,7 @@ namespace AADWebApp.Models
             Timer.Stop();
             Timer.Dispose();
 
-            Console.WriteLine("Timer " + prescription.Id + " is doing stuff and has " + occurrences + " occurrences remaining");
+            Console.WriteLine("Prescription " + prescription.Id + " interval has been reached. " + occurrences + " occurrences remaining");
 
             var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
 
@@ -69,7 +73,7 @@ namespace AADWebApp.Models
         public void CancelSchedule()
         {
             Timer.Stop();
-            Console.WriteLine("Timer " + Prescription.Id + " stopped");
+            Console.WriteLine("Prescription " + Prescription.Id + " schedule stopped");
         }
     }
 }
