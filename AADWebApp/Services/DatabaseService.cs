@@ -105,9 +105,17 @@ namespace AADWebApp.Services
         /// <returns>Returns the number of rows affected as an int.</returns>
         public int ExecuteNonQuery(string nonQuery)
         {
-            CheckInitialised();
-            var command = new SqlCommand(nonQuery, DbConnection);
-            return command.ExecuteNonQuery();
+            try
+            {
+                CheckInitialised();
+                var command = new SqlCommand(nonQuery, DbConnection);
+                return command.ExecuteNonQuery();
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2601 || ex.Number == 2627) return -1;
+                throw;
+            }
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
@@ -131,7 +130,6 @@ namespace AADWebAppTests.Services
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SqlException), "A duplicate NHS number was permitted to be added to the database.")]
         public void WhenInsertingDuplicateNhsNumbersItFails()
         {
             AssertPatientsTableContainsXRows(0);
@@ -140,12 +138,15 @@ namespace AADWebAppTests.Services
             var affectedRows1 = _patientService.CreateNewPatientEntry("some-guid-1", CommunicationPreferences.Email, "1", "some-gp-1");
             Assert.AreEqual(1, affectedRows1);
 
-            // Check amount of database rows
-            var databaseRows1 = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM Patients");
-            Assert.IsTrue(databaseRows1 == 1);
+            // Check amount of patients
+            AssertPatientsTableContainsXRows(1);
 
             // Add second patient, which should throw an SQL exception
-            _patientService.CreateNewPatientEntry("some-guid-2", CommunicationPreferences.Email, "1", "some-gp-1");
+            var insertResult = _patientService.CreateNewPatientEntry("some-guid-2", CommunicationPreferences.Email, "1", "some-gp-1");
+            Assert.IsTrue(insertResult == -1);
+
+            // Check amount of patients
+            AssertPatientsTableContainsXRows(1);
         }
 
         [TestMethod]
