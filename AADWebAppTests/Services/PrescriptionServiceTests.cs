@@ -166,7 +166,7 @@ namespace AADWebAppTests.Services
                     Dosage = 99,
                     DateStart = TimeNow,
                     DateEnd = TimeTomorrow,
-                    PrescriptionStatus = PrescriptionStatus.Approved,
+                    PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.Monthly
                 }
             };

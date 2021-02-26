@@ -1,53 +1,41 @@
-﻿using AADWebApp.Interfaces;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Timers;
+using AADWebApp.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using static AADWebApp.Services.PrescriptionService.IssueFrequency;
 
 namespace AADWebApp.Models
 {
-    public class PrescriptionSchedule
+    public class PrescriptionSchedule : IPrescriptionSchedule
     {
-        public Prescription _Prescription { get; set; }
+        public Prescription Prescription { get; set; }
 
         private Timer Timer { get; set; }
         private int Occurances { get; set; }
         private double Interval { get; set; }
-        private INotificationService _notificationService;
-        
-        public PrescriptionSchedule(Prescription Prescription, INotificationService notificationService)
-        {
-            _Prescription = Prescription;
-            _notificationService = notificationService;
 
-            SetupTimer();
+        private readonly IServiceProvider _serviceProvider;
+
+        public PrescriptionSchedule(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
         }
 
-        private void SetupTimer()
+        public void SetupTimer()
         {
-            TimeSpan prescriptionDuration = _Prescription.DateEnd - _Prescription.DateStart;
+            var prescriptionDuration = Prescription.DateEnd - Prescription.DateStart;
 
-            if (_Prescription.IssueFrequency.ToString().Equals("Minutely"))
+            Interval = Prescription.IssueFrequency switch
             {
-                Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
-            }
-            else if (_Prescription.IssueFrequency.ToString().Equals("Weekly"))
-            {
-                Interval = TimeSpan.FromDays(7).TotalMilliseconds;
-            }
-            else if (_Prescription.IssueFrequency.ToString().Equals("BiWeekly"))
-            {
-                Interval = TimeSpan.FromDays(14).TotalMilliseconds;
-            }
-            else if (_Prescription.IssueFrequency.ToString().Equals("Monthly"))
-            {
-                Interval = TimeSpan.FromDays(28).TotalMilliseconds; // Could use nested if to determine days in month
-            }
-            else // Assume BiMonthly
-            {
-                Interval = TimeSpan.FromDays(56).TotalMilliseconds; // Could use nested if to determine days in month
-            }
+                Minutely => TimeSpan.FromMinutes(1).TotalMilliseconds,
+                Weekly => TimeSpan.FromDays(7).TotalMilliseconds,
+                BiWeekly => TimeSpan.FromDays(14).TotalMilliseconds,
+                Monthly => TimeSpan.FromDays(28).TotalMilliseconds,
+                _ => TimeSpan.FromDays(56).TotalMilliseconds
+            };
 
-            Occurances = (int)(prescriptionDuration.TotalMilliseconds / Interval);
+            Occurances = (int) (prescriptionDuration.TotalMilliseconds / Interval);
 
             CreateTimer();
         }
@@ -58,31 +46,30 @@ namespace AADWebApp.Models
             {
                 Occurances--;
                 Timer = new Timer(Interval); //Timer duration in Milliseconds
-                Timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
+                Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurances); };
                 Timer.Start();
-                Console.WriteLine("Timer " + _Prescription.Id + " started");
+                Console.WriteLine("Timer " + Prescription.Id + " started");
             }
         }
 
-        private async void TimerElapsed(object sender, ElapsedEventArgs e)
+        private async Task TimerElapsed(Prescription prescription, int occurrences)
         {
             Timer.Stop();
-            
-            Console.WriteLine("Timer " + _Prescription.Id + " is doing stuff and has " + Occurances + " occurances remaining");
-            await test();
+            Timer.Dispose();
+
+            Console.WriteLine("Timer " + prescription.Id + " is doing stuff and has " + occurrences + " occurrences remaining");
+
+            var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
+
+            await notificationService.SendPrescriptionNotification(prescription, occurrences);
 
             CreateTimer();
-        }
-
-        private async Task test()
-        {
-            await _notificationService.SendPrescriptionNotification(_Prescription, Occurances);
         }
 
         public void CancelSchedule()
         {
             Timer.Stop();
-            Console.WriteLine("Timer " + _Prescription.Id + " stopped");
+            Console.WriteLine("Timer " + Prescription.Id + " stopped");
         }
     }
 }

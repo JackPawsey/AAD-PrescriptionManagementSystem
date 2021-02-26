@@ -1,8 +1,13 @@
 ﻿using System;
+using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
+using AADWebApp.Models;
 using AADWebApp.Resolver;
 using AADWebApp.Services;
 using AADWebAppTests.Resolver;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -36,8 +41,18 @@ namespace AADWebAppTests.Services
                 "{0}");
 
             // Add services for testing
+            services.AddSingleton<INotificationScheduleService, NotificationScheduleService>();
+
+            services.AddScoped<INotificationService, NotificationService>();
+
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
+            services.AddTransient<IBloodTestService, BloodTestService>();
+            services.AddTransient<IMedicationService, MedicationService>();
+            services.AddTransient<IPatientService, PatientService>();
+            services.AddTransient<IPrescriptionService, PrescriptionService>();
+            services.AddTransient<IPrescriptionCollectionService, PrescriptionCollectionService>();
+            services.AddTransient<IPrescriptionSchedule, PrescriptionSchedule>();
             services.AddTransient<IDatabaseNameResolver, TestDatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(

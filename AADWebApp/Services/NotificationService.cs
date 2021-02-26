@@ -1,10 +1,10 @@
-﻿using AADWebApp.Areas.Identity.Data;
+﻿using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Services
 {
@@ -24,44 +24,48 @@ namespace AADWebApp.Services
             _sendSmsService = sendSmsService;
             _medicationService = medicationService;
         }
-        public async Task SendPrescriptionNotification(Prescription Prescription, int Occurances)
-        {
-            var patient = _patientService.GetPatients(Prescription.PatientId);
-            var patientAccount = await _userManager.FindByIdAsync(Prescription.PatientId);
-            var medication = _medicationService.GetMedications((short?)Prescription.MedicationId);
 
-            if (patient.ElementAt(0).CommunicationPreferences.ToString().Equals("Email"))
+        public async Task SendPrescriptionNotification(Prescription prescription, int occurances)
+        {
+            var patient = _patientService.GetPatients(prescription.PatientId);
+            var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
+            var medication = _medicationService.GetMedications((short?) prescription.MedicationId);
+
+            var enumerable = patient.ToList();
+            var medications = medication.ToList();
+
+            switch (enumerable.ElementAt(0).CommunicationPreferences.ToString())
             {
-                SendEmail(patient.ElementAt(0), patientAccount, medication.ElementAt(0), Prescription, Occurances);
-            }
-            else if (patient.ElementAt(0).CommunicationPreferences.ToString().Equals("SMS"))
-            {
-                SendSMS(patient.ElementAt(0), patientAccount, medication.ElementAt(0), Prescription, Occurances);
-            }
-            else
-            {
-                SendEmail(patient.ElementAt(0), patientAccount, medication.ElementAt(0), Prescription, Occurances);
-                SendSMS(patient.ElementAt(0), patientAccount, medication.ElementAt(0), Prescription, Occurances);
+                case "Email":
+                    SendEmail(enumerable.ElementAt(0), patientAccount, medications.ElementAt(0), prescription, occurances);
+                    break;
+                case "SMS":
+                    SendSms(enumerable.ElementAt(0), patientAccount, medications.ElementAt(0), prescription, occurances);
+                    break;
+                default:
+                    SendEmail(enumerable.ElementAt(0), patientAccount, medications.ElementAt(0), prescription, occurances);
+                    SendSms(enumerable.ElementAt(0), patientAccount, medications.ElementAt(0), prescription, occurances);
+                    break;
             }
         }
 
-        private void SendEmail(Patient patient, ApplicationUser patientAccount, Medication medication, Prescription Prescription, int Occurances)
+        private void SendEmail(Patient patient, ApplicationUser patientAccount, Medication medication, Prescription prescription, int occurances)
         {
             _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription for {medication.MedicationName} has begun. <br>
-                                            You will receive {Occurances} dosages of this medication beginning {Prescription.DateStart.ToShortDateString()} and ending {Prescription.DateEnd.ToShortDateString()}. <br>
-                                            The dosage will be {Prescription.Dosage} milligrams {Prescription.IssueFrequency}.",
-                                            patientAccount.FirstName + " " + patientAccount.LastName + " " + medication.MedicationName + " Prescription",
-                                            patientAccount.Email);
+                                            You will receive {occurances} dosages of this medication beginning {prescription.DateStart.ToShortDateString()} and ending {prescription.DateEnd.ToShortDateString()}. <br>
+                                            The dosage will be {prescription.Dosage} milligrams {prescription.IssueFrequency}.",
+                patientAccount.FirstName + " " + patientAccount.LastName + " " + medication.MedicationName + " Prescription",
+                patientAccount.Email);
         }
 
-        private void SendSMS(Patient patient, ApplicationUser patientAccount, Medication medication, Prescription Prescription, int Occurances)
+        private void SendSms(Patient patient, ApplicationUser patientAccount, Medication medication, Prescription prescription, int occurances)
         {
-            var TextMessage = new StringBuilder()
+            var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, your prescription for {medication.MedicationName} has begun.\n\n ")
-                .Append($"You will receive { Occurances} dosages of this medication beginning { Prescription.DateStart.ToShortDateString()}and ending { Prescription.DateEnd.ToShortDateString()}.\n\n")
-                .Append($"The dosage will be { Prescription.Dosage} milligrams { Prescription.IssueFrequency}.");
+                .Append($"You will receive {occurances} dosages of this medication beginning {prescription.DateStart.ToShortDateString()}and ending {prescription.DateEnd.ToShortDateString()}.\n\n")
+                .Append($"The dosage will be {prescription.Dosage} milligrams {prescription.IssueFrequency}.");
 
-            _sendSmsService.SendSms(patientAccount.PhoneNumber, TextMessage.ToString());
+            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
     }
 }

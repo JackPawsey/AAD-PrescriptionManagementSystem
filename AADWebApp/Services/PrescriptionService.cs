@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 
@@ -55,7 +56,7 @@ namespace AADWebApp.Services
                     DateStart = (DateTime) result.GetValue(4),
                     DateEnd = (DateTime) result.GetValue(5),
                     PrescriptionStatus = (PrescriptionStatus) Enum.Parse(typeof(PrescriptionStatus), result.GetValue(6).ToString() ?? throw new InvalidOperationException()),
-                    IssueFrequency = (IssueFrequency)Enum.Parse(typeof(IssueFrequency), result.GetValue(7).ToString() ?? throw new InvalidOperationException())
+                    IssueFrequency = (IssueFrequency) Enum.Parse(typeof(IssueFrequency), result.GetValue(7).ToString() ?? throw new InvalidOperationException())
                 });
             }
 
@@ -75,14 +76,14 @@ namespace AADWebApp.Services
             {
                 prescriptions.Add(new Prescription
                 {
-                    Id = (short)result.GetValue(0),
-                    MedicationId = (short)result.GetValue(1),
-                    PatientId = (string)result.GetValue(2),
-                    Dosage = (short)result.GetValue(3),
-                    DateStart = (DateTime)result.GetValue(4),
-                    DateEnd = (DateTime)result.GetValue(5),
-                    PrescriptionStatus = (PrescriptionStatus)Enum.Parse(typeof(PrescriptionStatus), result.GetValue(6).ToString() ?? throw new InvalidOperationException()),
-                    IssueFrequency = (IssueFrequency)Enum.Parse(typeof(IssueFrequency), result.GetValue(7).ToString() ?? throw new InvalidOperationException())
+                    Id = (short) result.GetValue(0),
+                    MedicationId = (short) result.GetValue(1),
+                    PatientId = (string) result.GetValue(2),
+                    Dosage = (short) result.GetValue(3),
+                    DateStart = (DateTime) result.GetValue(4),
+                    DateEnd = (DateTime) result.GetValue(5),
+                    PrescriptionStatus = (PrescriptionStatus) Enum.Parse(typeof(PrescriptionStatus), result.GetValue(6).ToString() ?? throw new InvalidOperationException()),
+                    IssueFrequency = (IssueFrequency) Enum.Parse(typeof(IssueFrequency), result.GetValue(7).ToString() ?? throw new InvalidOperationException())
                 });
             }
 
