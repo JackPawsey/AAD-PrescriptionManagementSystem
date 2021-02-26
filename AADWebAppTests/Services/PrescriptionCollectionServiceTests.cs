@@ -166,7 +166,7 @@ namespace AADWebAppTests.Services
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
 
             // Update
-            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTime(1, updatedTime);
+            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(1, updatedTime);
             Assert.AreEqual(1, affectedRows);
 
             // Check there's one database row
