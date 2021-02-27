@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace AADWebApp.Areas.Identity.Pages.Account.Manage
 {
@@ -154,7 +155,15 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
             }
 
             Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
-            return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
+
+            var serializedPersonalData = Encoding.UTF8.GetBytes(
+                JsonConvert.SerializeObject(personalData, new JsonSerializerSettings
+                {
+                    StringEscapeHandling = StringEscapeHandling.EscapeNonAscii
+                })
+            );
+
+            return new FileContentResult(serializedPersonalData, "application/json");
         }
     }
 }
