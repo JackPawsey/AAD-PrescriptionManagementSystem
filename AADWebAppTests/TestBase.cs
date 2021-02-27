@@ -6,11 +6,10 @@ using AADWebApp.Resolver;
 using AADWebApp.Services;
 using AADWebAppTests.Resolver;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
 
 namespace AADWebAppTests.Services
@@ -54,6 +53,7 @@ namespace AADWebAppTests.Services
             services.AddTransient<IPrescriptionCollectionService, PrescriptionCollectionService>();
             services.AddTransient<IPrescriptionSchedule, PrescriptionSchedule>();
             services.AddTransient<IDatabaseNameResolver, TestDatabaseNameResolver>();
+            services.AddTransient(serviceProvider => MockUserManager<ApplicationUser>().Object);
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(
                     sqlConnectionString,
@@ -83,6 +83,27 @@ namespace AADWebAppTests.Services
             {
                 DateFormatString = "yyyy-MM-ddTHH:mm:ss"
             });
+        }
+
+        /// <summary>
+        /// Creates a mock user manager instance for use within testing.
+        /// </summary>
+        /// <typeparam name="TUser">The type of user the user manage will be dealing with.</typeparam>
+        /// <returns>The mocked user manager instance.</returns>
+        private static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
+        {
+            var mockUserStore = new Mock<IUserStore<TUser>>();
+            var mockUserManager = new Mock<UserManager<TUser>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
+
+            mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new ApplicationUser
+            {
+                FirstName = "firstName",
+                LastName = "lastName",
+                Email = "cloudcrusaderssystems+unittests@gmail.com",
+                PhoneNumber = "+4411234567890"
+            } as TUser);
+
+            return mockUserManager;
         }
     }
 }
