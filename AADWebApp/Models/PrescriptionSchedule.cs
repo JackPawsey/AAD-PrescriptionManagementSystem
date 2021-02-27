@@ -76,7 +76,8 @@ namespace AADWebApp.Models
 
             var nextCollectionTime = DateTime.Now.AddMilliseconds(interval);
 
-            await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescriptionCollection, nextCollectionTime);
+            //await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescriptionCollection, nextCollectionTime);
+            await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, nextCollectionTime);
 
             var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
             await notificationService.SendPrescriptionNotification(prescription, occurrences, nextCollectionTime);

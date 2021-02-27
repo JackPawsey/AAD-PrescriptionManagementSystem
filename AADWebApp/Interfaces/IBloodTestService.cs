@@ -12,5 +12,6 @@ namespace AADWebApp.Interfaces
         public int RequestBloodTest(int prescriptionId, int bloodTestId, DateTime appointmentTime);
         public int SetBloodTestDateTime(int id, DateTime appointmentTime);
         public int SetBloodTestResults(int bloodRequestTestId, bool result, DateTime resultTime);
+        public int DeleteBloodTestRequest(int id);
     }
 }

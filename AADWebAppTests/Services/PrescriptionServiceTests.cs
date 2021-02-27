@@ -19,12 +19,18 @@ namespace AADWebAppTests.Services
         private readonly IDatabaseService _databaseService;
         private readonly INotificationScheduleService _notificationScheduleService;
         private readonly IPrescriptionService _prescriptionService;
+        private readonly INotificationService _notificationService;
+        private readonly IBloodTestService _bloodTestService;
+        private readonly IPrescriptionCollectionService _prescriptionCollectionService;
 
         public PrescriptionServiceTests()
         {
             _databaseService = Get<IDatabaseService>();
             _notificationScheduleService = Get<INotificationScheduleService>();
-            _prescriptionService = new PrescriptionService(_databaseService, _notificationScheduleService);
+            _notificationService = Get<INotificationService>();
+            _bloodTestService = Get<IBloodTestService>();
+            _prescriptionCollectionService = Get<IPrescriptionCollectionService>();
+            _prescriptionService = new PrescriptionService(_databaseService, _notificationScheduleService, _notificationService, _prescriptionCollectionService, _bloodTestService);
         }
 
         [TestInitialize]
@@ -225,7 +231,7 @@ namespace AADWebAppTests.Services
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
 
             // Update
-            var affectedRows = _prescriptionService.CancelPrescription(1);
+            var affectedRows = _prescriptionService.CancelPrescriptionAsync(1);
             Assert.AreEqual(1, affectedRows);
 
             // Check there's one database row

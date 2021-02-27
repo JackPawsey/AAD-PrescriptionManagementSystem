@@ -17,15 +17,13 @@ namespace AADWebAppTests.Services
     {
         private readonly IDatabaseService _databaseService;
         private readonly INotificationService _notificationService;
-        private readonly IPrescriptionService _prescriptionService;
         private readonly IPrescriptionCollectionService _prescriptionCollectionService;
 
         public PrescriptionCollectionServiceTests()
         {
             _databaseService = Get<IDatabaseService>();
             _notificationService = Get <INotificationService>();
-            _prescriptionService = Get<IPrescriptionService>();
-            _prescriptionCollectionService = new PrescriptionCollectionService(_databaseService, _prescriptionService, _notificationService);
+            _prescriptionCollectionService = new PrescriptionCollectionService(_databaseService, _notificationService);
         }
 
         [TestInitialize]
@@ -170,16 +168,22 @@ namespace AADWebAppTests.Services
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
 
             // Update
-            PrescriptionCollection prescriptionCollection = new PrescriptionCollection 
+            var TimeNow = DateTime.Now;
+            var TimeTomorrow = DateTime.Now.AddDays(1);
+
+            Prescription prescription = new Prescription
             {
                 Id = 1,
-                PrescriptionId = 1,
-                CollectionStatus = CollectionStatus.BeingPrepared,
-                CollectionStatusUpdated = now,
-                CollectionTime = updatedTime
+                MedicationId = 1,
+                PatientId = "patientId",
+                Dosage = 99,
+                DateStart = TimeNow,
+                DateEnd = TimeTomorrow,
+                PrescriptionStatus = PrescriptionStatus.Approved,
+                IssueFrequency = IssueFrequency.Monthly
             };
 
-            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescriptionCollection, updatedTime);
+            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, updatedTime);
             Assert.AreEqual(1, affectedRows);
 
             // Check there's one database row

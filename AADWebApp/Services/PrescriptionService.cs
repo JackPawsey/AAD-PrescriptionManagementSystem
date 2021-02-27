@@ -29,11 +29,17 @@ namespace AADWebApp.Services
 
         private readonly IDatabaseService _databaseService;
         private readonly INotificationScheduleService _notificationScheduleService;
+        private readonly INotificationService _notificationService;
+        private readonly IPrescriptionCollectionService _prescriptionCollectionService;
+        private readonly IBloodTestService _bloodTestService;
 
-        public PrescriptionService(IDatabaseService databaseService, INotificationScheduleService notificationScheduleService)
+        public PrescriptionService(IDatabaseService databaseService, INotificationScheduleService notificationScheduleService, INotificationService notificationService, IPrescriptionCollectionService prescriptionCollectionService, IBloodTestService bloodTestService)
         {
             _databaseService = databaseService;
             _notificationScheduleService = notificationScheduleService;
+            _notificationService = notificationService;
+            _prescriptionCollectionService = prescriptionCollectionService;
+            _bloodTestService = bloodTestService;
         }
 
         public IEnumerable<Prescription> GetPrescriptions(short? id = null)
@@ -105,14 +111,32 @@ namespace AADWebApp.Services
             }
         }
 
-        public int CancelPrescription(int id)
+        public async Task<int> CancelPrescriptionAsync(int id)
         {
-            if (GetPrescriptions((short?) id).ElementAt(0).PrescriptionStatus.ToString().Equals("Approved"))
+            var prescription = GetPrescriptions((short?)id).ElementAt(0);
+
+            if (prescription.PrescriptionStatus.ToString().Equals("Approved"))
             {
                 _notificationScheduleService.CancelPrescriptionSchedule(id); // Cancel PrescriptionSchedule when prescription is cancelled and its has been approved
             }
 
-            return SetPrescriptionStatus(id, PrescriptionStatus.Terminated); // Otherwise it does not have a PrescriptionSchedule
+            var result = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?)id);
+
+            foreach (var item in result)
+            {
+                _prescriptionCollectionService.CancelPrescriptionCollection(item.Id); // Set any PrescriptionCollections to Cancelled
+            }
+
+            var bloodTestRequests = _bloodTestService.GetBloodTestRequests((short?) id);
+
+            foreach (var bloodTestRequest in bloodTestRequests)
+            {
+                _bloodTestService.DeleteBloodTestRequest(bloodTestRequest.Id); // Delete bloodTestRequests for this prescription (would be better to set a status)
+            }
+
+            await _notificationService.SendCancellationNotification(prescription, DateTime.Now); // Send notifcation to patient
+
+            return SetPrescriptionStatus(id, PrescriptionStatus.Terminated);
         }
 
         public int SetPrescriptionStatus(int id, PrescriptionStatus prescriptionStatus) // Setting an already approved prescription to 'Approved' will restart is presriptionSchedule!

@@ -109,6 +109,45 @@ namespace AADWebApp.Services
             _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
+        public async Task SendCancellationNotification(Prescription prescription, DateTime cancellationTime)
+        {
+            var patient = GetPatientRecord(prescription.PatientId);
+            var medication = GetMediciationRecord(prescription.MedicationId);
+            var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
+
+            switch (patient.CommunicationPreferences.ToString())
+            {
+                case "Email":
+                    SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
+                    break;
+                case "SMS":
+                    SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
+                    break;
+                default:
+                    SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
+                    SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
+                    break;
+            }
+        }
+        private void SendCancellationEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
+        {
+            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription starting {prescription.DateStart} for {medication.MedicationName} has been cancelled! <br>
+                                        It was cancelled at {cancellationTime}. <br>
+                                        You will recieve no further medication from this prescription.",
+                                        patientAccount.FirstName + " " + patientAccount.LastName + " " + medication.MedicationName + " Prescription Cancellation",
+                                        patientAccount.Email);
+        }
+
+        private void SendCancellationSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
+        {
+            var textMessage = new StringBuilder()
+                .Append($"Hello {patientAccount.FirstName}, your prescription starting {prescription.DateStart} for {medication.MedicationName} has been cancelled!\n\n ")
+                .Append($"It was cancelled at {cancellationTime}.")
+                .Append($"You will recieve no further medication from this prescription.");
+
+            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+        }
+
         private Patient GetPatientRecord(string patientId)
         {
             return _patientService.GetPatients(patientId).ElementAt(0);

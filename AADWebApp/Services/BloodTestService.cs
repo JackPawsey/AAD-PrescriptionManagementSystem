@@ -108,5 +108,13 @@ namespace AADWebApp.Services
             //CREATE BloodTestResults TABLE ROW
             return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
         }
+
+        public int DeleteBloodTestRequest(int id)
+        {
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
+            //DELETE BloodTestRequests TABLE ROW
+            return _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestRequests WHERE Id = '{id}'");
+        }
     }
 }
