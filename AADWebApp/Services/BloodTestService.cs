@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 
@@ -9,10 +10,14 @@ namespace AADWebApp.Services
     public class BloodTestService : IBloodTestService
     {
         private readonly IDatabaseService _databaseService;
+        private readonly INotificationService _notificationService;
+        //private readonly IPrescriptionService _prescriptionService;
 
-        public BloodTestService(IDatabaseService databaseService)
+        public BloodTestService(IDatabaseService databaseService, INotificationService notificationService)
         {
             _databaseService = databaseService;
+            _notificationService = notificationService;
+            //_prescriptionService = prescriptionService;
         }
 
         public IEnumerable<BloodTest> GetBloodTests(short? id = null)
@@ -83,14 +88,17 @@ namespace AADWebApp.Services
 
             return bloodTestRequests.AsEnumerable();
         }
-
-
-        public int RequestBloodTest(int prescriptionId, int bloodTestId, DateTime appointmentTime)
+        
+        public async Task<int> RequestBloodTestAsync(Prescription prescription, int bloodTestId, DateTime appointmentTime)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
+            var bloodTest = GetBloodTests((short?) bloodTestId).ElementAt(0);
+
+            await _notificationService.SendBloodTestRequestNotification(prescription, bloodTest, DateTime.Now, appointmentTime);
+
             //CREATE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime) VALUES ('{prescriptionId}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime) VALUES ('{prescription.Id}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
         }
 
         public int SetBloodTestDateTime(int id, DateTime appointmentTime)

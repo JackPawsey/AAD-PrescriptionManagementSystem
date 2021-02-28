@@ -9,5 +9,6 @@ namespace AADWebApp.Interfaces
         public Task SendPrescriptionNotification(Prescription Prescription, int Occurances, DateTime nextCollectionTime);
         public Task SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime);
         public Task SendCancellationNotification(Prescription prescription, DateTime cancellationTime);
+        Task SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime);
     }
 }

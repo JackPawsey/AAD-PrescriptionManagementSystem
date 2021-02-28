@@ -27,6 +27,8 @@ namespace AADWebApp.Services
             _medicationService = medicationService;
         }
 
+        // Precription Notification ############################################
+
         public async Task SendPrescriptionNotification(Prescription prescription, int occurances, DateTime nextCollectionTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
@@ -69,6 +71,8 @@ namespace AADWebApp.Services
             _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
+        // Collection TIme Notification ##########################################
+
         public async Task SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
@@ -109,6 +113,8 @@ namespace AADWebApp.Services
             _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
+        // Prescription Cancellation Notification #######################################################
+
         public async Task SendCancellationNotification(Prescription prescription, DateTime cancellationTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
@@ -147,6 +153,52 @@ namespace AADWebApp.Services
 
             _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
+
+        // Blood Test Request Notification #######################################################
+
+        public async Task SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
+        {
+            var patient = GetPatientRecord(prescription.PatientId);
+            var medication = GetMediciationRecord(prescription.MedicationId);
+            var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
+
+            switch (patient.CommunicationPreferences.ToString())
+            {
+                case "Email":
+                    SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
+                    break;
+                case "SMS":
+                    SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
+                    break;
+                default:
+                    SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
+                    SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
+                    break;
+            }
+        }
+
+        private void SendBloodTestRequestEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
+        {
+            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, you have been requested to have a blood test for your prescription for {medication.MedicationName} starting {prescription.DateStart}. <br>
+                                        The test type is: {bloodTest.FullTitle}. <br>
+                                        This test was requested at {requestTime} and as scheduled to take place at {appointmentTime}. <br>
+                                        Your prescription will not be approved until this test is taken and the results permit the treatment.",
+                                        patientAccount.FirstName + " " + patientAccount.LastName + " Blood Test Request",
+                                        patientAccount.Email);
+        }
+
+        private void SendBloodTestRequestSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
+        {
+            var textMessage = new StringBuilder()
+                .Append($"Hello {patientAccount.FirstName}, you have been requested to have a blood test for your prescription for {medication.MedicationName} starting {prescription.DateStart}.\n\n ")
+                .Append($"The test type is: { bloodTest.FullTitle}.")
+                .Append($"This test was requested at {requestTime} and as scheduled to take place at {appointmentTime}.")
+                .Append($"Your prescription will not be approved until this test is taken and the results permit the treatment.");
+
+            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+        }
+
+        //#######################################################
 
         private Patient GetPatientRecord(string patientId)
         {
