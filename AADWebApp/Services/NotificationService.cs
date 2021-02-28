@@ -198,6 +198,48 @@ namespace AADWebApp.Services
             _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
+        // Blood Test Appointment Time Update #######################################################
+
+        public async Task SendBloodTestTimeUpdateNotification(Prescription prescription, BloodTestRequest bloodTestRequest, DateTime newTime)
+        {
+            var patient = GetPatientRecord(prescription.PatientId);
+            var medication = GetMediciationRecord(prescription.MedicationId);
+            var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
+
+            switch (patient.CommunicationPreferences.ToString())
+            {
+                case "Email":
+                    SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
+                    break;
+                case "SMS":
+                    SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
+                    break;
+                default:
+                    SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
+                    SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
+                    break;
+            }
+        }
+
+        private void SendBloodTestTimeUpdateEmail(ApplicationUser patientAccount, Medication medication, BloodTestRequest bloodTestRequest, DateTime newTime)
+        {
+            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, the blood test appointment time for your {medication.MedicationName} prescription has been updated. <br>
+                                        The old time was: {bloodTestRequest.AppointmentTime}, the updated time is: {newTime}. <br>
+                                        Your prescription will not be approved until this test is taken and the results permit the treatment.",
+                                        patientAccount.FirstName + " " + patientAccount.LastName + " Blood Test Request",
+                                        patientAccount.Email);
+        }
+
+        private void SendBloodTestTimeUpdateSms(ApplicationUser patientAccount, Medication medication, BloodTestRequest bloodTestRequest, DateTime newTime)
+        {
+            var textMessage = new StringBuilder()
+                .Append($"Hello {patientAccount.FirstName}, the blood test appointment time for your {medication.MedicationName} prescription has been updated.\n\n ")
+                .Append($"The old time was: {bloodTestRequest.AppointmentTime}, the updated time is: {newTime}.")
+                .Append($"Your prescription will not be approved until this test is taken and the results permit the treatment.");
+
+            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+        }
+
         //#######################################################
 
         private Patient GetPatientRecord(string patientId)

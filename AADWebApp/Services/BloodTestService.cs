@@ -66,7 +66,30 @@ namespace AADWebApp.Services
             return bloodTestResults.AsEnumerable();
         }
 
-        public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? prescriptionId = null)
+        public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? Id = null)
+        {
+            var bloodTestRequests = new List<BloodTestRequest>();
+
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
+            //GET blood_test_requests TABLE
+            using var result = _databaseService.RetrieveTable("BloodTestRequests", "Id", Id);
+
+            while (result.Read())
+            {
+                bloodTestRequests.Add(new BloodTestRequest
+                {
+                    Id = (short)result.GetValue(0),
+                    PrescriptionId = (short)result.GetValue(1),
+                    BloodTestId = (short)result.GetValue(2),
+                    AppointmentTime = (DateTime)result.GetValue(3)
+                });
+            }
+
+            return bloodTestRequests.AsEnumerable();
+        }
+
+        public IEnumerable<BloodTestRequest> GetBloodTestRequestsByPrescriptionId(short? prescriptionId = null)
         {
             var bloodTestRequests = new List<BloodTestRequest>();
 
@@ -89,7 +112,7 @@ namespace AADWebApp.Services
             return bloodTestRequests.AsEnumerable();
         }
         
-        public async Task<int> RequestBloodTestAsync(Prescription prescription, int bloodTestId, DateTime appointmentTime)
+        public async Task<int> RequestBloodTestAsync(Prescription prescription, int bloodTestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
@@ -101,12 +124,16 @@ namespace AADWebApp.Services
             return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime) VALUES ('{prescription.Id}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
         }
 
-        public int SetBloodTestDateTime(int id, DateTime appointmentTime)
+        public async Task<int> SetBloodTestDateTimeAsync(Prescription prescription, int bloodTestRequestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
+            var bloodTestRequest = GetBloodTestRequests((short?) bloodTestRequestId).ElementAt(0);
+
+            await _notificationService.SendBloodTestTimeUpdateNotification(prescription, bloodTestRequest, appointmentTime);
+
             //UPDATE BloodTestRequests TABLE ROW appointmentTime COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{bloodTestRequestId}'");
         }
 
         public int SetBloodTestResults(int bloodRequestTestId, bool result, DateTime resultTime)
