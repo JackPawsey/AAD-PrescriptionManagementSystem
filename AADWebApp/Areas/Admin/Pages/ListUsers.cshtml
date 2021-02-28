@@ -12,6 +12,11 @@
 {
     <button type='button' class='btn btn-primary mb-3' data-toggle='modal' data-target='#user-type-modal'>Create user</button>
 
+    @if (TempData["PasswordResetSuccess"] != null)
+    {
+        <p class="mb-2 p-2 bg-success text-white rounded">@TempData["PasswordResetSuccess"]</p>
+    }
+
     <div class="row">
         @foreach (var user in UserManager.Users)
         {
@@ -61,7 +66,12 @@
                     <div class="card-footer">
                         <form method="post">
                             <input asp-for="UserId" value="@user.Id" type="hidden">
-                            <button type="submit" asp class="btn btn-danger btn-block" onclick="return confirm('Are you sure you want to delete user: @user.UserName?')">Delete</button>
+                            <div class="d-flex">
+                                <div class="w-100 d-flex mr-2">
+                                    <input type="submit" asp-page-handler="IssuePasswordReset" value="Issue password reset" asp class="btn btn-warning w-100" onclick="return confirm('Are you sure you want to issue a password reset for user: @user.UserName?')" />
+                                </div>
+                                <input type="submit" asp-page-handler="DeleteUser" value="Delete" asp class="btn btn-danger" onclick="return confirm('Are you sure you want to delete user: @user.UserName?')" />
+                            </div>
                         </form>
                     </div>
                 </div>
