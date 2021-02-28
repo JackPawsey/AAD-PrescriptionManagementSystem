@@ -113,16 +113,16 @@ namespace AADWebApp.Services
 
         public async Task<int> CancelPrescriptionAsync(int id)
         {
-            var prescription = GetPrescriptions((short?)id).ElementAt(0);
+            var prescription = GetPrescriptions((short?) id).ElementAt(0);
 
             if (prescription.PrescriptionStatus.ToString().Equals("Approved"))
             {
                 _notificationScheduleService.CancelPrescriptionSchedule(id); // Cancel PrescriptionSchedule when prescription is cancelled and its has been approved
             }
 
-            var result = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?)id);
+            var prescriptions = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?) id);
 
-            foreach (var item in result)
+            foreach (var item in prescriptions)
             {
                 _prescriptionCollectionService.CancelPrescriptionCollection(item.Id); // Set any PrescriptionCollections to Cancelled
             }
