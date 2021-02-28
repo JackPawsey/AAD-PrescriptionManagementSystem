@@ -10,7 +10,7 @@
 <h1>List Users</h1>
 @if (UserManager.Users.Any())
 {
-    <a class="btn btn-primary mb-3" asp-area="Identity" asp-page="/Account/Register">Create user</a>
+    <button type='button' class='btn btn-primary mb-3' data-toggle='modal' data-target='#user-type-modal'>Create user</button>
 
     <div class="row">
         @foreach (var user in UserManager.Users)
@@ -79,3 +79,33 @@ else
         </div>
     </div>
 }
+
+<!-- User type selection modal -->
+<div class="modal fade" id="user-type-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create a user</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form method="GET" asp-area="Identity" asp-page="/Account/Register">
+                <div class="modal-body">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Input.Role" class="control-label"></label>
+                        <select asp-for="Input.Role" class="form-control" asp-items="@Model.Roles" required>
+                            <option value="">Select an option</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-danger" data-dismiss="modal" />
+                    <input type="submit" value="Create user" class="btn btn-success" id="js-action-btn" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
