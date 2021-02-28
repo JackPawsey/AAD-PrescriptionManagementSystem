@@ -151,7 +151,7 @@ namespace AADWebAppTests.Services
                 new BloodTestRequest
                 {
                     Id = 3,
-                    PrescriptionId = 2,
+                    PrescriptionId = 1,
                     BloodTestId = 1,
                     AppointmentTime = TimeNow
                 }
@@ -168,7 +168,7 @@ namespace AADWebAppTests.Services
                 },
                 new BloodTestRequest
                 {
-                    Id = 2,
+                    Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
                     AppointmentTime = TimeNow
@@ -216,18 +216,6 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            Prescription prescription3 = new Prescription
-            {
-                Id = 3,
-                MedicationId = 3,
-                PatientId = "1",
-                Dosage = 99,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
-                PrescriptionStatus = PrescriptionStatus.PendingApproval,
-                IssueFrequency = IssueFrequency.Monthly
-            };
-
             // Request blood tests
             var affectedRows1 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, TimeNow).Result;
             Assert.AreEqual(1, affectedRows1);
@@ -235,7 +223,7 @@ namespace AADWebAppTests.Services
             var affectedRows2 = _bloodTestService.RequestBloodTestAsync(prescription2, 3, TimeNow).Result;
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _bloodTestService.RequestBloodTestAsync(prescription2, 1, TimeNow).Result;
+            var affectedRows3 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, TimeNow).Result;
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -250,7 +238,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(allExpectedSerialised, afterRequestResultSerialised);
 
             // Check results - GetBloodTestRequests with id expecting 2 results
-            var afterRequestResultsById1 = _bloodTestService.GetBloodTestRequestsByPrescriptionId(2);
+            var afterRequestResultsById1 = _bloodTestService.GetBloodTestRequestsByPrescriptionId(1);
             var afterRequestResultsById1Serialised = Serialize(afterRequestResultsById1);
 
             Assert.IsTrue(afterRequestResultsById1.Count() == 2);

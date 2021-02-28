@@ -175,7 +175,7 @@ namespace AADWebAppTests.Services
             {
                 Id = 1,
                 MedicationId = 1,
-                PatientId = "patientId",
+                PatientId = "1",
                 Dosage = 99,
                 DateStart = TimeNow,
                 DateEnd = TimeTomorrow,
@@ -183,7 +183,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, updatedTime);
+            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, updatedTime).Result;
             Assert.AreEqual(1, affectedRows);
 
             // Check there's one database row
