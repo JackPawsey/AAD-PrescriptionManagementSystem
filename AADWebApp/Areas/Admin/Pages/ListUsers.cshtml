@@ -10,7 +10,7 @@
 <h1>List Users</h1>
 @if (UserManager.Users.Any())
 {
-    <button type='button' class='btn btn-primary mb-3' data-toggle='modal' data-target='#user-type-modal'>Create user</button>
+    <button type='button' class='btn btn-primary mb-2' data-toggle='modal' data-target='#user-type-modal'>Create user</button>
 
     @if (TempData["PasswordResetSuccess"] != null)
     {
