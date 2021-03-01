@@ -52,14 +52,20 @@ namespace AADWebApp.Areas.Identity.Pages.Account
             Enum.GetValues(typeof(PatientService.CommunicationPreferences))
         );
 
+        public SelectList Roles { get; set; }
+
         public string ReturnUrl { get; private set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        private string DefaultRole { get; set; } = "Patient";
+        private string RoleToAssign { get; set; } = "Patient";
 
         public class InputModel
         {
+            [DataType(DataType.Text)]
+            [Display(Name = "Select a role for the new user")]
+            public string Role { get; set; }
+
             [Required]
             [DataType(DataType.Text)]
             [Display(Name = "First Name")]
@@ -114,7 +120,18 @@ namespace AADWebApp.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (User.Identity.IsAuthenticated && !User.IsInRole("Admin")) Response.Redirect("/");
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    Roles = new SelectList(_roleManager.Roles.ToList());
+                    Roles.First(item => item.Text == HttpContext.Request.Query["Input.Role"]).Selected = true;
+                }
+                else
+                {
+                    Response.Redirect("/");
+                }
+            }
 
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -122,7 +139,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -152,9 +169,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                 {
                     var addToRoleResult = new IdentityResult();
 
-                    if (await _roleManager.RoleExistsAsync(DefaultRole))
+                    if (User.IsInRole("Admin")) RoleToAssign = Input.Role;
+
+                    if (await _roleManager.RoleExistsAsync(RoleToAssign))
                     {
-                        addToRoleResult = await _userManager.AddToRoleAsync(user, DefaultRole);
+                        addToRoleResult = await _userManager.AddToRoleAsync(user, RoleToAssign);
 
                         if (!addToRoleResult.Succeeded)
                             foreach (var error in addToRoleResult.Errors)
@@ -162,7 +181,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Default role does not exist");
+                        ModelState.AddModelError("", "Role does not exist");
                     }
 
                     if (createResult.Succeeded && addToRoleResult.Succeeded)

@@ -11,6 +11,15 @@
     <section>
         <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="form-group">
+                    <label asp-for="Input.Role" class="control-label"></label>
+                    <select asp-for="Input.Role" class="form-control" asp-items="@Model.Roles" required>
+                    </select>
+                    <span asp-validation-for="Input.Role" class="text-danger"></span>
+                </div>
+            }
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -57,6 +66,7 @@
                 <select asp-for="Input.CommunicationPreference" class="form-control" asp-items="@Model.CommunicationPreferences">
                     <option value="">Select an option</option>
                 </select>
+                <span asp-validation-for="Input.CommunicationPreference" class="text-danger"></span>
             </div>
             <div class="row">
                 <div class="col-md-6">
