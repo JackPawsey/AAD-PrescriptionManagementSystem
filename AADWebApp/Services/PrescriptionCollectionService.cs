@@ -18,13 +18,11 @@ namespace AADWebApp.Services
         }
 
         private readonly IDatabaseService _databaseService;
-        //private readonly IPrescriptionService _prescriptionService;
         private readonly INotificationService _notificationService;
 
         public PrescriptionCollectionService(IDatabaseService databaseService, INotificationService notificationService)
         {
             _databaseService = databaseService;
-            //_prescriptionService = prescriptionService;
             _notificationService = notificationService;
         }
 
@@ -65,11 +63,11 @@ namespace AADWebApp.Services
             {
                 prescriptionCollections.Add(new PrescriptionCollection
                 {
-                    Id = (short)result.GetValue(0),
-                    PrescriptionId = (short)result.GetValue(1),
-                    CollectionStatus = (CollectionStatus)Enum.Parse(typeof(CollectionStatus), result.GetValue(2).ToString() ?? throw new InvalidOperationException()),
-                    CollectionStatusUpdated = (DateTime)result.GetValue(3),
-                    CollectionTime = (DateTime)result.GetValue(4)
+                    Id = (short) result.GetValue(0),
+                    PrescriptionId = (short) result.GetValue(1),
+                    CollectionStatus = (CollectionStatus) Enum.Parse(typeof(CollectionStatus), result.GetValue(2).ToString() ?? throw new InvalidOperationException()),
+                    CollectionStatusUpdated = (DateTime) result.GetValue(3),
+                    CollectionTime = (DateTime) result.GetValue(4)
                 });
             }
 
@@ -103,8 +101,6 @@ namespace AADWebApp.Services
         public async Task<int> SetPrescriptionCollectionTimeAsync(Prescription prescription, DateTime collectionTime)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
-
-            //var prescription = _prescriptionService.GetPrescriptions((short?) prescriptionCollection.PrescriptionId).ElementAt(0);
 
             if (collectionTime > prescription.DateStart && collectionTime < prescription.DateEnd)
             {

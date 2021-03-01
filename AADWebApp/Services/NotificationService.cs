@@ -42,7 +42,7 @@ namespace AADWebApp.Services
                 case CommunicationPreferences.Sms:
                     return SendPrescriptionSms(patientAccount, medication, prescription, occurrences, nextCollectionTime);
                 case CommunicationPreferences.Both:
-                    var result1 =  SendPrescriptionEmail(patientAccount, medication, prescription, occurrences, nextCollectionTime);
+                    var result1 = SendPrescriptionEmail(patientAccount, medication, prescription, occurrences, nextCollectionTime);
                     var result2 = SendPrescriptionSms(patientAccount, medication, prescription, occurrences, nextCollectionTime);
 
                     return result1 & result2;
@@ -138,6 +138,7 @@ namespace AADWebApp.Services
                     throw new ArgumentOutOfRangeException();
             }
         }
+
         private bool SendCancellationEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
         {
             return _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription starting {prescription.DateStart} for {medication.MedicationName} has been cancelled! <br>
@@ -195,7 +196,7 @@ namespace AADWebApp.Services
         {
             var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, you have been requested to have a blood test for your prescription for {medication.MedicationName} starting {prescription.DateStart}.\n\n ")
-                .Append($"The test type is: { bloodTest.FullTitle}.")
+                .Append($"The test type is: {bloodTest.FullTitle}.")
                 .Append($"This test was requested at {requestTime} and as scheduled to take place at {appointmentTime}.")
                 .Append($"Your prescription will not be approved until this test is taken and the results permit the treatment.");
 

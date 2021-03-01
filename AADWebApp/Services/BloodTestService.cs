@@ -84,11 +84,11 @@ namespace AADWebApp.Services
             {
                 bloodTestRequests.Add(new BloodTestRequest
                 {
-                    Id = (short)result.GetValue(0),
-                    PrescriptionId = (short)result.GetValue(1),
-                    BloodTestId = (short)result.GetValue(2),
-                    AppointmentTime = (DateTime)result.GetValue(3),
-                    BloodTestStatus = (BloodTestRequestStatus)Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
+                    Id = (short) result.GetValue(0),
+                    PrescriptionId = (short) result.GetValue(1),
+                    BloodTestId = (short) result.GetValue(2),
+                    AppointmentTime = (DateTime) result.GetValue(3),
+                    BloodTestStatus = (BloodTestRequestStatus) Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
                 });
             }
 
@@ -112,13 +112,13 @@ namespace AADWebApp.Services
                     PrescriptionId = (short) result.GetValue(1),
                     BloodTestId = (short) result.GetValue(2),
                     AppointmentTime = (DateTime) result.GetValue(3),
-                    BloodTestStatus = (BloodTestRequestStatus)Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
+                    BloodTestStatus = (BloodTestRequestStatus) Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
                 });
             }
 
             return bloodTestRequests.AsEnumerable();
         }
-        
+
         public async Task<int> RequestBloodTestAsync(Prescription prescription, short bloodTestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);

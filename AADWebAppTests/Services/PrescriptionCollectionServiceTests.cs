@@ -97,7 +97,7 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            IEnumerable<PrescriptionCollection> singleExpected = allExpected.ToList().Where(p => p.Id == 2);
+            var singleExpected = allExpected.ToList().Where(p => p.Id == 2);
 
             // Add prescription collections
             var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.BeingPrepared, now);
@@ -128,13 +128,12 @@ namespace AADWebAppTests.Services
                 Assert.IsTrue(allExpected.ElementAt(i).CollectionStatusUpdated - afterCreateResultsList.ElementAt(i).CollectionStatusUpdated > TimeSpan.Zero);
                 Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortDateString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortDateString());
                 Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortTimeString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortTimeString());
-
             }
-            
+
             // Check results - get prescription collections with valid id
             var afterCreateResultsByValidId = _prescriptionCollectionService.GetPrescriptionCollections(2);
             var afterCreateResultsByValidIdList = afterCreateResultsByValidId.ToList();
-            
+
             Assert.IsTrue(afterCreateResultsByValidIdList.Count() == 1);
 
             var prescriptionCollections = singleExpected.ToList();
@@ -188,7 +187,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -220,7 +219,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
             Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
         }
-        
+
         [TestMethod]
         public void WhenSettingAnInvalidPrescriptionCollectionTimeItIsNotUpdated()
         {
@@ -254,7 +253,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -275,7 +274,7 @@ namespace AADWebAppTests.Services
             // Check results via get prescription collections with id
             var afterUpdateResults = _prescriptionCollectionService.GetPrescriptionCollections(1);
             var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
-            
+
             Assert.AreEqual(originalExpectedSerialised, afterUpdateResultsSerialised);
         }
 

@@ -111,7 +111,7 @@ namespace AADWebAppTests.Services
                 }
             };
 
-            IEnumerable<Prescription> singleExpected = allExpected.ToList().Where(p => p.Id == 2);
+            var singleExpected = allExpected.ToList().Where(p => p.Id == 2);
 
             var allExpectedSerialised = Serialize(allExpected);
             var singleSerialised = Serialize(singleExpected);

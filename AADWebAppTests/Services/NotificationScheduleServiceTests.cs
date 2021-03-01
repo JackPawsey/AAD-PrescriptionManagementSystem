@@ -42,7 +42,7 @@ namespace AADWebAppTests.Services
 
             CreatePrescriptionSchedule(1, 1, "patientId", 77, timeNow, timeTomorrow, PrescriptionStatus.PendingApproval);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -97,7 +97,7 @@ namespace AADWebAppTests.Services
 
         private bool CreatePrescriptionSchedule(short id, short medicationId, string patientId, int dosage, DateTime timeNow, DateTime timeTomorrow, PrescriptionStatus prescriptionStatus)
         {
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = id,
                 MedicationId = medicationId,

@@ -58,7 +58,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescripton = new Prescription
+            var prescripton = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -80,7 +80,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescripton = new Prescription
+            var prescripton = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -102,7 +102,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescripton = new Prescription
+            var prescripton = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -124,7 +124,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescripton = new Prescription
+            var prescripton = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -136,7 +136,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Weekly
             };
 
-            BloodTest bloodTest = new BloodTest
+            var bloodTest = new BloodTest
             {
                 Id = 7,
                 AbbreviatedTitle = "BP",
@@ -154,7 +154,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescripton = new Prescription
+            var prescripton = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -166,7 +166,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Weekly
             };
 
-            BloodTestRequest bloodTestRequest = new BloodTestRequest
+            var bloodTestRequest = new BloodTestRequest
             {
                 Id = 1,
                 PrescriptionId = 1,

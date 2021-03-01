@@ -199,7 +199,7 @@ namespace AADWebAppTests.Services
 
             var expected2Serialised = Serialize(expected2);
 
-            Prescription prescription1 = new Prescription
+            var prescription1 = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -211,7 +211,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            Prescription prescription2 = new Prescription
+            var prescription2 = new Prescription
             {
                 Id = 2,
                 MedicationId = 2,
@@ -274,7 +274,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -367,7 +367,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -381,11 +381,11 @@ namespace AADWebAppTests.Services
 
             _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
             _bloodTestService.RequestBloodTestAsync(prescription, 2, timeNow);
-            
+
             // Check the blood test requests have been set to complete
             var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
             var beforeBloodTestRequestsList = beforeBloodTestRequests.ToList();
-            
+
             Assert.AreEqual(BloodTestRequestStatus.Pending, beforeBloodTestRequestsList.ElementAt(0).BloodTestStatus);
             Assert.AreEqual(BloodTestRequestStatus.Pending, beforeBloodTestRequestsList.ElementAt(1).BloodTestStatus);
 
@@ -459,7 +459,7 @@ namespace AADWebAppTests.Services
             // Check the blood test requests have been set to complete
             var afterBloodTestRequests = _bloodTestService.GetBloodTestRequests();
             var afterBloodTestRequestsList = afterBloodTestRequests.ToList();
-            
+
             Assert.AreEqual(BloodTestRequestStatus.Complete, afterBloodTestRequestsList.ElementAt(0).BloodTestStatus);
             Assert.AreEqual(BloodTestRequestStatus.Complete, afterBloodTestRequestsList.ElementAt(1).BloodTestStatus);
         }
@@ -475,7 +475,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
@@ -488,19 +488,19 @@ namespace AADWebAppTests.Services
             };
 
             _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
-            
+
             // Check the blood test requests have been set to complete
             var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
-            
+
             Assert.AreEqual(BloodTestRequestStatus.Pending, beforeBloodTestRequests.ElementAt(0).BloodTestStatus);
-            
+
             // Update the status
             var result = _bloodTestService.SetBloodTestRequestStatus(1, BloodTestRequestStatus.Cancelled);
             Assert.AreEqual(1, result);
 
             // Assert value is updated
             var afterBloodTestRequests = _bloodTestService.GetBloodTestRequests();
-            
+
             Assert.AreEqual(BloodTestRequestStatus.Cancelled, afterBloodTestRequests.ElementAt(0).BloodTestStatus);
         }
 
@@ -516,7 +516,7 @@ namespace AADWebAppTests.Services
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
 
-            Prescription prescription = new Prescription
+            var prescription = new Prescription
             {
                 Id = 1,
                 MedicationId = 1,
