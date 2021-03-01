@@ -153,6 +153,91 @@ namespace AADWebAppTests.Services
         }
 
         [TestMethod]
+        public void WhenGettingPrescriptionsByPatientId()
+        {
+            var TimeNow = DateTime.Now;
+            var TimeTomorrow = DateTime.Now.AddDays(1);
+
+            AssertPrescriptionsTableContainsXRows(0);
+
+            // Prep expected
+            IEnumerable<Prescription> allExpected = new List<Prescription>
+            {
+                new Prescription
+                {
+                    Id = 1,
+                    MedicationId = 1,
+                    PatientId = "patientId",
+                    Dosage = 77,
+                    DateStart = TimeNow,
+                    DateEnd = TimeTomorrow,
+                    PrescriptionStatus = PrescriptionStatus.AwaitingBloodWork,
+                    IssueFrequency = IssueFrequency.Weekly
+                },
+                new Prescription
+                {
+                    Id = 2,
+                    MedicationId = 2,
+                    PatientId = "patientId",
+                    Dosage = 88,
+                    DateStart = TimeNow,
+                    DateEnd = TimeTomorrow,
+                    PrescriptionStatus = PrescriptionStatus.Declined,
+                    IssueFrequency = IssueFrequency.BiWeekly
+                },
+                new Prescription
+                {
+                    Id = 3,
+                    MedicationId = 3,
+                    PatientId = "patientId",
+                    Dosage = 99,
+                    DateStart = TimeNow,
+                    DateEnd = TimeTomorrow,
+                    PrescriptionStatus = PrescriptionStatus.PendingApproval,
+                    IssueFrequency = IssueFrequency.Monthly
+                }
+            };
+
+            var allExpectedSerialised = Serialize(allExpected);
+
+            // Add prescriptions
+            var affectedRows1 = _prescriptionService.CreatePrescription(1, "patientId", 77, TimeNow, TimeTomorrow, PrescriptionStatus.AwaitingBloodWork, IssueFrequency.Weekly);
+            Assert.AreEqual(1, affectedRows1);
+
+            var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, TimeNow, TimeTomorrow, PrescriptionStatus.Declined, IssueFrequency.BiWeekly);
+            Assert.AreEqual(1, affectedRows2);
+
+            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval, IssueFrequency.Monthly);
+            Assert.AreEqual(1, affectedRows3);
+
+            // Check amount of database rows
+            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM Prescriptions");
+            Assert.IsTrue(databaseRows == 3);
+
+            // Check results - GetPrescriptions with no id
+            var afterCreateResults = _prescriptionService.GetPrescriptionsByPatientId();
+            var afterCreateResultsSerialised = Serialize(afterCreateResults);
+
+            Assert.IsTrue(afterCreateResults.Count() == 3);
+            Assert.AreEqual(allExpectedSerialised, afterCreateResultsSerialised);
+
+            // Check results - GetPrescriptions with valid id
+            var afterCreateResultsByValidId = _prescriptionService.GetPrescriptionsByPatientId("patientId");
+            var afterCreateResultsByValidIdSerialised = Serialize(afterCreateResultsByValidId);
+
+            Assert.IsTrue(afterCreateResultsByValidId.Count() == 3);
+            Assert.AreEqual(allExpectedSerialised, afterCreateResultsByValidIdSerialised);
+
+            // Check results - GetPrescriptions with invalid id
+            var afterCreateResultsByInvalidId = _prescriptionService.GetPrescriptionsByPatientId("InvalidPatientId");
+            var afterCreateResultsByInvalidIdSerialised = Serialize(afterCreateResultsByInvalidId);
+            var expectedInvalidIdSerialised = Serialize(new List<Prescription>());
+
+            Assert.IsTrue(!afterCreateResultsByInvalidId.Any());
+            Assert.AreEqual(expectedInvalidIdSerialised, afterCreateResultsByInvalidIdSerialised);
+        }
+
+        [TestMethod]
         public void WhenSettingPrescriptionStatusItIsUpdated()
         {
             var TimeNow = DateTime.Now;
