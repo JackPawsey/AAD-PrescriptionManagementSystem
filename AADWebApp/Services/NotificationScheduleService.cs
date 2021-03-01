@@ -42,19 +42,12 @@ namespace AADWebApp.Services
 
         public bool CancelPrescriptionSchedule(int id)
         {
-            for (int i = 0; i < _prescriptionSchedules.Count(); i++)
+            foreach (var prescriptionSchedule in _prescriptionSchedules.Where(schedule => schedule.Prescription.Id == id))
             {
-                if (_prescriptionSchedules[i].Prescription.Id == id)
-                {
-                    _prescriptionSchedules[i].CancelSchedule();
-
-                    _prescriptionSchedules.RemoveAt(i);
-
-                    return true;
-                }
+                prescriptionSchedule.CancelSchedule();
             }
 
-            return false;
+            return _prescriptionSchedules.RemoveAll(schedule => schedule.Prescription.Id == id) > 0;
         }
     }
 }
