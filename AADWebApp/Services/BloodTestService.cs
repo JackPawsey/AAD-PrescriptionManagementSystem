@@ -147,6 +147,9 @@ namespace AADWebApp.Services
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
+            // Set the corresponding blood test request to be complete
+            SetBloodTestRequestStatus(bloodRequestTestId, BloodTestRequestStatus.Complete);
+
             //CREATE BloodTestResults TABLE ROW
             return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
         }
