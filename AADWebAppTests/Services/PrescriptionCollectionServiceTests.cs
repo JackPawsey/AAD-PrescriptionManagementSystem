@@ -6,6 +6,7 @@ using AADWebApp.Models;
 using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static AADWebApp.Services.DatabaseService;
+using static AADWebApp.Services.PatientService;
 using static AADWebApp.Services.PrescriptionCollectionService;
 using static AADWebApp.Services.PrescriptionService;
 
@@ -22,7 +23,7 @@ namespace AADWebAppTests.Services
         public PrescriptionCollectionServiceTests()
         {
             _databaseService = Get<IDatabaseService>();
-            _notificationService = Get <INotificationService>();
+            _notificationService = Get<INotificationService>();
             _prescriptionCollectionService = new PrescriptionCollectionService(_databaseService, _notificationService);
         }
 
@@ -31,7 +32,7 @@ namespace AADWebAppTests.Services
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES (1, 1, 1, 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES (1, '{CommunicationPreferences.Email}', 1, 'gp-name');");
             _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES (1, 1, 99, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus.PendingApproval}', 'frequency')");
         }
 
@@ -191,9 +192,17 @@ namespace AADWebAppTests.Services
 
             // Check results via get prescription collections with id
             var afterUpdateResults = _prescriptionCollectionService.GetPrescriptionCollections(1);
-            var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
 
-            Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
+            var expectedUpdatePrescription = expectedAfterUpdate.First(p => p.Id == 1);
+            var afterUpdatePrescription = afterUpdateResults.First(p => p.Id == 1);
+
+            Assert.AreEqual(expectedUpdatePrescription.Id, afterUpdatePrescription.Id);
+            Assert.AreEqual(expectedUpdatePrescription.PrescriptionId, afterUpdatePrescription.PrescriptionId);
+            Assert.AreEqual(expectedUpdatePrescription.CollectionStatus, afterUpdatePrescription.CollectionStatus);
+            Assert.IsFalse(expectedUpdatePrescription.CollectionStatusUpdated.Equals(afterUpdatePrescription.CollectionStatusUpdated));
+            Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
+            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
+            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
         }
 
         [TestMethod]

@@ -39,7 +39,7 @@ namespace AADWebAppTests.Services
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
             _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('patientId', '{CommunicationPreferences.Email}', 'nhs-number', 'gp-name');");
-            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('patientId2', '{CommunicationPreferences.Email}', 'nhs-number', 'gp-name');");
+            _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('patientId2', '{CommunicationPreferences.Email}', 'nhs-number-2', 'gp-name');");
         }
 
         [TestCleanup]
@@ -51,7 +51,6 @@ namespace AADWebAppTests.Services
             _databaseService.ExecuteNonQuery($"DELETE FROM Patients;");
 
             _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (Prescriptions, RESEED, 0);");
-            _databaseService.ExecuteNonQuery($"DBCC CHECKIDENT (Patients, RESEED, 0);");
         }
 
         [TestMethod]
@@ -226,7 +225,7 @@ namespace AADWebAppTests.Services
             var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, TimeNow, TimeTomorrow, IssueFrequency.BiWeekly);
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId2", 99, TimeNow, TimeTomorrow, IssueFrequency.Monthly);
+            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, TimeNow, TimeTomorrow, IssueFrequency.Monthly);
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows

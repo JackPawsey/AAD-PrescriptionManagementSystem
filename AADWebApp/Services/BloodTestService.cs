@@ -87,7 +87,8 @@ namespace AADWebApp.Services
                     Id = (short)result.GetValue(0),
                     PrescriptionId = (short)result.GetValue(1),
                     BloodTestId = (short)result.GetValue(2),
-                    AppointmentTime = (DateTime)result.GetValue(3)
+                    AppointmentTime = (DateTime)result.GetValue(3),
+                    BloodTestStatus = (BloodTestRequestStatus)Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
                 });
             }
 
@@ -110,7 +111,8 @@ namespace AADWebApp.Services
                     Id = (short) result.GetValue(0),
                     PrescriptionId = (short) result.GetValue(1),
                     BloodTestId = (short) result.GetValue(2),
-                    AppointmentTime = (DateTime) result.GetValue(3)
+                    AppointmentTime = (DateTime) result.GetValue(3),
+                    BloodTestStatus = (BloodTestRequestStatus)Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
                 });
             }
 

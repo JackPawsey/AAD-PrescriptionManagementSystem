@@ -171,7 +171,8 @@ namespace AADWebAppTests.Services
                 Id = 1,
                 PrescriptionId = 1,
                 BloodTestId = 7,
-                AppointmentTime = TimeNow
+                AppointmentTime = TimeNow,
+                BloodTestStatus = BloodTestService.BloodTestRequestStatus.Pending
             };
 
             var result = _notificationService.SendBloodTestTimeUpdateNotification(prescripton, bloodTestRequest, DateTime.Now.AddDays(5)).Result;
