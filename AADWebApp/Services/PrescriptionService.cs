@@ -96,14 +96,14 @@ namespace AADWebApp.Services
             return prescriptions.AsEnumerable();
         }
 
-        public int CreatePrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, PrescriptionStatus prescriptionStatus, IssueFrequency issueFrequency)
+        public int CreatePrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, IssueFrequency issueFrequency)
         {
-            if ((dateStart < dateEnd) && (prescriptionStatus != PrescriptionStatus.Approved)) // CHECK THAT dateEnd IS AFTER dateStart
+            if (dateStart < dateEnd) // CHECK THAT dateEnd IS AFTER dateStart
             {
                 _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
                 //CREATE prescriptions TABLE ROW
-                return _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{prescriptionStatus}', '{issueFrequency}')");
+                return _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus.PendingApproval}', '{issueFrequency}')");
             }
             else
             {
