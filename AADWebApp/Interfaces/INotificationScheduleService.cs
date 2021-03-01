@@ -6,7 +6,7 @@ namespace AADWebApp.Interfaces
     public interface INotificationScheduleService
     {
         public IEnumerable<IPrescriptionSchedule> GetPrescriptionSchedules();
-        public bool CreatePrescriptionSchedule(Prescription Prescription);
+        public bool CreatePrescriptionSchedule(Prescription prescription);
         public bool CancelPrescriptionSchedule(short id);
     }
 }

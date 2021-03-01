@@ -129,8 +129,8 @@ namespace AADWebAppTests.Services
             var beforeRequestResults = _bloodTestService.GetBloodTestRequests().ToList();
             Assert.IsTrue(!beforeRequestResults.Any());
 
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             // Prep expected
             IEnumerable<BloodTestRequest> allExpected = new List<BloodTestRequest>
@@ -140,7 +140,7 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow,
+                    AppointmentTime = timeNow,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
@@ -148,7 +148,7 @@ namespace AADWebAppTests.Services
                     Id = 2,
                     PrescriptionId = 2,
                     BloodTestId = 3,
-                    AppointmentTime = TimeNow,
+                    AppointmentTime = timeNow,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
@@ -156,7 +156,7 @@ namespace AADWebAppTests.Services
                     Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow,
+                    AppointmentTime = timeNow,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -168,7 +168,7 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow,
+                    AppointmentTime = timeNow,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
@@ -176,7 +176,7 @@ namespace AADWebAppTests.Services
                     Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow,
+                    AppointmentTime = timeNow,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -188,7 +188,7 @@ namespace AADWebAppTests.Services
                     Id = 2,
                     PrescriptionId = 2,
                     BloodTestId = 3,
-                    AppointmentTime = TimeNow,
+                    AppointmentTime = timeNow,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -205,8 +205,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 99,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.PendingApproval,
                 IssueFrequency = IssueFrequency.Monthly
             };
@@ -217,20 +217,20 @@ namespace AADWebAppTests.Services
                 MedicationId = 2,
                 PatientId = "1",
                 Dosage = 99,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.PendingApproval,
                 IssueFrequency = IssueFrequency.Monthly
             };
 
             // Request blood tests
-            var affectedRows1 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, TimeNow).Result;
+            var affectedRows1 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, timeNow).Result;
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _bloodTestService.RequestBloodTestAsync(prescription2, 3, TimeNow).Result;
+            var affectedRows2 = _bloodTestService.RequestBloodTestAsync(prescription2, 3, timeNow).Result;
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, TimeNow).Result;
+            var affectedRows3 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, timeNow).Result;
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -271,8 +271,8 @@ namespace AADWebAppTests.Services
             var initialTime = DateTime.Now;
             var updatedTime = initialTime.AddDays(1);
 
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescription = new Prescription
             {
@@ -280,8 +280,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 1,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.Approved,
                 IssueFrequency = IssueFrequency.Monthly
             };
@@ -364,8 +364,8 @@ namespace AADWebAppTests.Services
             Assert.IsTrue(preSetupRows == 0);
 
             // Prerequisite setup
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescription = new Prescription
             {
@@ -373,14 +373,14 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 1,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.Approved,
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, TimeNow);
-            _bloodTestService.RequestBloodTestAsync(prescription, 2, TimeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 2, timeNow);
             
             // Check the blood test requests have been set to complete
             var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
@@ -401,14 +401,14 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     BloodTestRequestId = 1,
                     Result = false,
-                    ResultTime = TimeNow
+                    ResultTime = timeNow
                 },
                 new BloodTestResult
                 {
                     Id = 2,
                     BloodTestRequestId = 2,
                     Result = true,
-                    ResultTime = TimeNow
+                    ResultTime = timeNow
                 }
             };
 
@@ -419,7 +419,7 @@ namespace AADWebAppTests.Services
                     Id = 2,
                     BloodTestRequestId = 2,
                     Result = true,
-                    ResultTime = TimeNow
+                    ResultTime = timeNow
                 }
             };
 
@@ -432,10 +432,10 @@ namespace AADWebAppTests.Services
             Assert.IsTrue(beforeAnyResultsDatabaseRows == 0);
 
             // Set blood test results
-            var affectedRows1 = _bloodTestService.SetBloodTestResults(1, false, TimeNow);
+            var affectedRows1 = _bloodTestService.SetBloodTestResults(1, false, timeNow);
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _bloodTestService.SetBloodTestResults(2, true, TimeNow);
+            var affectedRows2 = _bloodTestService.SetBloodTestResults(2, true, timeNow);
             Assert.AreEqual(1, affectedRows2);
 
             // Check prior to adding blood tests - via the database
@@ -472,8 +472,8 @@ namespace AADWebAppTests.Services
             Assert.IsTrue(preSetupRows == 0);
 
             // Prerequisite setup
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescription = new Prescription
             {
@@ -481,13 +481,13 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 1,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.Approved,
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, TimeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
             
             // Check the blood test requests have been set to complete
             var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
@@ -513,8 +513,8 @@ namespace AADWebAppTests.Services
             Assert.IsTrue(preSetupRows == 0);
 
             // Prerequisite setup
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescription = new Prescription
             {
@@ -522,13 +522,13 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 1,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.Approved,
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, TimeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
 
             // Check row was inserted
             var afterInsertRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");

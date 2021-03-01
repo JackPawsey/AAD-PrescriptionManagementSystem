@@ -71,14 +71,14 @@ namespace AADWebApp.Services
             return bloodTestResults.AsEnumerable();
         }
 
-        public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? Id = null)
+        public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? id = null)
         {
             var bloodTestRequests = new List<BloodTestRequest>();
 
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //GET blood_test_requests TABLE
-            using var result = _databaseService.RetrieveTable("BloodTestRequests", "Id", Id);
+            using var result = _databaseService.RetrieveTable("BloodTestRequests", "Id", id);
 
             while (result.Read())
             {

@@ -55,8 +55,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenSendingPrescriptionNotification()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescripton = new Prescription
             {
@@ -64,8 +64,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "patientId",
                 Dosage = 77,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.AwaitingBloodWork,
                 IssueFrequency = IssueFrequency.Weekly
             };
@@ -77,8 +77,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenSendingCollectionTimeNotification()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescripton = new Prescription
             {
@@ -86,8 +86,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "patientId",
                 Dosage = 77,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.AwaitingBloodWork,
                 IssueFrequency = IssueFrequency.Weekly
             };
@@ -99,8 +99,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenSendingCancellationNotification()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescripton = new Prescription
             {
@@ -108,8 +108,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "patientId",
                 Dosage = 77,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.AwaitingBloodWork,
                 IssueFrequency = IssueFrequency.Weekly
             };
@@ -121,8 +121,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenSendingBloodTestRequestNotification()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescripton = new Prescription
             {
@@ -130,8 +130,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "patientId",
                 Dosage = 77,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.AwaitingBloodWork,
                 IssueFrequency = IssueFrequency.Weekly
             };
@@ -151,8 +151,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenSendingBloodTestTimeUpdateNotification()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescripton = new Prescription
             {
@@ -160,8 +160,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "patientId",
                 Dosage = 77,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.AwaitingBloodWork,
                 IssueFrequency = IssueFrequency.Weekly
             };
@@ -171,7 +171,7 @@ namespace AADWebAppTests.Services
                 Id = 1,
                 PrescriptionId = 1,
                 BloodTestId = 7,
-                AppointmentTime = TimeNow,
+                AppointmentTime = timeNow,
                 BloodTestStatus = BloodTestService.BloodTestRequestStatus.Pending
             };
 

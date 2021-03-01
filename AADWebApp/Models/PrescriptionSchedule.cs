@@ -12,7 +12,7 @@ namespace AADWebApp.Models
         public Prescription Prescription { get; set; }
 
         private Timer Timer { get; set; }
-        private int Occurances { get; set; }
+        private int Occurrences { get; set; }
         private double Interval { get; set; }
 
         private readonly IServiceProvider _serviceProvider;
@@ -35,18 +35,18 @@ namespace AADWebApp.Models
                 _ => TimeSpan.FromDays(60).TotalMilliseconds
             };
 
-            Occurances = (int) (prescriptionDuration.TotalMilliseconds / Interval);
+            Occurrences = (int) (prescriptionDuration.TotalMilliseconds / Interval);
 
             CreateTimer();
         }
 
         private void CreateTimer()
         {
-            if (Occurances > 0)
+            if (Occurrences > 0)
             {
-                Occurances--;
+                Occurrences--;
                 Timer = new Timer(Interval); //Timer duration in Milliseconds
-                Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurances, Interval); };
+                Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurrences, Interval); };
                 Timer.Start();
                 Console.WriteLine("Schedule for prescription " + Prescription.Id + " started");
             }

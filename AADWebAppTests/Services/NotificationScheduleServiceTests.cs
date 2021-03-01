@@ -37,10 +37,10 @@ namespace AADWebAppTests.Services
         {
             AssertPrescriptionScheduleListContainsXSchedules(0);
 
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
-            CreatePrescriptionSchedule(1, 1, "patientId", 77, TimeNow, TimeTomorrow, PrescriptionStatus.PendingApproval);
+            CreatePrescriptionSchedule(1, 1, "patientId", 77, timeNow, timeTomorrow, PrescriptionStatus.PendingApproval);
 
             Prescription prescription = new Prescription
             {
@@ -48,8 +48,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "patientId",
                 Dosage = 77,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.PendingApproval
             };
 
@@ -95,17 +95,17 @@ namespace AADWebAppTests.Services
             AssertPrescriptionScheduleListContainsXSchedules(0);
         }
 
-        private bool CreatePrescriptionSchedule(short Id, short MedicationId, string PatientId, int Dosage, DateTime TimeNow, DateTime TimeTomorrow, PrescriptionStatus PrescriptionStatus)
+        private bool CreatePrescriptionSchedule(short id, short medicationId, string patientId, int dosage, DateTime timeNow, DateTime timeTomorrow, PrescriptionStatus prescriptionStatus)
         {
             Prescription prescription = new Prescription
             {
-                Id = Id,
-                MedicationId = MedicationId,
-                PatientId = PatientId,
-                Dosage = Dosage,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
-                PrescriptionStatus = PrescriptionStatus
+                Id = id,
+                MedicationId = medicationId,
+                PatientId = patientId,
+                Dosage = dosage,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
+                PrescriptionStatus = prescriptionStatus
             };
 
             var result = _notificationScheduleService.CreatePrescriptionSchedule(prescription);

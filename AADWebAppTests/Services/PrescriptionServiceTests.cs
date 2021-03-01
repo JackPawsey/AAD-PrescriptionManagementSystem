@@ -68,8 +68,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenGettingPrescriptions()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             AssertPrescriptionsTableContainsXRows(0);
 
@@ -82,8 +82,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 1,
                     PatientId = "patientId",
                     Dosage = 77,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.Weekly
                 },
@@ -93,8 +93,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 2,
                     PatientId = "patientId",
                     Dosage = 88,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.BiWeekly
                 },
@@ -104,8 +104,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 3,
                     PatientId = "patientId",
                     Dosage = 99,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.Monthly
                 }
@@ -117,13 +117,13 @@ namespace AADWebAppTests.Services
             var singleSerialised = Serialize(singleExpected);
 
             // Add prescriptions
-            var affectedRows1 = _prescriptionService.CreatePrescription(1, "patientId", 77, TimeNow, TimeTomorrow, IssueFrequency.Weekly);
+            var affectedRows1 = _prescriptionService.CreatePrescription(1, "patientId", 77, timeNow, timeTomorrow, IssueFrequency.Weekly);
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, TimeNow, TimeTomorrow, IssueFrequency.BiWeekly);
+            var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, timeNow, timeTomorrow, IssueFrequency.BiWeekly);
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, TimeNow, TimeTomorrow, IssueFrequency.Monthly);
+            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, timeNow, timeTomorrow, IssueFrequency.Monthly);
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -156,8 +156,8 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenGettingPrescriptionsByPatientId()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             AssertPrescriptionsTableContainsXRows(0);
 
@@ -170,8 +170,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 1,
                     PatientId = "patientId2",
                     Dosage = 77,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.Weekly
                 },
@@ -181,8 +181,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 2,
                     PatientId = "patientId",
                     Dosage = 88,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.BiWeekly
                 },
@@ -192,8 +192,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 3,
                     PatientId = "patientId",
                     Dosage = 99,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.Monthly
                 }
@@ -209,8 +209,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 1,
                     PatientId = "patientId2",
                     Dosage = 77,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.PendingApproval,
                     IssueFrequency = IssueFrequency.Weekly
                 }
@@ -219,13 +219,13 @@ namespace AADWebAppTests.Services
             var singleExpectedSerialised = Serialize(singleExpected);
 
             // Add prescriptions
-            var affectedRows1 = _prescriptionService.CreatePrescription(1, "patientId2", 77, TimeNow, TimeTomorrow, IssueFrequency.Weekly);
+            var affectedRows1 = _prescriptionService.CreatePrescription(1, "patientId2", 77, timeNow, timeTomorrow, IssueFrequency.Weekly);
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, TimeNow, TimeTomorrow, IssueFrequency.BiWeekly);
+            var affectedRows2 = _prescriptionService.CreatePrescription(2, "patientId", 88, timeNow, timeTomorrow, IssueFrequency.BiWeekly);
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, TimeNow, TimeTomorrow, IssueFrequency.Monthly);
+            var affectedRows3 = _prescriptionService.CreatePrescription(3, "patientId", 99, timeNow, timeTomorrow, IssueFrequency.Monthly);
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -258,13 +258,13 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenSettingPrescriptionStatusItIsUpdated()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             AssertPrescriptionsTableContainsXRows(0);
 
             // Prep expected
-            var originalExpected = AddPrescription(1, "patientId", 99, TimeNow, TimeTomorrow, IssueFrequency.Monthly);
+            var originalExpected = AddPrescription(1, "patientId", 99, timeNow, timeTomorrow, IssueFrequency.Monthly);
 
             IEnumerable<Prescription> expectedAfterUpdate = new List<Prescription>
             {
@@ -274,8 +274,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 1,
                     PatientId = "patientId",
                     Dosage = 99,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.Approved,
                     IssueFrequency = IssueFrequency.Monthly
                 }
@@ -304,13 +304,13 @@ namespace AADWebAppTests.Services
         [TestMethod]
         public void WhenCancellingPrescriptionItIsUpdated()
         {
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             AssertPrescriptionsTableContainsXRows(0);
 
             // Prep expected
-            var originalExpected = AddPrescription(1, "patientId", 99, TimeNow, TimeTomorrow, IssueFrequency.Monthly);
+            var originalExpected = AddPrescription(1, "patientId", 99, timeNow, timeTomorrow, IssueFrequency.Monthly);
 
             IEnumerable<Prescription> expectedAfterUpdate = new List<Prescription>
             {
@@ -320,8 +320,8 @@ namespace AADWebAppTests.Services
                     MedicationId = 1,
                     PatientId = "patientId",
                     Dosage = 99,
-                    DateStart = TimeNow,
-                    DateEnd = TimeTomorrow,
+                    DateStart = timeNow,
+                    DateEnd = timeTomorrow,
                     PrescriptionStatus = PrescriptionStatus.Terminated,
                     IssueFrequency = IssueFrequency.Monthly
                 }

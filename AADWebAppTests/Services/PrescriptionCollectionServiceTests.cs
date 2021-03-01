@@ -185,8 +185,8 @@ namespace AADWebAppTests.Services
             Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
 
             // Update
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescription = new Prescription
             {
@@ -194,8 +194,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 99,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.Approved,
                 IssueFrequency = IssueFrequency.Monthly
             };
@@ -251,8 +251,8 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(originalExpectedSerialised, updatedExpectedSerialised);
 
             // Update
-            var TimeNow = DateTime.Now;
-            var TimeTomorrow = DateTime.Now.AddDays(1);
+            var timeNow = DateTime.Now;
+            var timeTomorrow = DateTime.Now.AddDays(1);
 
             Prescription prescription = new Prescription
             {
@@ -260,8 +260,8 @@ namespace AADWebAppTests.Services
                 MedicationId = 1,
                 PatientId = "1",
                 Dosage = 99,
-                DateStart = TimeNow,
-                DateEnd = TimeTomorrow,
+                DateStart = timeNow,
+                DateEnd = timeTomorrow,
                 PrescriptionStatus = PrescriptionStatus.Approved,
                 IssueFrequency = IssueFrequency.Monthly
             };
