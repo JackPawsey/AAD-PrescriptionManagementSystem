@@ -11,13 +11,18 @@ namespace AADWebApp.Services
     {
         private readonly IDatabaseService _databaseService;
         private readonly INotificationService _notificationService;
-        //private readonly IPrescriptionService _prescriptionService;
+
+        public enum BloodTestRequestStatus
+        {
+            Pending,
+            Complete,
+            Cancelled
+        }
 
         public BloodTestService(IDatabaseService databaseService, INotificationService notificationService)
         {
             _databaseService = databaseService;
             _notificationService = notificationService;
-            //_prescriptionService = prescriptionService;
         }
 
         public IEnumerable<BloodTest> GetBloodTests(short? id = null)
@@ -121,7 +126,7 @@ namespace AADWebApp.Services
             await _notificationService.SendBloodTestRequestNotification(prescription, bloodTest, DateTime.Now, appointmentTime);
 
             //CREATE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime) VALUES ('{prescription.Id}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}', '{BloodTestRequestStatus.Pending}')");
         }
 
         public async Task<int> SetBloodTestDateTimeAsync(Prescription prescription, int bloodTestRequestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
@@ -144,12 +149,20 @@ namespace AADWebApp.Services
             return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
         }
 
-        public int DeleteBloodTestRequest(int id)
+        public int SetBloodTestRequestStatus(int id, BloodTestRequestStatus bloodTestRequestStatus)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //DELETE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"DELETE FROM BloodTestRequests WHERE Id = '{id}'");
+            //UPDATE BloodTestRequests TABLE ROW
+            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET BloodTestStatus = '{bloodTestRequestStatus}' WHERE Id = '{id}'");
+        }
+
+        public int CancelBloodTestRequest(int id)
+        {
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
+            //UPDATE BloodTestRequests TABLE ROW
+            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET BloodTestStatus = '{BloodTestRequestStatus.Cancelled}' WHERE Id = '{id}'");
         }
     }
 }

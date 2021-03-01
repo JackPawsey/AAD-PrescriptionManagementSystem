@@ -6,6 +6,7 @@ using AADWebApp.Models;
 using AADWebApp.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using static AADWebApp.Services.BloodTestService;
 using static AADWebApp.Services.DatabaseService;
 using static AADWebApp.Services.PrescriptionService;
 
@@ -139,21 +140,24 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow
+                    AppointmentTime = TimeNow,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
                 {
                     Id = 2,
                     PrescriptionId = 2,
                     BloodTestId = 3,
-                    AppointmentTime = TimeNow
+                    AppointmentTime = TimeNow,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
                 {
                     Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow
+                    AppointmentTime = TimeNow,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
 
@@ -164,14 +168,16 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow
+                    AppointmentTime = TimeNow,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
                 {
                     Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = TimeNow
+                    AppointmentTime = TimeNow,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
 
@@ -182,7 +188,8 @@ namespace AADWebAppTests.Services
                     Id = 2,
                     PrescriptionId = 2,
                     BloodTestId = 3,
-                    AppointmentTime = TimeNow
+                    AppointmentTime = TimeNow,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
 
@@ -290,7 +297,8 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = initialTime
+                    AppointmentTime = initialTime,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
 
@@ -303,7 +311,8 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = updatedTime
+                    AppointmentTime = updatedTime,
+                    BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
 
@@ -441,9 +450,9 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expected1Serialised, afterResultResultsByIdSerialised);
         }
 
-        // DeleteBloodTestRequest test method
+        // CancelBloodTestRequest test method
         [TestMethod]
-        public void WhenDeleteingBloodTestRequest()
+        public void WhenCancellingBloodTestRequest()
         {
             // Check prior to any setup - via the database
             var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
@@ -471,13 +480,12 @@ namespace AADWebAppTests.Services
             var afterInsertRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
             Assert.IsTrue(afterInsertRows == 1);
 
-            var result = _bloodTestService.DeleteBloodTestRequest(1);
+            var result = _bloodTestService.CancelBloodTestRequest(1);
             Assert.AreEqual(result, 1);
 
-            // Check row was deleted
-            var afterDeleteRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(afterDeleteRows == 0);
-
+            //Check that the blood test request has been cancelled
+            var result2 = _bloodTestService.GetBloodTestRequests(1).ElementAt(0);
+            Assert.AreEqual(result2.BloodTestStatus, BloodTestRequestStatus.Cancelled); // this doesnt work but should
         }
     }
 }

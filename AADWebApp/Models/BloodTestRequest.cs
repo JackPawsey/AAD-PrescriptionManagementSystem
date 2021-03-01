@@ -1,4 +1,5 @@
 ﻿using System;
+using static AADWebApp.Services.BloodTestService;
 
 namespace AADWebApp.Models
 {
@@ -8,5 +9,6 @@ namespace AADWebApp.Models
         public int PrescriptionId { get; set; }
         public int BloodTestId { get; set; }
         public DateTime AppointmentTime { get; set; }
+        public BloodTestRequestStatus BloodTestStatus { get; set; }
     }
 }

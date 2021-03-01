@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AADWebApp.Models;
+using static AADWebApp.Services.BloodTestService;
 
 namespace AADWebApp.Interfaces
 {
@@ -14,6 +15,7 @@ namespace AADWebApp.Interfaces
         public Task<int> RequestBloodTestAsync(Prescription prescription, int bloodTestId, DateTime appointmentTime);
         public Task<int> SetBloodTestDateTimeAsync(Prescription prescription, int bloodTestRequestId, DateTime appointmentTime);
         public int SetBloodTestResults(int bloodRequestTestId, bool result, DateTime resultTime);
-        public int DeleteBloodTestRequest(int id);
+        public int SetBloodTestRequestStatus(int id, BloodTestRequestStatus bloodTestRequestStatus);
+        public int CancelBloodTestRequest(int id);
     }
 }

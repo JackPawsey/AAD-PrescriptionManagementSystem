@@ -131,7 +131,7 @@ namespace AADWebApp.Services
 
             foreach (var bloodTestRequest in bloodTestRequests)
             {
-                _bloodTestService.DeleteBloodTestRequest(bloodTestRequest.Id); // Delete bloodTestRequests for this prescription (would be better to set a status)
+                _bloodTestService.CancelBloodTestRequest(bloodTestRequest.Id); // Delete bloodTestRequests for this prescription (would be better to set a status)
             }
 
             await _notificationService.SendCancellationNotification(prescription, DateTime.Now); // Send notifcation to patient
