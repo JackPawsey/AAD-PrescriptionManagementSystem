@@ -6,6 +6,7 @@ using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 using Microsoft.AspNetCore.Identity;
+using static AADWebApp.Services.PatientService;
 
 namespace AADWebApp.Services
 {
@@ -34,17 +35,19 @@ namespace AADWebApp.Services
             var medication = GetMediciationRecord(prescription.MedicationId);
             var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
 
-            switch (patient.CommunicationPreferences.ToString())
+            switch (patient.CommunicationPreferences)
             {
-                case "Email":
+                case CommunicationPreferences.Email:
                     return SendPrescriptionEmail(patientAccount, medication, prescription, occurances, nextCollectionTime);
-                case "SMS":
+                case CommunicationPreferences.Sms:
                     return SendPrescriptionSms(patientAccount, medication, prescription, occurances, nextCollectionTime);
-                default:
+                case CommunicationPreferences.Both:
                     var result1 =  SendPrescriptionEmail(patientAccount, medication, prescription, occurances, nextCollectionTime);
                     var result2 = SendPrescriptionSms(patientAccount, medication, prescription, occurances, nextCollectionTime);
 
-                    return result1 & result2 ? true : false;
+                    return result1 & result2;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -77,17 +80,19 @@ namespace AADWebApp.Services
             var medication = GetMediciationRecord(prescription.MedicationId);
             var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
 
-            switch (patient.CommunicationPreferences.ToString())
+            switch (patient.CommunicationPreferences)
             {
-                case "Email":
+                case CommunicationPreferences.Email:
                     return SendCollectionEmail(patientAccount, medication, prescription, collectionTime);
-                case "SMS":
+                case CommunicationPreferences.Sms:
                     return SendCollectionSms(patientAccount, medication, prescription, collectionTime);
-                default:
+                case CommunicationPreferences.Both:
                     var result1 = SendCollectionEmail(patientAccount, medication, prescription, collectionTime);
                     var result2 = SendCollectionSms(patientAccount, medication, prescription, collectionTime);
 
-                    return result1 & result2 ? true : false;
+                    return result1 & result2;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -118,17 +123,19 @@ namespace AADWebApp.Services
             var medication = GetMediciationRecord(prescription.MedicationId);
             var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
 
-            switch (patient.CommunicationPreferences.ToString())
+            switch (patient.CommunicationPreferences)
             {
-                case "Email":
+                case CommunicationPreferences.Email:
                     return SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
-                case "SMS":
+                case CommunicationPreferences.Sms:
                     return SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
-                default:
+                case CommunicationPreferences.Both:
                     var result1 = SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
                     var result2 = SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
 
-                    return result1 & result2 ? true : false;
+                    return result1 & result2;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         private bool SendCancellationEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
@@ -158,17 +165,19 @@ namespace AADWebApp.Services
             var medication = GetMediciationRecord(prescription.MedicationId);
             var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
 
-            switch (patient.CommunicationPreferences.ToString())
+            switch (patient.CommunicationPreferences)
             {
-                case "Email":
+                case CommunicationPreferences.Email:
                     return SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
-                case "SMS":
+                case CommunicationPreferences.Sms:
                     return SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
-                default:
+                case CommunicationPreferences.Both:
                     var result1 = SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
                     var result2 = SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
 
-                    return result1 & result2 ? true : false;
+                    return result1 & result2;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -201,17 +210,19 @@ namespace AADWebApp.Services
             var medication = GetMediciationRecord(prescription.MedicationId);
             var patientAccount = await _userManager.FindByIdAsync(prescription.PatientId);
 
-            switch (patient.CommunicationPreferences.ToString())
+            switch (patient.CommunicationPreferences)
             {
-                case "Email":
+                case CommunicationPreferences.Email:
                     return SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
-                case "SMS":
+                case CommunicationPreferences.Sms:
                     return SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
-                default:
+                case CommunicationPreferences.Both:
                     var result1 = SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
                     var result2 = SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
 
-                    return result1 & result2 ? true : false;
+                    return result1 & result2;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
