@@ -99,9 +99,6 @@ namespace AADWebAppTests.Services
 
             IEnumerable<PrescriptionCollection> singleExpected = allExpected.ToList().Where(p => p.Id == 2);
 
-            var allExpectedSerialised = Serialize(allExpected);
-            var singleSerialised = Serialize(singleExpected);
-
             // Add prescription collections
             var affectedRows1 = _prescriptionCollectionService.CreatePrescriptionCollection(1, CollectionStatus.BeingPrepared, now);
             Assert.AreEqual(1, affectedRows1);
@@ -118,17 +115,36 @@ namespace AADWebAppTests.Services
 
             // Check results - get prescription collections with no id
             var afterCreateResults = _prescriptionCollectionService.GetPrescriptionCollections();
-            var afterCreateResultsSerialised = Serialize(afterCreateResults);
+            var afterCreateResultsList = afterCreateResults.ToList();
 
-            Assert.IsTrue(afterCreateResults.Count() == 3);
-            Assert.AreEqual(allExpectedSerialised, afterCreateResultsSerialised);
+            Assert.IsTrue(afterCreateResultsList.Count() == 3);
 
+            for (var i = 0; i < afterCreateResultsList.Count(); i++)
+            {
+                Assert.AreEqual(allExpected.ElementAt(i).Id, afterCreateResultsList.ElementAt(i).Id);
+                Assert.AreEqual(allExpected.ElementAt(i).PrescriptionId, afterCreateResultsList.ElementAt(i).PrescriptionId);
+                Assert.AreEqual(allExpected.ElementAt(i).CollectionStatus, afterCreateResultsList.ElementAt(i).CollectionStatus);
+                Assert.IsFalse(allExpected.ElementAt(i).CollectionStatusUpdated.Equals(afterCreateResultsList.ElementAt(i).CollectionStatusUpdated));
+                Assert.IsTrue(allExpected.ElementAt(i).CollectionStatusUpdated - afterCreateResultsList.ElementAt(i).CollectionStatusUpdated > TimeSpan.Zero);
+                Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortDateString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortDateString());
+                Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortTimeString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortTimeString());
+
+            }
+            
             // Check results - get prescription collections with valid id
             var afterCreateResultsByValidId = _prescriptionCollectionService.GetPrescriptionCollections(2);
-            var afterCreateResultsByValidIdSerialised = Serialize(afterCreateResultsByValidId);
+            var afterCreateResultsByValidIdList = afterCreateResultsByValidId.ToList();
+            
+            Assert.IsTrue(afterCreateResultsByValidIdList.Count() == 1);
 
-            Assert.IsTrue(afterCreateResultsByValidId.Count() == 1);
-            Assert.AreEqual(singleSerialised, afterCreateResultsByValidIdSerialised);
+            var prescriptionCollections = singleExpected.ToList();
+            Assert.AreEqual(prescriptionCollections.ElementAt(0).Id, afterCreateResultsByValidIdList.ElementAt(0).Id);
+            Assert.AreEqual(prescriptionCollections.ElementAt(0).PrescriptionId, afterCreateResultsByValidIdList.ElementAt(0).PrescriptionId);
+            Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionStatus, afterCreateResultsByValidIdList.ElementAt(0).CollectionStatus);
+            Assert.IsFalse(prescriptionCollections.ElementAt(0).CollectionStatusUpdated.Equals(afterCreateResultsByValidIdList.ElementAt(0).CollectionStatusUpdated));
+            Assert.IsTrue(prescriptionCollections.ElementAt(0).CollectionStatusUpdated - afterCreateResultsByValidIdList.ElementAt(0).CollectionStatusUpdated > TimeSpan.Zero);
+            Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionTime.ToShortDateString(), afterCreateResultsByValidIdList.ElementAt(0).CollectionTime.ToShortDateString());
+            Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionTime.ToShortTimeString(), afterCreateResultsByValidIdList.ElementAt(0).CollectionTime.ToShortTimeString());
 
             // Check results - get prescription collections with invalid id
             var afterCreateResultsByInvalidId = _prescriptionCollectionService.GetPrescriptionCollections(99);
@@ -203,6 +219,64 @@ namespace AADWebAppTests.Services
             Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
             Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
             Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+        }
+        
+        [TestMethod]
+        public void WhenSettingAnInvalidPrescriptionCollectionTimeItIsNotUpdated()
+        {
+            var now = DateTime.Now;
+            var updatedTime = now.AddDays(-1);
+
+            AssertPrescriptionCollectionTableContainsXRows(0);
+
+            // Prep expected
+            var originalExpected = AddPrescriptionCollection(1, CollectionStatus.BeingPrepared, now, now);
+
+            IEnumerable<PrescriptionCollection> expectedAfterUpdate = new List<PrescriptionCollection>
+            {
+                new PrescriptionCollection
+                {
+                    Id = 1,
+                    PrescriptionId = 1,
+                    CollectionStatus = CollectionStatus.BeingPrepared,
+                    CollectionStatusUpdated = now,
+                    CollectionTime = now
+                }
+            };
+
+            var originalExpectedSerialised = Serialize(originalExpected);
+            var updatedExpectedSerialised = Serialize(expectedAfterUpdate);
+
+            // Make sure they're the same, as we shouldn't expect an update
+            Assert.AreEqual(originalExpectedSerialised, updatedExpectedSerialised);
+
+            // Update
+            var TimeNow = DateTime.Now;
+            var TimeTomorrow = DateTime.Now.AddDays(1);
+
+            Prescription prescription = new Prescription
+            {
+                Id = 1,
+                MedicationId = 1,
+                PatientId = "1",
+                Dosage = 99,
+                DateStart = TimeNow,
+                DateEnd = TimeTomorrow,
+                PrescriptionStatus = PrescriptionStatus.Approved,
+                IssueFrequency = IssueFrequency.Monthly
+            };
+
+            var affectedRows = _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, updatedTime).Result;
+            Assert.AreEqual(-1, affectedRows);
+
+            // Check there's one database row
+            AssertPrescriptionCollectionTableContainsXRows(1);
+
+            // Check results via get prescription collections with id
+            var afterUpdateResults = _prescriptionCollectionService.GetPrescriptionCollections(1);
+            var afterUpdateResultsSerialised = Serialize(afterUpdateResults);
+            
+            Assert.AreEqual(originalExpectedSerialised, afterUpdateResultsSerialised);
         }
 
         [TestMethod]

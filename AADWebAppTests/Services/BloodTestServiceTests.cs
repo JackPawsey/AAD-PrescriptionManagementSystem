@@ -381,6 +381,13 @@ namespace AADWebAppTests.Services
 
             _bloodTestService.RequestBloodTestAsync(prescription, 1, TimeNow);
             _bloodTestService.RequestBloodTestAsync(prescription, 2, TimeNow);
+            
+            // Check the blood test requests have been set to complete
+            var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
+            var beforeBloodTestRequestsList = beforeBloodTestRequests.ToList();
+            
+            Assert.AreEqual(BloodTestRequestStatus.Pending, beforeBloodTestRequestsList.ElementAt(0).BloodTestStatus);
+            Assert.AreEqual(BloodTestRequestStatus.Pending, beforeBloodTestRequestsList.ElementAt(1).BloodTestStatus);
 
             // Begin actual test
             var beforeResultResults = _bloodTestService.GetBloodTestResults().ToList();
@@ -448,6 +455,53 @@ namespace AADWebAppTests.Services
 
             Assert.IsTrue(afterResultResultsById.Count() == 1);
             Assert.AreEqual(expected1Serialised, afterResultResultsByIdSerialised);
+
+            // Check the blood test requests have been set to complete
+            var afterBloodTestRequests = _bloodTestService.GetBloodTestRequests();
+            var afterBloodTestRequestsList = afterBloodTestRequests.ToList();
+            
+            Assert.AreEqual(BloodTestRequestStatus.Complete, afterBloodTestRequestsList.ElementAt(0).BloodTestStatus);
+            Assert.AreEqual(BloodTestRequestStatus.Complete, afterBloodTestRequestsList.ElementAt(1).BloodTestStatus);
+        }
+
+        [TestMethod]
+        public void WhenSettingAnBloodTestRequestStatusTheRowIsUpdated()
+        {
+            // Check prior to any setup - via the database
+            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
+            Assert.IsTrue(preSetupRows == 0);
+
+            // Prerequisite setup
+            var TimeNow = DateTime.Now;
+            var TimeTomorrow = DateTime.Now.AddDays(1);
+
+            Prescription prescription = new Prescription
+            {
+                Id = 1,
+                MedicationId = 1,
+                PatientId = "1",
+                Dosage = 1,
+                DateStart = TimeNow,
+                DateEnd = TimeTomorrow,
+                PrescriptionStatus = PrescriptionStatus.Approved,
+                IssueFrequency = IssueFrequency.Monthly
+            };
+
+            _bloodTestService.RequestBloodTestAsync(prescription, 1, TimeNow);
+            
+            // Check the blood test requests have been set to complete
+            var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
+            
+            Assert.AreEqual(BloodTestRequestStatus.Pending, beforeBloodTestRequests.ElementAt(0).BloodTestStatus);
+            
+            // Update the status
+            var result = _bloodTestService.SetBloodTestRequestStatus(1, BloodTestRequestStatus.Cancelled);
+            Assert.AreEqual(1, result);
+
+            // Assert value is updated
+            var afterBloodTestRequests = _bloodTestService.GetBloodTestRequests();
+            
+            Assert.AreEqual(BloodTestRequestStatus.Cancelled, afterBloodTestRequests.ElementAt(0).BloodTestStatus);
         }
 
         // CancelBloodTestRequest test method
