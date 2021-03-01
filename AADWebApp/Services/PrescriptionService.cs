@@ -143,15 +143,23 @@ namespace AADWebApp.Services
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            if (prescriptionStatus.ToString().Equals("Approved"))
+            var prescription = GetPrescriptions((short?) id).ElementAt(0);
+
+            if (prescription.PrescriptionStatus.Equals(PrescriptionStatus.Approved))
             {
-                var prescription = GetPrescriptions((short?) id);
-
-                _notificationScheduleService.CreatePrescriptionSchedule(prescription.ElementAt(0)); // Start PrescriptionSchedule when prescription is approved
+                //UPDATE prescriptions TABLE ROW prescription_status COLUMN
+                return _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
             }
+            else
+            {
+                if (prescriptionStatus.Equals(PrescriptionStatus.Approved))
+                {
+                    _notificationScheduleService.CreatePrescriptionSchedule(prescription); // Start PrescriptionSchedule when prescription is approved
+                }
 
-            //UPDATE prescriptions TABLE ROW prescription_status COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
+                //UPDATE prescriptions TABLE ROW prescription_status COLUMN
+                return _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
+            }
         }
     }
 }
