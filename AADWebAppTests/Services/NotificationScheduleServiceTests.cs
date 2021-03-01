@@ -18,12 +18,6 @@ namespace AADWebAppTests.Services
             _notificationScheduleService = Get<INotificationScheduleService>();
         }
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            // None required
-        }
-
         [TestCleanup]
         public void TestCleanup()
         {
