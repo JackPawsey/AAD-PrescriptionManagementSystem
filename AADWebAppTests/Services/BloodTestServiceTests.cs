@@ -440,5 +440,44 @@ namespace AADWebAppTests.Services
             Assert.IsTrue(afterResultResultsById.Count() == 1);
             Assert.AreEqual(expected1Serialised, afterResultResultsByIdSerialised);
         }
+
+        // DeleteBloodTestRequest test method
+        [TestMethod]
+        public void WhenDeleteingBloodTestRequest()
+        {
+            // Check prior to any setup - via the database
+            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
+            Assert.IsTrue(preSetupRows == 0);
+
+            // Prerequisite setup
+            var TimeNow = DateTime.Now;
+            var TimeTomorrow = DateTime.Now.AddDays(1);
+
+            Prescription prescription = new Prescription
+            {
+                Id = 1,
+                MedicationId = 1,
+                PatientId = "1",
+                Dosage = 1,
+                DateStart = TimeNow,
+                DateEnd = TimeTomorrow,
+                PrescriptionStatus = PrescriptionStatus.Approved,
+                IssueFrequency = IssueFrequency.Monthly
+            };
+
+            _bloodTestService.RequestBloodTestAsync(prescription, 1, TimeNow);
+
+            // Check row was inserted
+            var afterInsertRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
+            Assert.IsTrue(afterInsertRows == 1);
+
+            var result = _bloodTestService.DeleteBloodTestRequest(1);
+            Assert.AreEqual(result, 1);
+
+            // Check row was deleted
+            var afterDeleteRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
+            Assert.IsTrue(afterDeleteRows == 0);
+
+        }
     }
 }
