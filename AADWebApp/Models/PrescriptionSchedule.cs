@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using AADWebApp.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using static AADWebApp.Services.PrescriptionCollectionService;
 using static AADWebApp.Services.PrescriptionService.IssueFrequency;
 
 namespace AADWebApp.Models
@@ -61,22 +60,9 @@ namespace AADWebApp.Models
             Console.WriteLine("Prescription " + prescription.Id + " interval has been reached. " + occurrences + " occurrences remaining");
 
             var prescriptionCollectionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionCollectionService>();
-            
-            var result = prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?) prescription.Id);
-
-            PrescriptionCollection prescriptionCollection = null;
-
-            foreach (var item in result)
-            {
-                if (item.CollectionStatus != CollectionStatus.Collected)
-                {
-                    prescriptionCollection = item;
-                }
-            }
 
             var nextCollectionTime = DateTime.Now.AddMilliseconds(interval);
 
-            //await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescriptionCollection, nextCollectionTime);
             await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, nextCollectionTime);
 
             var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
