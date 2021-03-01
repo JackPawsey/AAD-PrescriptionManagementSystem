@@ -246,6 +246,56 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
         }
 
+        [TestMethod]
+        public void WhenCancellingPrescriptionCollectionItIsUpdated()
+        {
+            var now = DateTime.Now;
+
+            AssertPrescriptionCollectionTableContainsXRows(0);
+
+            // Prep expected
+            var originalExpected = AddPrescriptionCollection(1, CollectionStatus.BeingPrepared, now, now);
+
+            IEnumerable<PrescriptionCollection> expectedAfterUpdate = new List<PrescriptionCollection>
+            {
+                new PrescriptionCollection
+                {
+                    Id = 1,
+                    PrescriptionId = 1,
+                    CollectionStatus = CollectionStatus.Cancelled,
+                    CollectionStatusUpdated = now,
+                    CollectionTime = now
+                }
+            };
+
+            var originalExpectedSerialised = Serialize(originalExpected);
+            var updatedExpectedSerialised = Serialize(expectedAfterUpdate);
+
+            // Make sure they're not the same yet (as we haven't updated)
+            Assert.AreNotEqual(originalExpectedSerialised, updatedExpectedSerialised);
+
+            // Update
+            var affectedRows = _prescriptionCollectionService.CancelPrescriptionCollection(1);
+            Assert.AreEqual(1, affectedRows);
+
+            // Check there's one database row
+            AssertPrescriptionCollectionTableContainsXRows(1);
+
+            // Check results via GetPrescriptionCollections with id
+            var afterUpdateResults = _prescriptionCollectionService.GetPrescriptionCollections(1);
+
+            var expectedUpdatePrescription = expectedAfterUpdate.First(p => p.Id == 1);
+            var afterUpdatePrescription = afterUpdateResults.First(p => p.Id == 1);
+
+            Assert.AreEqual(expectedUpdatePrescription.Id, afterUpdatePrescription.Id);
+            Assert.AreEqual(expectedUpdatePrescription.PrescriptionId, afterUpdatePrescription.PrescriptionId);
+            Assert.AreEqual(expectedUpdatePrescription.CollectionStatus, afterUpdatePrescription.CollectionStatus);
+            Assert.IsFalse(expectedUpdatePrescription.CollectionStatusUpdated.Equals(afterUpdatePrescription.CollectionStatusUpdated));
+            Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
+            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
+            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+        }
+
         private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(int prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)
         {
             IEnumerable<PrescriptionCollection> expected = new List<PrescriptionCollection>
