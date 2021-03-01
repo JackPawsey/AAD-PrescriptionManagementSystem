@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 
@@ -12,14 +13,17 @@ namespace AADWebApp.Services
         {
             BeingPrepared,
             CollectionReady,
-            Collected
+            Collected,
+            Cancelled
         }
 
         private readonly IDatabaseService _databaseService;
+        private readonly INotificationService _notificationService;
 
-        public PrescriptionCollectionService(IDatabaseService databaseService)
+        public PrescriptionCollectionService(IDatabaseService databaseService, INotificationService notificationService)
         {
             _databaseService = databaseService;
+            _notificationService = notificationService;
         }
 
         public IEnumerable<PrescriptionCollection> GetPrescriptionCollections(short? id = null)
@@ -46,15 +50,47 @@ namespace AADWebApp.Services
             return prescriptionCollections.AsEnumerable();
         }
 
-        public int CreatePrescriptionCollection(int prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)
+        public IEnumerable<PrescriptionCollection> GetPrescriptionCollectionsByPrescriptionId(short? id = null)
+        {
+            var prescriptionCollections = new List<PrescriptionCollection>();
+
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
+            //GET PrescriptionCollections TABLE
+            using var result = _databaseService.RetrieveTable("PrescriptionCollections", "PrescriptionId", id);
+
+            while (result.Read())
+            {
+                prescriptionCollections.Add(new PrescriptionCollection
+                {
+                    Id = (short) result.GetValue(0),
+                    PrescriptionId = (short) result.GetValue(1),
+                    CollectionStatus = (CollectionStatus) Enum.Parse(typeof(CollectionStatus), result.GetValue(2).ToString() ?? throw new InvalidOperationException()),
+                    CollectionStatusUpdated = (DateTime) result.GetValue(3),
+                    CollectionTime = (DateTime) result.GetValue(4)
+                });
+            }
+
+            return prescriptionCollections.AsEnumerable();
+        }
+
+        public int CreatePrescriptionCollection(short prescriptionId, CollectionStatus collectionStatus, DateTime collectionTime)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //CREATE PrescriptionCollections TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO PrescriptionCollections (PrescriptionId, CollectionStatus, CollectionStatusUpdated, CollectionTime) VALUES ('{prescriptionId}', '{collectionStatus}', '{collectionStatusUpdated:yyyy-MM-dd HH:mm:ss}', '{collectionTime:yyyy-MM-dd HH:mm:ss}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO PrescriptionCollections (PrescriptionId, CollectionStatus, CollectionStatusUpdated, CollectionTime) VALUES ('{prescriptionId}', '{collectionStatus}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{collectionTime:yyyy-MM-dd HH:mm:ss}')");
         }
 
-        public int SetPrescriptionCollectionStatus(int id, CollectionStatus collectionStatus)
+        public int CancelPrescriptionCollection(short id)
+        {
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
+            //UPDATE PrescriptionCollections TABLE ROW
+            return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{CollectionStatus.Cancelled}' WHERE Id = '{id}'");
+        }
+
+        public int SetPrescriptionCollectionStatus(short id, CollectionStatus collectionStatus)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
@@ -62,12 +98,21 @@ namespace AADWebApp.Services
             return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{collectionStatus}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
         }
 
-        public int SetPrescriptionCollectionTime(int id, DateTime collectionTime)
+        public async Task<int> SetPrescriptionCollectionTimeAsync(Prescription prescription, DateTime collectionTime)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            //UPDATE prescription_collections TABLE ROW collection_time
-            return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionTime = '{collectionTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+            if (collectionTime > prescription.DateStart && collectionTime < prescription.DateEnd)
+            {
+                await _notificationService.SendCollectionTimeNotification(prescription, collectionTime);
+
+                var prescriptionCollection = GetPrescriptionCollectionsByPrescriptionId(prescription.Id).ElementAt(0);
+
+                //UPDATE prescription_collections TABLE ROW collection_time
+                return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionTime = '{collectionTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{prescriptionCollection.Id}'");
+            }
+
+            return -1;
         }
     }
 }

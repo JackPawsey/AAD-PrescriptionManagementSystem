@@ -1,5 +1,6 @@
 using AADWebApp.Resolver;
 using AADWebApp.Interfaces;
+using AADWebApp.Models;
 using AADWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,10 @@ namespace AADWebApp
                     .AddRazorRuntimeCompilation();
 
             // Add services
+            services.AddSingleton<INotificationScheduleService, NotificationScheduleService>();
+
+            services.AddScoped<INotificationService, NotificationService>();
+
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ISendSmsService, SendSmsService>();
             services.AddTransient<IBloodTestService, BloodTestService>();
@@ -40,6 +45,7 @@ namespace AADWebApp
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPrescriptionService, PrescriptionService>();
             services.AddTransient<IPrescriptionCollectionService, PrescriptionCollectionService>();
+            services.AddTransient<IPrescriptionSchedule, PrescriptionSchedule>();
             services.AddTransient<IDatabaseNameResolver, DatabaseNameResolver>();
             services.AddTransient<IDatabaseService, DatabaseService>(serviceProvider =>
                 new DatabaseService(

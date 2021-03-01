@@ -113,7 +113,7 @@ namespace AADWebApp.Services
             }
             catch (SqlException ex)
             {
-                if (ex.Number == 2601 || ex.Number == 2627) return -1;
+                if (ex.Number == 547 || ex.Number == 2601 || ex.Number == 2627) return -1;
                 throw;
             }
         }

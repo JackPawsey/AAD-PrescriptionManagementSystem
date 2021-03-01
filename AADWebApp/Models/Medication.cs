@@ -2,7 +2,7 @@
 {
     public class Medication
     {
-        public int Id { get; set; }
+        public short Id { get; set; }
         public string MedicationName { get; set; }
         public int? BloodWorkRestrictionLevel { get; set; }
     }

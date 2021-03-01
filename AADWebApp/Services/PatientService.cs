@@ -49,7 +49,7 @@ namespace AADWebApp.Services
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            return _databaseService.ExecuteNonQuery($"UPDATE Patients SET CommunicationPreferences = '{(short) communicationPreferences}' WHERE Id = '{patientId}'");
+            return _databaseService.ExecuteNonQuery($"UPDATE Patients SET CommunicationPreferences = '{communicationPreferences}' WHERE Id = '{patientId}'");
         }
 
         public int UpdateGeneralPractitioner(string patientId, string generalPractitionerName)
@@ -63,7 +63,7 @@ namespace AADWebApp.Services
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            return _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('{patientId}', '{(short) communicationPreferences}', '{nhsNumber}', '{generalPractitionerName}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('{patientId}', '{communicationPreferences}', '{nhsNumber}', '{generalPractitionerName}')");
         }
 
         public int DeletePatient(string patientId)

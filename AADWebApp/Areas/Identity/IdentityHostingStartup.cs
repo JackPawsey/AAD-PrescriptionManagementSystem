@@ -23,7 +23,7 @@ namespace AADWebApp.Areas.Identity
                     rdsConfiguration.GetValue<string>("RdsName"),
                     rdsConfiguration.GetValue<string>("Username"),
                     rdsConfiguration.GetValue<string>("Password"));
-    
+
                 services.AddDbContext<AuthDbContext>(options =>
                     options.UseSqlServer(sqlConnectionString));
 
