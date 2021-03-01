@@ -68,7 +68,7 @@
                             <input asp-for="UserId" value="@user.Id" type="hidden">
                             <div class="d-flex">
                                 <div class="w-100 d-flex mr-2">
-                                    <input type="submit" asp-page-handler="IssuePasswordReset" value="Issue password reset" asp class="btn btn-warning w-100" onclick="return confirm('Are you sure you want to issue a password reset for user: @user.UserName?')" />
+                                    <input type="submit" asp-page-handler="IssuePasswordReset" value="Issue password reset" asp class="btn btn-warning" onclick="return confirm('Are you sure you want to issue a password reset for user: @user.UserName?')" />
                                 </div>
                                 <input type="submit" asp-page-handler="DeleteUser" value="Delete" asp class="btn btn-danger" onclick="return confirm('Are you sure you want to delete user: @user.UserName?')" />
                             </div>
