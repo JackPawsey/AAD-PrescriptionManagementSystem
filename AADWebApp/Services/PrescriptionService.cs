@@ -96,7 +96,7 @@ namespace AADWebApp.Services
             return prescriptions.AsEnumerable();
         }
 
-        public int CreatePrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, IssueFrequency issueFrequency)
+        public int CreatePrescription(short medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, IssueFrequency issueFrequency)
         {
             if (dateStart < dateEnd) // CHECK THAT dateEnd IS AFTER dateStart
             {
@@ -111,23 +111,23 @@ namespace AADWebApp.Services
             }
         }
 
-        public async Task<int> CancelPrescriptionAsync(int id)
+        public async Task<int> CancelPrescriptionAsync(short id)
         {
-            var prescription = GetPrescriptions((short?) id).ElementAt(0);
+            var prescription = GetPrescriptions(id).ElementAt(0);
 
             if (prescription.PrescriptionStatus.ToString().Equals("Approved"))
             {
                 _notificationScheduleService.CancelPrescriptionSchedule(id); // Cancel PrescriptionSchedule when prescription is cancelled and its has been approved
             }
 
-            var prescriptions = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?) id);
+            var prescriptions = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId(id);
 
             foreach (var item in prescriptions)
             {
                 _prescriptionCollectionService.CancelPrescriptionCollection(item.Id); // Set any PrescriptionCollections to Cancelled
             }
 
-            var bloodTestRequests = _bloodTestService.GetBloodTestRequests((short?) id);
+            var bloodTestRequests = _bloodTestService.GetBloodTestRequests(id);
 
             foreach (var bloodTestRequest in bloodTestRequests)
             {
@@ -139,11 +139,11 @@ namespace AADWebApp.Services
             return SetPrescriptionStatus(id, PrescriptionStatus.Terminated);
         }
 
-        public int SetPrescriptionStatus(int id, PrescriptionStatus prescriptionStatus) // Setting an already approved prescription to 'Approved' will restart is presriptionSchedule!
+        public int SetPrescriptionStatus(short id, PrescriptionStatus prescriptionStatus) // Setting an already approved prescription to 'Approved' will restart is presriptionSchedule!
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
-            var prescription = GetPrescriptions((short?) id).ElementAt(0);
+            var prescription = GetPrescriptions(id).ElementAt(0);
 
             if (prescription.PrescriptionStatus.Equals(PrescriptionStatus.Approved))
             {

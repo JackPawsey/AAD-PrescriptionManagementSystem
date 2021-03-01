@@ -92,7 +92,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                             prescriptionData.Add("MedicationId", prescription.MedicationId);
 
                             // Get the medication data
-                            var medication = _medicationService.GetMedications((short?) prescription.MedicationId);
+                            var medication = _medicationService.GetMedications(prescription.MedicationId);
                             var medications = medication.ToList();
                             if (medications.Count() == 1)
                             {
@@ -108,11 +108,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                             prescriptionData.Add("IssueFrequency", prescription.IssueFrequency.ToString());
 
                             // Get prescription collection history
-                            var prescriptionCollectionResults = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId((short?) prescription.Id);
+                            var prescriptionCollectionResults = _prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId(prescription.Id);
                             if (prescriptionCollectionResults.Any()) prescriptionData.Add("Collections", prescriptionCollectionResults);
 
                             // Get blood test request history
-                            var bloodTestRequestsResults = _bloodTestService.GetBloodTestRequests((short?) prescription.Id);
+                            var bloodTestRequestsResults = _bloodTestService.GetBloodTestRequests(prescription.Id);
                             var bloodTestRequests = bloodTestRequestsResults.ToList();
                             if (bloodTestRequests.Any())
                             {
@@ -124,7 +124,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                                     bloodTestRequestData.Add("BloodTestId", bloodTestRequest.BloodTestId);
 
                                     // Get blood test information
-                                    var bloodTests = _bloodTestService.GetBloodTests((short?) bloodTestRequest.BloodTestId);
+                                    var bloodTests = _bloodTestService.GetBloodTests(bloodTestRequest.BloodTestId);
                                     var bloodTest = bloodTests.ToList();
                                     if (bloodTest.Count() == 1) bloodTestRequestData.Add("BloodTestInformation", bloodTest.First());
 
@@ -132,7 +132,7 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
                                     bloodTestRequestData.Add("AppointmentTime", bloodTestRequest.AppointmentTime);
 
                                     // Get blood test results
-                                    var bloodTestResultsResult = _bloodTestService.GetBloodTestResults((short?) bloodTestRequest.Id);
+                                    var bloodTestResultsResult = _bloodTestService.GetBloodTestResults(bloodTestRequest.Id);
                                     if (bloodTestResultsResult.Any()) bloodTestRequestData.Add("Results", bloodTestResultsResult);
                                 }
 

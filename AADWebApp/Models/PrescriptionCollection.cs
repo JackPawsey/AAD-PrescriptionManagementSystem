@@ -5,8 +5,8 @@ namespace AADWebApp.Models
 {
     public class PrescriptionCollection
     {
-        public int Id { get; set; }
-        public int PrescriptionId { get; set; }
+        public short Id { get; set; }
+        public short PrescriptionId { get; set; }
         public CollectionStatus CollectionStatus { get; set; }
         public DateTime CollectionStatusUpdated { get; set; }
         public DateTime CollectionTime { get; set; }

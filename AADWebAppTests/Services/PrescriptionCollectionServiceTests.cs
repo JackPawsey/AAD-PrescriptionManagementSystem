@@ -379,7 +379,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
         }
 
-        private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(int prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)
+        private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(short prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)
         {
             IEnumerable<PrescriptionCollection> expected = new List<PrescriptionCollection>
             {

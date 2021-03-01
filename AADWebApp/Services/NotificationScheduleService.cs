@@ -40,7 +40,7 @@ namespace AADWebApp.Services
             }
         }
 
-        public bool CancelPrescriptionSchedule(int id)
+        public bool CancelPrescriptionSchedule(short id)
         {
             foreach (var prescriptionSchedule in _prescriptionSchedules.Where(schedule => schedule.Prescription.Id == id))
             {

@@ -95,7 +95,7 @@ namespace AADWebAppTests.Services
         [DataRow(1000)]
         public void WhenGettingBloodTestByAnInvalidId(int id)
         {
-            var results = _bloodTestService.GetBloodTests((short) id);
+            var results = _bloodTestService.GetBloodTests((short) id); // This case is necessary as DataRow is dumb and only works with primitives
 
             Assert.IsTrue(!results.Any());
         }

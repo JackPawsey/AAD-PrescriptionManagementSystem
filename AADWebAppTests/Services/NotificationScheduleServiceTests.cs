@@ -95,7 +95,7 @@ namespace AADWebAppTests.Services
             AssertPrescriptionScheduleListContainsXSchedules(0);
         }
 
-        private bool CreatePrescriptionSchedule(int Id, int MedicationId, string PatientId, int Dosage, DateTime TimeNow, DateTime TimeTomorrow, PrescriptionStatus PrescriptionStatus)
+        private bool CreatePrescriptionSchedule(short Id, short MedicationId, string PatientId, int Dosage, DateTime TimeNow, DateTime TimeTomorrow, PrescriptionStatus PrescriptionStatus)
         {
             Prescription prescription = new Prescription
             {

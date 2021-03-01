@@ -7,6 +7,6 @@ namespace AADWebApp.Interfaces
     {
         public IEnumerable<IPrescriptionSchedule> GetPrescriptionSchedules();
         public bool CreatePrescriptionSchedule(Prescription Prescription);
-        public bool CancelPrescriptionSchedule(int id);
+        public bool CancelPrescriptionSchedule(short id);
     }
 }

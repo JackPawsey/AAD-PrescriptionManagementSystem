@@ -10,9 +10,9 @@ namespace AADWebApp.Interfaces
     {
         public IEnumerable<PrescriptionCollection> GetPrescriptionCollections(short? id = null);
         public IEnumerable<PrescriptionCollection> GetPrescriptionCollectionsByPrescriptionId(short? id = null);
-        public int CreatePrescriptionCollection(int prescriptionId, CollectionStatus collectionStatus, DateTime collectionTime);
-        public int CancelPrescriptionCollection(int id);
-        public int SetPrescriptionCollectionStatus(int id, CollectionStatus collectionStatus);
+        public int CreatePrescriptionCollection(short prescriptionId, CollectionStatus collectionStatus, DateTime collectionTime);
+        public int CancelPrescriptionCollection(short id);
+        public int SetPrescriptionCollectionStatus(short id, CollectionStatus collectionStatus);
         public Task<int> SetPrescriptionCollectionTimeAsync(Prescription prescription, DateTime collectionTime);
     }
 }

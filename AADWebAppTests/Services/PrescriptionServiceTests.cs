@@ -347,7 +347,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(updatedExpectedSerialised, afterUpdateResultsSerialised);
         }
 
-        private IEnumerable<Prescription> AddPrescription(int medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, IssueFrequency issueFrequency)
+        private IEnumerable<Prescription> AddPrescription(short medicationId, string patientId, int dosage, DateTime dateStart, DateTime dateEnd, IssueFrequency issueFrequency)
         {
             IEnumerable<Prescription> expected = new List<Prescription>
             {
