@@ -116,7 +116,7 @@ namespace AADWebApp.Services
                 return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionTime = '{collectionTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{prescriptionCollection.Id}'");
             }
 
-            return 0;
+            return -1;
         }
     }
 }
