@@ -131,15 +131,15 @@ namespace AADWebApp.Services
 
             foreach (var bloodTestRequest in bloodTestRequests)
             {
-                _bloodTestService.CancelBloodTestRequest(bloodTestRequest.Id); // Delete bloodTestRequests for this prescription (would be better to set a status)
+                _bloodTestService.CancelBloodTestRequest(bloodTestRequest.Id); // Cancel bloodTestRequests for this prescription
             }
 
-            await _notificationService.SendCancellationNotification(prescription, DateTime.Now); // Send notifcation to patient
+            await _notificationService.SendCancellationNotification(prescription, DateTime.Now); // Send notification to patient
 
             return SetPrescriptionStatus(id, PrescriptionStatus.Terminated);
         }
 
-        public int SetPrescriptionStatus(short id, PrescriptionStatus prescriptionStatus) // Setting an already approved prescription to 'Approved' will restart is presriptionSchedule!
+        public int SetPrescriptionStatus(short id, PrescriptionStatus prescriptionStatus)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
