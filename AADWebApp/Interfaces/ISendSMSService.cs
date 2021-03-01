@@ -2,6 +2,6 @@
 {
     public interface ISendSmsService
     {
-        public void SendSms(string phoneNumber, string message);
+        public bool SendSms(string phoneNumber, string message);
     }
 }

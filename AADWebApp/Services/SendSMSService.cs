@@ -8,7 +8,7 @@ namespace AADWebApp.Services
 {
     public class SendSmsService : ISendSmsService
     {
-        public void SendSms(string phoneNumber, string message)
+        public bool SendSms(string phoneNumber, string message)
         {
             const string awsKey = "AKIA3NTV7LS6XPMG4NOK";
             const string awsSecretKey = "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";
@@ -32,13 +32,14 @@ namespace AADWebApp.Services
             try
             {
                 var response = client.PublishAsync(request);
-
                 Console.WriteLine("Message sent successfully");
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Caught exception publishing request:");
                 Console.WriteLine(ex.Message);
+                return false;
             }
         }
     }

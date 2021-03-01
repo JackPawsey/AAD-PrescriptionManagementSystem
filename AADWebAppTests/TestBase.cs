@@ -97,6 +97,7 @@ namespace AADWebAppTests.Services
 
             mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new ApplicationUser
             {
+                Id = "patientId",
                 FirstName = "firstName",
                 LastName = "lastName",
                 Email = "cloudcrusaderssystems+unittests@gmail.com",

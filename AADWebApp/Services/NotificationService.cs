@@ -6,7 +6,6 @@ using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
 using Microsoft.AspNetCore.Identity;
-using static AADWebApp.Services.PrescriptionCollectionService;
 
 namespace AADWebApp.Services
 {
@@ -29,7 +28,7 @@ namespace AADWebApp.Services
 
         // Precription Notification ############################################
 
-        public async Task SendPrescriptionNotification(Prescription prescription, int occurances, DateTime nextCollectionTime)
+        public async Task<bool> SendPrescriptionNotification(Prescription prescription, int occurances, DateTime nextCollectionTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
             var medication = GetMediciationRecord(prescription.MedicationId);
@@ -38,21 +37,20 @@ namespace AADWebApp.Services
             switch (patient.CommunicationPreferences.ToString())
             {
                 case "Email":
-                    SendPrescriptionEmail(patientAccount, medication, prescription, occurances, nextCollectionTime);
-                    break;
+                    return SendPrescriptionEmail(patientAccount, medication, prescription, occurances, nextCollectionTime);
                 case "SMS":
-                    SendPrescriptionSms(patientAccount, medication, prescription, occurances, nextCollectionTime);
-                    break;
+                    return SendPrescriptionSms(patientAccount, medication, prescription, occurances, nextCollectionTime);
                 default:
-                    SendPrescriptionEmail(patientAccount, medication, prescription, occurances, nextCollectionTime);
-                    SendPrescriptionSms(patientAccount, medication, prescription, occurances, nextCollectionTime);
-                    break;
+                    var result1 =  SendPrescriptionEmail(patientAccount, medication, prescription, occurances, nextCollectionTime);
+                    var result2 = SendPrescriptionSms(patientAccount, medication, prescription, occurances, nextCollectionTime);
+
+                    return result1 & result2 ? true : false;
             }
         }
 
-        private void SendPrescriptionEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, int occurances, DateTime nextCollectionTime)
+        private bool SendPrescriptionEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, int occurances, DateTime nextCollectionTime)
         {
-            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription for {medication.MedicationName} is due. <br>
+            return _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription for {medication.MedicationName} is due. <br>
                                         You will receive {occurances} more dosages of this medication that began {prescription.DateStart.ToShortDateString()} and ends {prescription.DateEnd.ToShortDateString()}. <br>
                                         The dosage is {prescription.Dosage} milligrams {prescription.IssueFrequency}. <br>
                                         Collection for the next medication is scheduled at {nextCollectionTime}",
@@ -60,7 +58,7 @@ namespace AADWebApp.Services
                                         patientAccount.Email);
         }
 
-        private void SendPrescriptionSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, int occurances, DateTime nextCollectionTime)
+        private bool SendPrescriptionSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, int occurances, DateTime nextCollectionTime)
         {
             var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, your prescription for {medication.MedicationName} is due.\n\n ")
@@ -68,12 +66,12 @@ namespace AADWebApp.Services
                 .Append($"The dosage is {prescription.Dosage} milligrams {prescription.IssueFrequency}.")
                 .Append($"Collection for this medication is scheduled at {nextCollectionTime}");
 
-            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+            return _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
         // Collection TIme Notification ##########################################
 
-        public async Task SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime)
+        public async Task<bool> SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
             var medication = GetMediciationRecord(prescription.MedicationId);
@@ -82,40 +80,39 @@ namespace AADWebApp.Services
             switch (patient.CommunicationPreferences.ToString())
             {
                 case "Email":
-                    SendCollectionEmail(patientAccount, medication, prescription, collectionTime);
-                    break;
+                    return SendCollectionEmail(patientAccount, medication, prescription, collectionTime);
                 case "SMS":
-                    SendCollectionSms(patientAccount, medication, prescription, collectionTime);
-                    break;
+                    return SendCollectionSms(patientAccount, medication, prescription, collectionTime);
                 default:
-                    SendCollectionEmail(patientAccount, medication, prescription, collectionTime);
-                    SendCollectionSms(patientAccount, medication, prescription, collectionTime);
-                    break;
+                    var result1 = SendCollectionEmail(patientAccount, medication, prescription, collectionTime);
+                    var result2 = SendCollectionSms(patientAccount, medication, prescription, collectionTime);
+
+                    return result1 & result2 ? true : false;
             }
         }
 
-        private void SendCollectionEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime collectionTime)
+        private bool SendCollectionEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime collectionTime)
         {
-            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, collection time has been successfully updated for {medication.MedicationName} prescription. <br>
+            return _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, collection time has been successfully updated for {medication.MedicationName} prescription. <br>
                                         The new date/time is {collectionTime}. <br>
                                         It's current status is {prescription.PrescriptionStatus}.",
                                         patientAccount.FirstName + " " + patientAccount.LastName + " " + medication.MedicationName + " Prescription Collection",
                                         patientAccount.Email);
         }
 
-        private void SendCollectionSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime collectionTime)
+        private bool SendCollectionSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime collectionTime)
         {
             var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, collection time has been successfully updated for {medication.MedicationName} prescription.\n\n ")
                 .Append($"The new date/time is {collectionTime}.\n\n")
                 .Append($"It's current status is {prescription.PrescriptionStatus}.");
 
-            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+            return _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
         // Prescription Cancellation Notification #######################################################
 
-        public async Task SendCancellationNotification(Prescription prescription, DateTime cancellationTime)
+        public async Task<bool> SendCancellationNotification(Prescription prescription, DateTime cancellationTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
             var medication = GetMediciationRecord(prescription.MedicationId);
@@ -124,39 +121,38 @@ namespace AADWebApp.Services
             switch (patient.CommunicationPreferences.ToString())
             {
                 case "Email":
-                    SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
-                    break;
+                    return SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
                 case "SMS":
-                    SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
-                    break;
+                    return SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
                 default:
-                    SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
-                    SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
-                    break;
+                    var result1 = SendCancellationEmail(patientAccount, medication, prescription, cancellationTime);
+                    var result2 = SendCancellationSms(patientAccount, medication, prescription, cancellationTime);
+
+                    return result1 & result2 ? true : false;
             }
         }
-        private void SendCancellationEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
+        private bool SendCancellationEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
         {
-            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription starting {prescription.DateStart} for {medication.MedicationName} has been cancelled! <br>
+            return _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, your prescription starting {prescription.DateStart} for {medication.MedicationName} has been cancelled! <br>
                                         It was cancelled at {cancellationTime}. <br>
                                         You will recieve no further medication from this prescription.",
                                         patientAccount.FirstName + " " + patientAccount.LastName + " " + medication.MedicationName + " Prescription Cancellation",
                                         patientAccount.Email);
         }
 
-        private void SendCancellationSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
+        private bool SendCancellationSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, DateTime cancellationTime)
         {
             var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, your prescription starting {prescription.DateStart} for {medication.MedicationName} has been cancelled!\n\n ")
                 .Append($"It was cancelled at {cancellationTime}.")
                 .Append($"You will recieve no further medication from this prescription.");
 
-            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+            return _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
         // Blood Test Request Notification #######################################################
 
-        public async Task SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
+        public async Task<bool> SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
             var medication = GetMediciationRecord(prescription.MedicationId);
@@ -165,21 +161,20 @@ namespace AADWebApp.Services
             switch (patient.CommunicationPreferences.ToString())
             {
                 case "Email":
-                    SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
-                    break;
+                    return SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
                 case "SMS":
-                    SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
-                    break;
+                    return SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
                 default:
-                    SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
-                    SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
-                    break;
+                    var result1 = SendBloodTestRequestEmail(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
+                    var result2 = SendBloodTestRequestSms(patientAccount, medication, prescription, bloodTest, requestTime, appointmentTime);
+
+                    return result1 & result2 ? true : false;
             }
         }
 
-        private void SendBloodTestRequestEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
+        private bool SendBloodTestRequestEmail(ApplicationUser patientAccount, Medication medication, Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
         {
-            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, you have been requested to have a blood test for your prescription for {medication.MedicationName} starting {prescription.DateStart}. <br>
+            return _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, you have been requested to have a blood test for your prescription for {medication.MedicationName} starting {prescription.DateStart}. <br>
                                         The test type is: {bloodTest.FullTitle}. <br>
                                         This test was requested at {requestTime} and as scheduled to take place at {appointmentTime}. <br>
                                         Your prescription will not be approved until this test is taken and the results permit the treatment.",
@@ -187,7 +182,7 @@ namespace AADWebApp.Services
                                         patientAccount.Email);
         }
 
-        private void SendBloodTestRequestSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
+        private bool SendBloodTestRequestSms(ApplicationUser patientAccount, Medication medication, Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime)
         {
             var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, you have been requested to have a blood test for your prescription for {medication.MedicationName} starting {prescription.DateStart}.\n\n ")
@@ -195,12 +190,12 @@ namespace AADWebApp.Services
                 .Append($"This test was requested at {requestTime} and as scheduled to take place at {appointmentTime}.")
                 .Append($"Your prescription will not be approved until this test is taken and the results permit the treatment.");
 
-            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+            return _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
         // Blood Test Appointment Time Update #######################################################
 
-        public async Task SendBloodTestTimeUpdateNotification(Prescription prescription, BloodTestRequest bloodTestRequest, DateTime newTime)
+        public async Task<bool> SendBloodTestTimeUpdateNotification(Prescription prescription, BloodTestRequest bloodTestRequest, DateTime newTime)
         {
             var patient = GetPatientRecord(prescription.PatientId);
             var medication = GetMediciationRecord(prescription.MedicationId);
@@ -209,35 +204,34 @@ namespace AADWebApp.Services
             switch (patient.CommunicationPreferences.ToString())
             {
                 case "Email":
-                    SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
-                    break;
+                    return SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
                 case "SMS":
-                    SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
-                    break;
+                    return SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
                 default:
-                    SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
-                    SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
-                    break;
+                    var result1 = SendBloodTestTimeUpdateEmail(patientAccount, medication, bloodTestRequest, newTime);
+                    var result2 = SendBloodTestTimeUpdateSms(patientAccount, medication, bloodTestRequest, newTime);
+
+                    return result1 & result2 ? true : false;
             }
         }
 
-        private void SendBloodTestTimeUpdateEmail(ApplicationUser patientAccount, Medication medication, BloodTestRequest bloodTestRequest, DateTime newTime)
+        private bool SendBloodTestTimeUpdateEmail(ApplicationUser patientAccount, Medication medication, BloodTestRequest bloodTestRequest, DateTime newTime)
         {
-            _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, the blood test appointment time for your {medication.MedicationName} prescription has been updated. <br>
+            return _sendEmailService.SendEmail(@$"Hello {patientAccount.FirstName}, the blood test appointment time for your {medication.MedicationName} prescription has been updated. <br>
                                         The old time was: {bloodTestRequest.AppointmentTime}, the updated time is: {newTime}. <br>
                                         Your prescription will not be approved until this test is taken and the results permit the treatment.",
                                         patientAccount.FirstName + " " + patientAccount.LastName + " Blood Test Request",
                                         patientAccount.Email);
         }
 
-        private void SendBloodTestTimeUpdateSms(ApplicationUser patientAccount, Medication medication, BloodTestRequest bloodTestRequest, DateTime newTime)
+        private bool SendBloodTestTimeUpdateSms(ApplicationUser patientAccount, Medication medication, BloodTestRequest bloodTestRequest, DateTime newTime)
         {
             var textMessage = new StringBuilder()
                 .Append($"Hello {patientAccount.FirstName}, the blood test appointment time for your {medication.MedicationName} prescription has been updated.\n\n ")
                 .Append($"The old time was: {bloodTestRequest.AppointmentTime}, the updated time is: {newTime}.")
                 .Append($"Your prescription will not be approved until this test is taken and the results permit the treatment.");
 
-            _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
+            return _sendSmsService.SendSms(patientAccount.PhoneNumber, textMessage.ToString());
         }
 
         //#######################################################

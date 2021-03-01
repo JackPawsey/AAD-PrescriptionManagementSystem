@@ -6,10 +6,10 @@ namespace AADWebApp.Interfaces
 {
     public interface INotificationService
     {
-        public Task SendPrescriptionNotification(Prescription Prescription, int Occurances, DateTime nextCollectionTime);
-        public Task SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime);
-        public Task SendCancellationNotification(Prescription prescription, DateTime cancellationTime);
-        Task SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime);
-        public Task SendBloodTestTimeUpdateNotification(Prescription prescription, BloodTestRequest bloodTestRequest, DateTime newTime);
+        public Task<bool> SendPrescriptionNotification(Prescription Prescription, int Occurances, DateTime nextCollectionTime);
+        public Task<bool> SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime);
+        public Task<bool> SendCancellationNotification(Prescription prescription, DateTime cancellationTime);
+        public Task<bool> SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime);
+        public Task<bool> SendBloodTestTimeUpdateNotification(Prescription prescription, BloodTestRequest bloodTestRequest, DateTime newTime);
     }
 }

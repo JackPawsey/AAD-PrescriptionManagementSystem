@@ -2,6 +2,6 @@
 {
     public interface ISendEmailService
     {
-        public void SendEmail(string bodyContent, string subject, string recipientAddress);
+        public bool SendEmail(string bodyContent, string subject, string recipientAddress);
     }
 }
