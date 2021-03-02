@@ -57,7 +57,7 @@
     <tbody>
     @for (var i = 0; i < Model.BloodTestRequests.Count; i++)
     {
-        var isScheduled = Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Scheduled;
+        var isScheduledOrComplete = Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Scheduled || Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Complete;
 
         <form method="post">
             <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
@@ -70,7 +70,7 @@
                 <td>@Model.Medications[i].MedicationName</td>
                 <td>@Model.Prescriptions[i].Dosage</td>
                 <td>
-                    @if (isScheduled)
+                    @if (isScheduledOrComplete)
                     {
                         @Model.BloodTestRequests[i].AppointmentTime.ToShortDateString()
                     }
@@ -80,7 +80,7 @@
                     }
                 </td>
                 <td>
-                    @if (isScheduled)
+                    @if (isScheduledOrComplete)
                     {
                         @Model.BloodTestRequests[i].AppointmentTime.ToShortTimeString()
                     }
@@ -90,7 +90,7 @@
                     }
                 </td>
                 <td>
-                    <input type="submit" class="btn btn-primary float-right" value="Confirm" @(isScheduled ? "disabled" : "") />
+                    <input type="submit" class="btn btn-primary float-right" value="Confirm" @(isScheduledOrComplete ? "disabled" : "") />
                 </td>
             </tr>
         </form>
