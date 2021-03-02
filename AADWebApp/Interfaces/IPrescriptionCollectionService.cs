@@ -13,6 +13,7 @@ namespace AADWebApp.Interfaces
         public int CreatePrescriptionCollection(short prescriptionId, CollectionStatus collectionStatus, DateTime collectionTime);
         public int CancelPrescriptionCollection(short id);
         public int SetPrescriptionCollectionStatus(short id, CollectionStatus collectionStatus);
+        public int SetPrescriptionCollectionCollected(short id);
         public Task<int> SetPrescriptionCollectionTimeAsync(Prescription prescription, DateTime collectionTime);
     }
 }

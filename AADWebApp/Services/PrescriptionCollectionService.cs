@@ -99,6 +99,14 @@ namespace AADWebApp.Services
             return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{collectionStatus}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
         }
 
+        public int SetPrescriptionCollectionCollected(short id)
+        {
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
+            //UPDATE PrescriptionCollections TABLE ROW CollectionStatus
+            return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{CollectionStatus.Collected}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', CollectionTime = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+        }
+
         public async Task<int> SetPrescriptionCollectionTimeAsync(Prescription prescription, DateTime collectionTime)
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
