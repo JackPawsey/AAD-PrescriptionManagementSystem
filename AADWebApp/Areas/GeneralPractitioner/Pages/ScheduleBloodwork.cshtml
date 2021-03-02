@@ -33,6 +33,14 @@
     </form>
 </div>
 
+@if (TempData["ScheduleBloodworkSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["ScheduleBloodworkSuccess"]</p>
+} else if (TempData["ScheduleBloodworkFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["ScheduleBloodworkFailure"]</p>
+}
+
 <table class="table table-striped">
     <thead>
     <tr>

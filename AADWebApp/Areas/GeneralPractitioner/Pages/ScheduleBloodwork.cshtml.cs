@@ -47,22 +47,22 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             await InitPageAsync();
         }
 
-        public async Task<PageResult> OnPostAsync()
+        public async Task OnPostAsync()
         {
             await InitPageAsync();
 
-            var result = await _bloodTestService.SetBloodTestDateTimeAsync(Prescriptions.First(item => item.Id == PrescriptionId), (short) BloodTestRequestId, AppointmentDateTime);
+            var isSuccess = await _bloodTestService.SetBloodTestDateTimeAsync(Prescriptions.First(item => item.Id == PrescriptionId), (short) BloodTestRequestId, AppointmentDateTime);
 
             await InitPageAsync();
 
-            if (result == 1)
+            if (isSuccess == 1)
             {
-                return Page();
+                TempData["ScheduleBloodworkSuccess"] = $"A blood test request {BloodTestRequestId} (prescription ID {PrescriptionId}) has been booked for {AppointmentDateTime}.";
             }
-
-            ModelState.AddModelError("Request blood test error", "Blood Test service returned error value");
-
-            return Page();
+            else
+            {
+                TempData["ScheduleBloodworkFailure"] = $"Blood Test service returned error value.";
+            }
         }
 
         private async Task InitPageAsync()
