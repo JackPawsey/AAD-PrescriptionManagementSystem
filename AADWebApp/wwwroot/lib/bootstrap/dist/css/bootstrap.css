@@ -5720,6 +5720,10 @@ a.close.disabled {
   overflow: hidden;
 }
 
+.modal-override{
+    width: 300px;
+    margin:auto;
+}
 .modal-open .modal {
   overflow-x: hidden;
   overflow-y: auto;
@@ -5742,6 +5746,7 @@ a.close.disabled {
   width: auto;
   margin: 0.5rem;
   pointer-events: none;
+  max-width: 750px;
 }
 
 .modal.fade .modal-dialog {
