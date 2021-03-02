@@ -37,7 +37,7 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             await InitPageAsync();
         }
 
-        public async Task<PageResult> OnPostAsync()
+        public async Task OnPostAsync()
         {
             var cancelResult = await _prescriptionService.CancelPrescriptionAsync((short) Id);
 
@@ -45,12 +45,12 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
             if (cancelResult == 1)
             {
-                return Page();
+                TempData["PrescriptionCancelSuccess"] = $"Prescription with ID {Id} successfully cancelled.";
             }
-
-            ModelState.AddModelError("Cancel prescription error", "Prescription returned error value");
-
-            return Page();
+            else
+            {
+                TempData["PrescriptionCancelFailure"] = $"Prescription returned error value";
+            }
         }
 
         private async Task InitPageAsync()
