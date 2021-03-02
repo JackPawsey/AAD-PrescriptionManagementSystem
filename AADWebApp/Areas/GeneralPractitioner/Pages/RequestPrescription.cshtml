@@ -1,4 +1,5 @@
 ﻿@page
+@using AADWebApp.Models
 @model AADWebApp.Areas.GeneralPractitioner.Pages.RequestPrescriptionModel
 @{
     ViewData["Title"] = "Request Prescription";
@@ -43,57 +44,58 @@
     </form>
 </div>
 
+@if (TempData["PrescriptionRequestSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["PrescriptionRequestSuccess"]</p>
+} else if (TempData["PrescriptionRequestFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["PrescriptionRequestFailure"]</p>
+}
+
 <table class="table table-striped table-hover">
     <thead>
     <tr>
-        <th scope="col">#</th>
-        <th scope="col">Medication ID</th>
         <th scope="col">Medication Name</th>
         <th scope="col">Restriction Level</th>
         <th scope="col">Prescription Start</th>
         <th scope="col">Prescription End</th>
         <th scope="col">Dosage</th>
+        <th scope="col">Issue Frequency</th>
         <th scope="col">Select</th>
     </tr>
     </thead>
     <tbody>
-    @for (var i = 0; i < 6; i++)
+    @foreach (var medication in Model.Medications)
     {
-        <tr>
-            <th scope="row">@(i + 1)</th>
-            <td>Text</td>
-            <td>Text</td>
-            <td>
-                <div class="form-group">
-                    <select class="custom-select">
-                        <option selected> Restriction Level</option>
-                        @for (var j = 0; j < 4; j++)
-                        {
-                            <option> @(j)</option>
-                        }
-
-                    </select>
-                </div>
+        <tr data-medication-id="@medication.Id">
+            <td class="js-medication-name">@medication.MedicationName</td>
+            <td class="js-medication-restriction-level">
+                @* @(medication.BloodWorkRestrictionLevel == null ? @Html.Raw("<i>None</i>") : @medication.BloodWorkRestrictionLevel.ToString()) *@
+                @if (medication.BloodWorkRestrictionLevel == null)
+                {
+                    @Html.Raw("<i>None</i>")
+                }
+                else
+                {
+                    @medication.BloodWorkRestrictionLevel.ToString()
+                }
             </td>
             <td>
-                <div id="DateStart">
-                    <input type="date" class="form-control-sm" name="Prescription Start" id="Prescription Start" />
-                </div>
+                <input type="date" class="form-control js-start-date" required />
             </td>
-
             <td>
-                <div id="DateEnd">
-                    <input type="date" class="form-control-sm" name="Prescription End" id="Prescription End" />
-                </div>
+                <input type="date" class="form-control js-end-date" required />
             </td>
-            <td>Text</td>
             <td>
-                <div id="CheckBox" class="form-check">
-                    <input type="checkbox" name="Status" value="Choose" class="form-check-input" id="Select@(i + 1)" />
-                    <label for="Select@(i + 1)">
-                        Select
-                    </label>
-                </div>
+                <input type="number" class="form-control js-dosage" placeholder="Dosage (mg)" min="0" step="any" required />
+            </td>
+            <td>
+                <select class="form-control js-issue-frequency" asp-items="@Model.IssueFrequencies">
+                    <option value="">---</option>
+                </select>
+            </td>
+            <td>
+                <button data-toggle="modal" data-target="#request-prescription-patient-modal" class="btn btn-primary float-right">Prescribe</button>
             </td>
         </tr>
     }
@@ -101,55 +103,49 @@
 </table>
 
 <!--Modal-->
-<div class=" modal fade" tabindex="-1" id="ChoosePatient">
-    <div class=" modal-dialog" role="form">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle"> Choose Patient</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Patient ID</th>
-                            <th scope="col"> First Name</th>
-                            <th scope="col"> Last Name</th>
-                            <th scope="col">Select</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @for (var i = 0; i < 8; i++)
-                        {
+<div class="modal fade" tabindex="-1" id="request-prescription-patient-modal">
+    <form method="POST">
+        <div class="modal-dialog" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"> Choose Patient</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <table class="table table-hover">
+                            <thead>
                             <tr>
-                                <th scope="row">@(i + 1)</th>
-                                <td>Text</td>
-                                <td>Text</td>
-                                <td>Text</td>
-                                <td>
-                                    <div id="CheckBox" class="form-check-input mt-0">
-                                        <input type="radio" name="Status" value="Select" class="form-check-input" id="SelectPatient@(i + 1)" />
-                                        <label for="SelectPatient@(i + 1)">
-                                            Select
-                                        </label>
-                                    </div>
-                                </td>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Select</th>
                             </tr>
-                        }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            @foreach (var patient in Model.Patients)
+                            {
+                                <tr>
+                                    <td>@patient.FirstName</td>
+                                    <td>@patient.LastName</td>
+                                    <td>
+                                        <div id="CheckBox" class="form-check-input mt-0">
+                                            <input type="radio" name="Id" value="@(patient.Id)" class="form-check-input" id="SelectPatient" required />
+                                            <label for="SelectPatient">Choose</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger float-left" data-dismiss="modal" value="Cancel" />
+                    <input type="submit" class="btn btn-primary float-right" value="Confirm" />
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger float-left" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary float-right">Confirm</button>
-            </div>
         </div>
-    </div>
+    </form>
 </div>
-
-<button data-toggle="modal" data-target="#ChoosePatient" class="btn btn-primary float-right">Confirm</button>
