@@ -5,4 +5,64 @@
     Layout = "~/Areas/Pharmacist/Pages/_PharmacistLayout.cshtml";
 }
 
-<h1>Review Prescriptions</h1>
+<h1 class="mb-5">Review Prescriptions</h1>
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Prescription ID</th>
+                <th scope="col"> Medication ID</th>
+                <th scope="col"> Patient ID</th>
+                <th scope="col">Dosage</th>
+                <th scope="col">Date Start</th>
+                <th scope="col">Date End</th>
+                <th scope="col">Status</th>
+                <th scope="col">Frequency</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < 8; i++)
+            {
+            <tr data-toggle="modal" data-target="#RequestBloodWork">
+                <th scope="row">@(i+1)</th>
+                <td>Text</td>
+                <td>Text</td>
+                <td>Text</td>
+                <td>Text</td>
+                <td>
+                    <div id="DateStart">
+                        <input type="date" class="form-control-sm" name="DoB" id="DateStart" />
+                    </div>
+                </td>
+                <td>
+                    <div id="DateEnd">
+                        <input type="date" class="form-control-sm" name="Date End" id="DateEnd" />
+                    </div>
+                </td>
+                <td>
+                    <select class="custom-select">
+                        <option selected> Status</option>
+                        @for (int j = 0; j < 5; j++)
+                        {
+                            <option>@(j) </option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select class="custom-select">
+                        <option selected> Status</option>
+                        @for (int x = 0; x < 5; x++)
+                        {
+                            <option>@(x) </option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<button class="btn btn-primary float-right mt-3">Confirm</button>
