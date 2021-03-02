@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using AADWebApp.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using static AADWebApp.Services.PrescriptionCollectionService;
 using static AADWebApp.Services.PrescriptionService.IssueFrequency;
 
 namespace AADWebApp.Models
@@ -37,6 +39,11 @@ namespace AADWebApp.Models
 
             Occurrences = (int) (prescriptionDuration.TotalMilliseconds / Interval);
 
+            var nextCollectionTime = DateTime.Now.AddMilliseconds(Interval);
+            var prescriptionCollectionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionCollectionService>();
+            prescriptionCollectionService.CreatePrescriptionCollection(Prescription.Id, CollectionStatus.Arranged, nextCollectionTime); // Send initial PrescriptionCollection
+            Occurrences--;
+
             CreateTimer();
         }
 
@@ -59,11 +66,19 @@ namespace AADWebApp.Models
 
             Console.WriteLine("Prescription " + prescription.Id + " interval has been reached. " + occurrences + " occurrences remaining");
 
-            var prescriptionCollectionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionCollectionService>();
-
             var nextCollectionTime = DateTime.Now.AddMilliseconds(interval);
 
-            await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, nextCollectionTime);
+            var prescriptionCollectionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionCollectionService>();
+            prescriptionCollectionService.CreatePrescriptionCollection(prescription.Id, CollectionStatus.Arranged, nextCollectionTime);
+
+
+            //await prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(prescription, nextCollectionTime);
+
+            //var prescriptionCollection = prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId(prescription.Id).ElementAt(0);
+
+            //prescriptionCollectionService.SetPrescriptionCollectionStatus(prescriptionCollection.Id, CollectionStatus.Collected);
+
+
 
             var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
             await notificationService.SendPrescriptionNotification(prescription, occurrences, nextCollectionTime);
