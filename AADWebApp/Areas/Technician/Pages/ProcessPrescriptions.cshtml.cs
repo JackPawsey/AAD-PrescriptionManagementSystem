@@ -15,12 +15,12 @@ namespace AADWebApp.Areas.Technician.Pages
         private readonly IMedicationService _medicationService;
         private readonly IPrescriptionCollectionService _prescriptionCollectionService;
 
-        public List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-        public List<Medication> Medications { get; set; } = new List<Medication>();
-        public List<List<PrescriptionCollection>> PrescriptionCollections { get; set; } = new List<List<PrescriptionCollection>>();
+        public List<Prescription> Prescriptions { get; private set; } = new List<Prescription>();
+        public List<Medication> Medications { get; private set; } = new List<Medication>();
+        public List<List<PrescriptionCollection>> PrescriptionCollections { get; private set; } = new List<List<PrescriptionCollection>>();
 
         [BindProperty]
-        public int prescriptionCollectionId { get; set; }
+        public int PrescriptionCollectionId { get; set; }
 
         public ProcessPrescriptionsModel(IPrescriptionService prescriptionService, IMedicationService medicationService, IPrescriptionCollectionService prescriptionCollectionService)
         {
@@ -31,38 +31,38 @@ namespace AADWebApp.Areas.Technician.Pages
 
         public void OnGet()
         {
-            loadData();
+            InitPage();
         }
 
         public void OnPostPrepared()
         {
-            loadData();
+            InitPage();
 
-            var result = _prescriptionCollectionService.SetPrescriptionCollectionStatus((short) prescriptionCollectionId, CollectionStatus.BeingPrepared);
+            var result = _prescriptionCollectionService.SetPrescriptionCollectionStatus((short) PrescriptionCollectionId, CollectionStatus.BeingPrepared);
 
-            loadData();
+            InitPage();
 
             if (result == 1)
             {
-                TempData["EnterPrescriptionStatusSuccess"] = $"Status for Prescripton Collection {prescriptionCollectionId} was set to Being Prepared.";
+                TempData["EnterPrescriptionStatusSuccess"] = $"Status for prescription collection {PrescriptionCollectionId} was set to Being Prepared.";
             }
             else
             {
-                TempData["EnterPrescriptionStatusFailure"] = $"Prescription Collection service returned error value.";
+                TempData["EnterPrescriptionStatusFailure"] = $"Prescription collection service returned error value.";
             }
         }
 
         public void OnPostReady()
         {
-            loadData();
+            InitPage();
 
-            var result = _prescriptionCollectionService.SetPrescriptionCollectionStatus((short) prescriptionCollectionId, CollectionStatus.CollectionReady);
+            var result = _prescriptionCollectionService.SetPrescriptionCollectionStatus((short) PrescriptionCollectionId, CollectionStatus.CollectionReady);
 
-            loadData();
+            InitPage();
 
             if (result == 1)
             {
-                TempData["EnterPrescriptionStatusSuccess"] = $"Status for Prescripton Collection {prescriptionCollectionId} was set to Collection Ready.";
+                TempData["EnterPrescriptionStatusSuccess"] = $"Status for prescription collection {PrescriptionCollectionId} was set to Collection Ready.";
             }
             else
             {
@@ -72,23 +72,23 @@ namespace AADWebApp.Areas.Technician.Pages
 
         public void OnPostCollected()
         {
-            loadData();
+            InitPage();
 
-            var result = _prescriptionCollectionService.SetPrescriptionCollectionCollected((short) prescriptionCollectionId);
+            var result = _prescriptionCollectionService.SetPrescriptionCollectionCollected((short) PrescriptionCollectionId);
 
-            loadData();
+            InitPage();
 
             if (result == 1)
             {
-                TempData["EnterPrescriptionStatusSuccess"] = $"Status for Prescripton Collection {prescriptionCollectionId} was set to Collected.";
+                TempData["EnterPrescriptionStatusSuccess"] = $"Status for prescription collection {PrescriptionCollectionId} was set to Collected.";
             }
             else
             {
-                TempData["EnterPrescriptionStatusFailure"] = $"Prescription Collection service returned error value.";
+                TempData["EnterPrescriptionStatusFailure"] = $"Prescription collection service returned error value.";
             }
         }
 
-        private void loadData()
+        private void InitPage()
         {
             Prescriptions = new List<Prescription>();
             Medications = new List<Medication>();

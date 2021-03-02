@@ -1,4 +1,5 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.Technician.Pages.ProcessPrescriptionsModel
 @{
     ViewData["Title"] = "Process Prescriptions";
@@ -20,37 +21,37 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
 
 <table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <th scope="col">Prescription ID</th>
-            <th scope="col">Medication Name</th>
-            <th scope="col">Dosage</th>
-            <th scope="col">Prescription Start</th>
-            <th scope="col">Prescription End</th>
-        </tr>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.Prescriptions.Count; i++)
+    @for (var i = 0; i < Model.Prescriptions.Count; i++)
+    {
+        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
         {
-            @for (int x = 0; x < Model.PrescriptionCollections[i].Count; x++)
-            {
-                <form method="post">
-                    <tr>
-                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="prescriptionCollectionId" />
-                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus.ToString().Equals("Pending"))
-                        {
-                            <td>@Model.Prescriptions[i].Id</td>
-                            <td>@Model.Medications[i].MedicationName</td>
-                            <td>@Model.Prescriptions[i].Dosage</td>
-                            <td>@Model.Prescriptions[i].DateStart</td>
-                            <td>@Model.Prescriptions[i].DateEnd</td>
-                            <td>
-                                <input type="submit" class="btn btn-primary float-right" value="Being Prepared" asp-page-handler="Prepared" />
-                            </td>
-                        }
-                    </tr>
-                </form>
-            }
+            <form method="post">
+                <tr>
+                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Pending)
+                    {
+                        <td>@Model.Prescriptions[i].Id</td>
+                        <td>@Model.Medications[i].MedicationName</td>
+                        <td>@Model.Prescriptions[i].Dosage</td>
+                        <td>@Model.Prescriptions[i].DateStart</td>
+                        <td>@Model.Prescriptions[i].DateEnd</td>
+                        <td>
+                            <input type="submit" class="btn btn-primary float-right" value="Being Prepared" asp-page-handler="Prepared" />
+                        </td>
+                    }
+                </tr>
+            </form>
         }
+    }
     </tbody>
 </table>
 
@@ -58,37 +59,37 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
 
 <table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <th scope="col">Prescription ID</th>
-            <th scope="col">Medication Name</th>
-            <th scope="col">Dosage</th>
-            <th scope="col">Prescription Start</th>
-            <th scope="col">Prescription End</th>
-        </tr>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.Prescriptions.Count; i++)
+    @for (var i = 0; i < Model.Prescriptions.Count; i++)
+    {
+        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
         {
-            @for (int x = 0; x < Model.PrescriptionCollections[i].Count; x++)
-            {
-                <form method="post">
-                    <tr>
-                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="prescriptionCollectionId" />
-                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus.ToString().Equals("BeingPrepared"))
-                        {
-                            <td>@Model.Prescriptions[i].Id</td>
-                            <td>@Model.Medications[i].MedicationName</td>
-                            <td>@Model.Prescriptions[i].Dosage</td>
-                            <td>@Model.Prescriptions[i].DateStart</td>
-                            <td>@Model.Prescriptions[i].DateEnd</td>
-                            <td>
-                                <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Ready" />
-                            </td>
-                        }
-                    </tr>
-                </form>
-            }
+            <form method="post">
+                <tr>
+                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.BeingPrepared)
+                    {
+                        <td>@Model.Prescriptions[i].Id</td>
+                        <td>@Model.Medications[i].MedicationName</td>
+                        <td>@Model.Prescriptions[i].Dosage</td>
+                        <td>@Model.Prescriptions[i].DateStart</td>
+                        <td>@Model.Prescriptions[i].DateEnd</td>
+                        <td>
+                            <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Ready" />
+                        </td>
+                    }
+                </tr>
+            </form>
         }
+    }
     </tbody>
 </table>
 
@@ -96,37 +97,37 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
 
 <table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <th scope="col">Prescription ID</th>
-            <th scope="col">Medication Name</th>
-            <th scope="col">Dosage</th>
-            <th scope="col">Prescription Start</th>
-            <th scope="col">Prescription End</th>
-        </tr>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.Prescriptions.Count; i++)
+    @for (var i = 0; i < Model.Prescriptions.Count; i++)
+    {
+        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
         {
-            @for (int x = 0; x < Model.PrescriptionCollections[i].Count; x++)
-            {
-                <form method="post">
-                    <tr>
-                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="prescriptionCollectionId" />
-                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus.ToString().Equals("CollectionReady"))
-                        {
-                            <td>@Model.Prescriptions[i].Id</td>
-                            <td>@Model.Medications[i].MedicationName</td>
-                            <td>@Model.Prescriptions[i].Dosage</td>
-                            <td>@Model.Prescriptions[i].DateStart</td>
-                            <td>@Model.Prescriptions[i].DateEnd</td>
-                            <td>
-                                <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Collected" />
-                            </td>
-                        }
-                    </tr>
-                </form>
-            }
+            <form method="post">
+                <tr>
+                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.CollectionReady)
+                    {
+                        <td>@Model.Prescriptions[i].Id</td>
+                        <td>@Model.Medications[i].MedicationName</td>
+                        <td>@Model.Prescriptions[i].Dosage</td>
+                        <td>@Model.Prescriptions[i].DateStart</td>
+                        <td>@Model.Prescriptions[i].DateEnd</td>
+                        <td>
+                            <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Collected" />
+                        </td>
+                    }
+                </tr>
+            </form>
         }
+    }
     </tbody>
 </table>
 
@@ -134,36 +135,36 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
 
 <table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <th scope="col">Prescription ID</th>
-            <th scope="col">Medication Name</th>
-            <th scope="col">Dosage</th>
-            <th scope="col">Prescription Start</th>
-            <th scope="col">Prescription End</th>
-            <th scope="col">Collected At</th>
-        </tr>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+        <th scope="col">Collected At</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.Prescriptions.Count; i++)
+    @for (var i = 0; i < Model.Prescriptions.Count; i++)
+    {
+        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
         {
-            @for (int x = 0; x < Model.PrescriptionCollections[i].Count; x++)
-            {
-                <form method="post">
-                    <tr>
-                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="prescriptionCollectionId" />
-                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus.ToString().Equals("Collected"))
-                        {
-                            <td>@Model.Prescriptions[i].Id</td>
-                            <td>@Model.Medications[i].MedicationName</td>
-                            <td>@Model.Prescriptions[i].Dosage</td>
-                            <td>@Model.Prescriptions[i].DateStart</td>
-                            <td>@Model.Prescriptions[i].DateEnd</td>
+            <form method="post">
+                <tr>
+                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Collected)
+                    {
+                        <td>@Model.Prescriptions[i].Id</td>
+                        <td>@Model.Medications[i].MedicationName</td>
+                        <td>@Model.Prescriptions[i].Dosage</td>
+                        <td>@Model.Prescriptions[i].DateStart</td>
+                        <td>@Model.Prescriptions[i].DateEnd</td>
 
-                            <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionTime</td>
-                        }
-                    </tr>
-                </form>
-            }
+                        <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionTime</td>
+                    }
+                </tr>
+            </form>
         }
+    }
     </tbody>
 </table>
