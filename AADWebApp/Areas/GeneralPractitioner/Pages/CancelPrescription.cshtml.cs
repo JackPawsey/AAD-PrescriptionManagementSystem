@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
@@ -5,9 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Areas.GeneralPractitioner.Pages
 {
@@ -19,11 +19,11 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         private readonly UserManager<ApplicationUser> _userManager;
 
         public List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-        public List<Medication> Medications { get; set; } = new List<Medication>();
-        public List<ApplicationUser> Patients { get; set; } = new List<ApplicationUser>();
+        public List<Medication> Medications { get; } = new List<Medication>();
+        public List<ApplicationUser> Patients { get; } = new List<ApplicationUser>();
 
         [BindProperty]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         public CancelPrescriptionModel(IPrescriptionService prescriptionService, IMedicationService medicationService, UserManager<ApplicationUser> userManager)
         {
@@ -34,35 +34,32 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         public async Task OnGetAsync()
         {
-            await loadData();
+            await InitPageAsync();
         }
 
         public async Task<PageResult> OnPostAsync()
         {
-            var result = await _prescriptionService.CancelPrescriptionAsync((short) id);
+            var cancelResult = await _prescriptionService.CancelPrescriptionAsync((short) Id);
 
-            await loadData();
+            await InitPageAsync();
 
-            if (result == 1)
+            if (cancelResult == 1)
             {
                 return Page();
             }
-            else
-            {
-                ModelState.AddModelError("Cancel prescription error", "Prescription returned error value");
 
-                return Page();
-            }
+            ModelState.AddModelError("Cancel prescription error", "Prescription returned error value");
+
+            return Page();
         }
 
-        private async Task loadData()
+        private async Task InitPageAsync()
         {
-            Prescriptions = _prescriptionService.GetPrescriptions().OrderBy(item=>item.PrescriptionStatus).ToList();
+            Prescriptions = _prescriptionService.GetPrescriptions().OrderBy(item => item.PrescriptionStatus).ToList();
 
             foreach (var item in Prescriptions)
             {
                 Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
-
                 Patients.Add(await _userManager.FindByIdAsync(item.PatientId));
             }
         }

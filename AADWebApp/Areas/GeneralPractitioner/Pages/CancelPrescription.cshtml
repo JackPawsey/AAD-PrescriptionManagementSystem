@@ -1,4 +1,5 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.GeneralPractitioner.Pages.CancelPrescriptionModel
 @{
     ViewData["Title"] = "Cancel Prescription";
@@ -11,15 +12,21 @@
 <div id=" Search" class="form-group form-inline mb-5">
     <form class="form-inline">
         <div class="form-group">
-            <label class=" control-label ml-3"><b>ID</b></label>
+            <label class=" control-label ml-3">
+                <b>ID</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="ID" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3"><b>First Name</b></label>
+            <label class=" control-label ml-3">
+                <b>First Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="First Name" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3 "><b>Last Name</b></label>
+            <label class=" control-label ml-3 ">
+                <b>Last Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="Last Name" />
         </div>
 
@@ -29,37 +36,39 @@
 
 <table class="table table-hover table-striped">
     <thead>
-        <tr>
-            <th scope="col">Prescription ID</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Medication ID</th>
-            <th scope="col">Issue Frequency</th>
-            <th scope="col">Status</th>
-            <th scope="col">Medication Start</th>
-            <th scope="col">Medication End</th>
-            <th scope="col">Cancel</th>
-        </tr>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Issue Frequency</th>
+        <th scope="col">Status</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+        <th scope="col">Cancel</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.Prescriptions.Count; i++)
-        {
-            <form method="post">
-                <input type="hidden" value="@Model.Prescriptions[i].Id" name="id" />
-                <tr>
-                    <td>@Model.Prescriptions[i].Id</td>
-                    <td>@Model.Patients[i].FirstName</td>
-                    <td>@Model.Patients[i].LastName</td>
-                    <td>@Model.Medications[i].MedicationName</td>
-                    <td>@Model.Prescriptions[i].IssueFrequency</td>
-                    <td>@Model.Prescriptions[i].PrescriptionStatus</td>
-                    <td>@Model.Prescriptions[i].DateStart</td>
-                    <td>@Model.Prescriptions[i].DateEnd</td>
-                    <td>
-                        <input type="submit" class="btn btn-primary float-right" value="Cancel" />
-                    </td>
-                </tr>
-            </form>
-        }
+    @for (var i = 0; i < Model.Prescriptions.Count(); i++)
+    {
+        var isCancelled = Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Terminated;
+
+        <form method="POST">
+            <input type="hidden" value="@Model.Prescriptions[i].Id" name="Id" />
+            <tr>
+                <td>@Model.Prescriptions[i].Id</td>
+                <td>@Model.Patients[i].FirstName</td>
+                <td>@Model.Patients[i].LastName</td>
+                <td>@Model.Medications[i].MedicationName</td>
+                <td>@Model.Prescriptions[i].IssueFrequency</td>
+                <td>@Model.Prescriptions[i].PrescriptionStatus</td>
+                <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                <td>
+                    <input type="submit" class="btn btn-primary float-right" value="Cancel" @(isCancelled ? "disabled" : "") />
+                </td>
+            </tr>
+        </form>
+    }
     </tbody>
 </table>
