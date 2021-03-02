@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AADWebApp.Areas.Identity.Data;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
@@ -5,10 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AADWebApp.Areas.GeneralPractitioner.Pages
 {
@@ -20,11 +20,10 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         private readonly IMedicationService _medicationService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public List<BloodTest> BloodTests { get; set; } = new List<BloodTest>();
-        public List<BloodTestRequest> BloodTestRequests { get; private set; } = new List<BloodTestRequest>();
-        public List<Prescription> Prescriptions { get; } = new List<Prescription>();
-        public List<Medication> Medications { get; } = new List<Medication>();
-        public List<ApplicationUser> Patients { get; } = new List<ApplicationUser>();
+        public List<BloodTestRequest> BloodTestRequests { get; private set; }
+        public List<Prescription> Prescriptions { get; private set; }
+        public List<Medication> Medications { get; private set; }
+        public List<ApplicationUser> Patients { get; private set; }
 
         [BindProperty]
         public int PrescriptionId { get; set; }
@@ -50,6 +49,8 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         public async Task<PageResult> OnPostAsync()
         {
+            await InitPageAsync();
+
             var result = await _bloodTestService.SetBloodTestDateTimeAsync(Prescriptions.First(item => item.Id == PrescriptionId), (short) BloodTestRequestId, AppointmentDateTime);
 
             await InitPageAsync();
@@ -66,7 +67,11 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         private async Task InitPageAsync()
         {
-            BloodTests = _bloodTestService.GetBloodTests().ToList();
+            BloodTestRequests = new List<BloodTestRequest>();
+            Prescriptions = new List<Prescription>();
+            Medications = new List<Medication>();
+            Patients = new List<ApplicationUser>();
+
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().OrderBy(item => item.BloodTestStatus).ToList();
 
             foreach (var item in BloodTestRequests)
