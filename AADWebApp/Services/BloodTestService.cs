@@ -17,7 +17,6 @@ namespace AADWebApp.Services
             Pending,
             Scheduled,
             Complete,
-            Scheduled,
             Cancelled
         }
 
