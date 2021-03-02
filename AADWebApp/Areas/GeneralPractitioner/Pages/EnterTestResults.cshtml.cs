@@ -46,21 +46,19 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             await InitPageAsync();
         }
 
-        public async Task<PageResult> OnPostAsync()
+        public async Task OnPostAsync()
         {
-            var result = _bloodTestService.SetBloodTestResults((short) BloodTestRequestId, BloodTestResult, BloodTestDateTime);
+            var isSuccess = _bloodTestService.SetBloodTestResults((short) BloodTestRequestId, BloodTestResult, BloodTestDateTime);
 
             await InitPageAsync();
 
-            if (result == 1)
+            if (isSuccess == 1)
             {
-                return Page();
+                TempData["EnterTestSuccess"] = $"Blood test results for blood test request {BloodTestRequestId} were {BloodTestResult} and received on {BloodTestDateTime}.";
             }
             else
             {
-                ModelState.AddModelError("Submit blood test results error", "Blood Test service returned error value");
-
-                return Page();
+                TempData["EnterTestFailure"] = $"Blood Test service returned error value.";
             }
         }
 
