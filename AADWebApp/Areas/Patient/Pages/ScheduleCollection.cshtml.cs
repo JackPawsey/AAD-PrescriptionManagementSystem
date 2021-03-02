@@ -20,15 +20,15 @@ namespace AADWebApp.Areas.Patient.Pages
         private readonly IMedicationService _medicationService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-        public List<List<PrescriptionCollection>> PrescriptionCollections { get; set; } = new List<List<PrescriptionCollection>>();
-        public List<Medication> Medications { get; set; } = new List<Medication>();
+        public List<Prescription> Prescriptions { get; private set; } = new List<Prescription>();
+        public List<List<PrescriptionCollection>> PrescriptionCollections { get; private set; } = new List<List<PrescriptionCollection>>();
+        public List<Medication> Medications { get; private set; } = new List<Medication>();
 
         [BindProperty]
-        public int prescriptionId { get; set; }
+        public int PrescriptionId { get; set; }
 
         [BindProperty]
-        public DateTime collectionDateTime { get; set; }
+        public DateTime CollectionDateTime { get; set; }
 
         public ScheduleCollectionModel(IPrescriptionService prescriptionService, IPrescriptionCollectionService prescriptionCollectionService, IMedicationService medicationService, UserManager<ApplicationUser> userManager)
         {
@@ -40,20 +40,20 @@ namespace AADWebApp.Areas.Patient.Pages
 
         public async Task OnGetAsync()
         {
-            await loadData();
+            await InitPageAsync();
         }
 
         public async Task OnPostAsync()
         {
-            await loadData();
+            await InitPageAsync();
 
-            var result = await _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(Prescriptions.Where(item => item.Id == prescriptionId).First(), collectionDateTime);
+            var result = await _prescriptionCollectionService.SetPrescriptionCollectionTimeAsync(Prescriptions.First(item => item.Id == PrescriptionId), CollectionDateTime);
 
-            await loadData();
+            await InitPageAsync();
 
             if (result == 1)
             {
-                TempData["EnterPrescriptionCollectionDateTimeSuccess"] = $"Collection time for Prescripton {prescriptionId} was set to {collectionDateTime}.";
+                TempData["EnterPrescriptionCollectionDateTimeSuccess"] = $"Collection time for prescription {PrescriptionId} was set to {CollectionDateTime}.";
             }
             else
             {
@@ -61,23 +61,19 @@ namespace AADWebApp.Areas.Patient.Pages
             }
         }
 
-        private async Task loadData()
+        private async Task InitPageAsync()
         {
-            var patientAccount = await _userManager.FindByEmailAsync(User.Identity.Name);
-
             Prescriptions = new List<Prescription>();
             PrescriptionCollections = new List<List<PrescriptionCollection>>();
             Medications = new List<Medication>();
+
+            var patientAccount = await _userManager.FindByEmailAsync(User.Identity.Name);
 
             Prescriptions = _prescriptionService.GetPrescriptionsByPatientId(patientAccount.Id).ToList();
 
             foreach (var item in Prescriptions)
             {
                 Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
-            }
-
-            foreach (var item in Prescriptions)
-            {
                 PrescriptionCollections.Add(_prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId(item.Id).ToList());
             }
         }
