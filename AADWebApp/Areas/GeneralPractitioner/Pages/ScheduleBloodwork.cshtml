@@ -34,45 +34,53 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Patient ID</th>
-            <th scope="col"> First Name</th>
-            <th scope="col"> Last Name</th>
-            <th scope="col">Date of Birth</th>
-            <th scope="col">Bloodwork Type</th>
+            <th scope="col">Blood Test Request ID</th>
+            <th scope="col">Request Status</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Medication</th>
+            <th scope="col">Dosage</th>
             <th scope="col">Appointment Date</th>
+            <th scope="col">Appointment Time</th>
         </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < 6; i++)
+        @for (int i = 0; i < Model.BloodTestRequests.Count; i++)
         {
+        <form method="post">
+            <input type="hidden" value="@Model.Prescriptions[i].Id" name="prescriptionId" />
+            <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="bloodTestRequestId" />
             <tr>
-                <th scope="row">@(i+1)</th>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
+                <td>@Model.BloodTestRequests[i].Id</td>
+                <td>@Model.BloodTestRequests[i].BloodTestStatus</td>
+                <td>@Model.Patients[i].FirstName</td>
+                <td>@Model.Patients[i].LastName</td>
+                <td>@Model.Medications[i].MedicationName</td>
+                <td>@Model.Prescriptions[i].Dosage</td>
                 <td>
                     <div id="Date">
-                        <input type="date" class="form-control-sm" name="BirthDate"id="BirthDate" />
-                    </div>
-                </td>
-
-                <td>
-                    <div class="form-group">
-                        <select class="custom-select">
-                            <option selected> Choose Test</option>
-                            <option> </option>
-                        </select>
+                        <input required type="date" class="form-control-sm" />
                     </div>
                 </td>
                 <td>
-                    <div id="Date">
-                        <input type="date" class="form-control-sm" name="Appointment"id="Appointment" />
+                    <div id="Time">
+                        <input required type="time" class="form-control-sm" name="appointmentDateTime">
                     </div>
                 </td>
+                @if (Model.BloodTestRequests[i].BloodTestStatus.ToString().Equals("Scheduled"))
+                {
+                    <td>
+                        <input disabled type="submit" class="btn btn-primary float-right" value="Confirm" />
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <input type="submit" class="btn btn-primary float-right" value="Confirm" />
+                    </td>
+                }
             </tr>
-        }
-    </tbody>
+        </form>
+         }
+        </tbody>
 </table>
-
-<button class="btn btn-primary float-right">Confirm</button>

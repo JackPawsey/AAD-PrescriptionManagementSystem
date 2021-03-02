@@ -15,6 +15,7 @@ namespace AADWebApp.Services
         public enum BloodTestRequestStatus
         {
             Pending,
+            Scheduled,
             Complete,
             Cancelled
         }
@@ -140,7 +141,7 @@ namespace AADWebApp.Services
             await _notificationService.SendBloodTestTimeUpdateNotification(prescription, bloodTestRequest, appointmentTime);
 
             //UPDATE BloodTestRequests TABLE ROW appointmentTime COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{bloodTestRequestId}'");
+            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}', BloodTestStatus = '{BloodTestRequestStatus.Scheduled}' WHERE Id = '{bloodTestRequestId}'");
         }
 
         public int SetBloodTestResults(short bloodRequestTestId, bool result, DateTime resultTime)
