@@ -11,6 +11,7 @@ namespace AADWebApp.Services
     {
         public enum CollectionStatus
         {
+            Pending,
             BeingPrepared,
             CollectionReady,
             Collected,
