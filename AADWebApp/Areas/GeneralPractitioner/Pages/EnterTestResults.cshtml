@@ -50,7 +50,6 @@ else if (TempData["EnterTestFailure"] != null)
         <th scope="col">Last Name</th>
         <th scope="col">Blood Test Type</th>
         <th scope="col">Blood Test Date</th>
-        <th scope="col">Blood Test Time</th>
         <th scope="col" colspan="2">Results</th>
         <th scope="col"></th>
     </tr>
@@ -67,10 +66,7 @@ else if (TempData["EnterTestFailure"] != null)
                 <td>@Model.Patients[i].LastName</td>
                 <td>@Model.BloodTests[i].FullTitle</td>
                 <td>
-                    <input required type="date" class="form-control" />
-                </td>
-                <td>
-                    <input required type="time" class="form-control" name="BloodTestDateTime">
+                    <input required type="datetime-local" class="form-control" name="BloodTestDateTime">
                 </td>
                 <td>
                     <input required type="radio" name="BloodTestResult" value="true" class="form-check-input" id="Pass">

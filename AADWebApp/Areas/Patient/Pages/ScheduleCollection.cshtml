@@ -30,7 +30,7 @@ else if (TempData["EnterPrescriptionCollectionDateTimeFailure"] != null)
         <th scope="col">Collection Status Last Updated</th>
         <th scope="col">Current Collection Date/Time</th>
         <th scope="col">New Collection Date</th>
-        <th scope="col">New Collection Time</th>
+        <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -55,10 +55,7 @@ else if (TempData["EnterPrescriptionCollectionDateTimeFailure"] != null)
                         @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus != PrescriptionCollectionService.CollectionStatus.CollectionReady)
                         {
                             <td>
-                                <input required type="date" class="form-control" />
-                            </td>
-                            <td>
-                                <input required type="time" class="form-control" name="CollectionDateTime">
+                                <input required type="datetime-local" class="form-control" name="CollectionDateTime">
                             </td>
                             <td>
                                 <input type="submit" class="btn btn-primary float-right" value="Schedule" />
