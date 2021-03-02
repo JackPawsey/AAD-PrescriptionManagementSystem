@@ -51,7 +51,6 @@
         <th scope="col">Medication</th>
         <th scope="col">Dosage</th>
         <th scope="col">Appointment Date</th>
-        <th scope="col">Appointment Time</th>
     </tr>
     </thead>
     <tbody>
@@ -72,21 +71,11 @@
                 <td>
                     @if (isScheduledOrComplete)
                     {
-                        @Model.BloodTestRequests[i].AppointmentTime.ToShortDateString()
+                        @Model.BloodTestRequests[i].AppointmentTime
                     }
                     else
                     {
-                        <input required type="date" class="form-control" />
-                    }
-                </td>
-                <td>
-                    @if (isScheduledOrComplete)
-                    {
-                        @Model.BloodTestRequests[i].AppointmentTime.ToShortTimeString()
-                    }
-                    else
-                    {
-                        <input required type="time" class="form-control" name="AppointmentDateTime">
+                        <input required type="datetime-local" class="form-control" name="AppointmentDateTime">
                     }
                 </td>
                 <td>
