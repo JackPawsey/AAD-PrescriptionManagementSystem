@@ -11,15 +11,21 @@
 <div id=" Search" class="form-group form-inline mb-5">
     <form class="form-inline">
         <div class="form-group">
-            <label class=" control-label ml-3"><b>ID</b></label>
+            <label class=" control-label ml-3">
+                <b>ID</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="ID" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3"><b>First Name</b></label>
+            <label class=" control-label ml-3">
+                <b>First Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="First Name" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3 "><b>Last Name</b></label>
+            <label class=" control-label ml-3 ">
+                <b>Last Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="Last Name" />
         </div>
 
@@ -29,52 +35,47 @@
 
 <table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <th scope="col">Blood Test Request ID</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Blood Test Type</th>
-            <th scope="col">Blood Test Date</th>
-            <th scope="col">Blood Test Time</th>
-            <th scope="col">Results</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-        </tr>
+    <tr>
+        <th scope="col">Blood Test Request ID</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Blood Test Type</th>
+        <th scope="col">Blood Test Date</th>
+        <th scope="col">Blood Test Time</th>
+        <th scope="col" colspan="2">Results</th>
+        <th scope="col"></th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.BloodTestRequests.Count; i++)
-        {
-            <form method="post">
-                <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="bloodTestRequestId" />
-                
-                <tr>
-                    <td>@Model.BloodTestRequests[i].Id</td>
-                    <td>@Model.Patients[i].FirstName</td>
-                    <td>@Model.Patients[i].LastName</td>
-                    <td>@Model.BloodTests[i].FullTitle</td>
-                    <td>
-                        <div id="Date">
-                            <input required type="date" class="form-control" />
-                        </div>
-                    </td>
-                    <td>
-                        <div id="Time">
-                            <input required type="time" class="form-control" name="bloodTestDateTime">
-                        </div>
-                    </td>
-                    <td>
-                        <input required type="radio" name="bloodTestResult" value="true" class="form-check-input" id="Pass">
-                        <label class="form-check-label" for="Pass">Pass</label>
-                    </td>
-                    <td>
-                        <input required type="radio" name="bloodTestResult" value="false" class="form-check-input" id="Fail">
-                        <label class="form-check-label" for="Pass">Fail</label>
-                    </td>
-                    <td>
-                        <input type="submit" class="btn btn-primary float-right" value="Submit" />
-                    </td>
-                </tr>
-            </form>
-        }
+    @for (int i = 0; i < Model.BloodTestRequests.Count; i++)
+    {
+        <form method="post">
+            <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="BloodTestRequestId" />
+
+            <tr>
+                <td>@Model.BloodTestRequests[i].Id</td>
+                <td>@Model.Patients[i].FirstName</td>
+                <td>@Model.Patients[i].LastName</td>
+                <td>@Model.BloodTests[i].FullTitle</td>
+                <td>
+                    <input required type="date" class="form-control" />
+                </td>
+                <td>
+                    <input required type="time" class="form-control" name="BloodTestDateTime">
+                </td>
+                <td>
+                    <input required type="radio" name="BloodTestResult" value="true" class="form-check-input" id="Pass">
+                    <label class="form-check-label" for="Pass">Pass</label>
+                </td>
+                <td>
+                    <input required type="radio" name="BloodTestResult" value="false" class="form-check-input" id="Fail">
+                    <label class="form-check-label" for="Pass">Fail</label>
+                </td>
+                <td>
+                    <input type="submit" class="btn btn-primary float-right" value="Submit" />
+                </td>
+            </tr>
+        </form>
+    }
     </tbody>
 </table>

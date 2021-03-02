@@ -17,47 +17,40 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
     public class EnterTestResultsModel : PageModel
     {
         private readonly IBloodTestService _bloodTestService;
-        private readonly IMedicationService _medicationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPrescriptionService _prescriptionService;
 
-        public List<BloodTest> BloodTests { get; set; } = new List<BloodTest>();
-        public List<BloodTestRequest> BloodTestRequests { get; set; } = new List<BloodTestRequest>();
-        public List<Medication> Medications { get; set; } = new List<Medication>();
-        public List<ApplicationUser> Patients { get; set; } = new List<ApplicationUser>();
-        public List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public List<BloodTest> BloodTests { get; private set; } = new List<BloodTest>();
+        public List<BloodTestRequest> BloodTestRequests { get; private set; } = new List<BloodTestRequest>();
+        public List<ApplicationUser> Patients { get; } = new List<ApplicationUser>();
+        public List<Prescription> Prescriptions { get; } = new List<Prescription>();
 
         [BindProperty]
-        public int bloodTestRequestId { get; set; }
+        public int BloodTestRequestId { get; set; }
 
         [BindProperty]
-        public bool bloodTestResult { get; set; }
+        public bool BloodTestResult { get; set; }
 
         [BindProperty]
-        public DateTime bloodTestDateTime { get; set; }
+        public DateTime BloodTestDateTime { get; set; }
 
-        public EnterTestResultsModel(IBloodTestService bloodTestService, UserManager<ApplicationUser> userManager, IMedicationService medicationService, IPrescriptionService prescriptionService)
+        public EnterTestResultsModel(IBloodTestService bloodTestService, UserManager<ApplicationUser> userManager, IPrescriptionService prescriptionService)
         {
             _bloodTestService = bloodTestService;
             _userManager = userManager;
-            _medicationService = medicationService;
             _prescriptionService = prescriptionService;
         }
 
         public async Task OnGetAsync()
         {
-            await loadData();
+            await InitPageAsync();
         }
 
         public async Task<PageResult> OnPostAsync()
         {
-            Console.WriteLine("bloodTestRequestId " + bloodTestRequestId);
-            Console.WriteLine("bloodTestResult " + bloodTestResult);
-            Console.WriteLine("bloodTestDateTime " + bloodTestDateTime);
+            var result = _bloodTestService.SetBloodTestResults((short) BloodTestRequestId, BloodTestResult, BloodTestDateTime);
 
-            var result = _bloodTestService.SetBloodTestResults((short) bloodTestRequestId, bloodTestResult, bloodTestDateTime);
-
-            await loadData();
+            await InitPageAsync();
 
             if (result == 1)
             {
@@ -71,7 +64,7 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             }
         }
 
-        private async Task loadData()
+        private async Task InitPageAsync()
         {
             BloodTests = _bloodTestService.GetBloodTests().ToList();
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => item.BloodTestStatus == BloodTestRequestStatus.Scheduled).OrderBy(item => item.BloodTestStatus).ToList();
@@ -83,8 +76,6 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
             foreach (var item in Prescriptions)
             {
-                Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
-
                 Patients.Add(await _userManager.FindByIdAsync(item.PatientId));
             }
         }
