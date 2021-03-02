@@ -21,19 +21,19 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         private readonly UserManager<ApplicationUser> _userManager;
 
         public List<BloodTest> BloodTests { get; set; } = new List<BloodTest>();
-        public List<BloodTestRequest> BloodTestRequests { get; set; } = new List<BloodTestRequest>();
-        public List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-        public List<Medication> Medications { get; set; } = new List<Medication>();
-        public List<ApplicationUser> Patients { get; set; } = new List<ApplicationUser>();
+        public List<BloodTestRequest> BloodTestRequests { get; private set; } = new List<BloodTestRequest>();
+        public List<Prescription> Prescriptions { get; } = new List<Prescription>();
+        public List<Medication> Medications { get; } = new List<Medication>();
+        public List<ApplicationUser> Patients { get; } = new List<ApplicationUser>();
 
         [BindProperty]
-        public int prescriptionId { get; set; }
+        public int PrescriptionId { get; set; }
 
         [BindProperty]
-        public int bloodTestRequestId { get; set; }
+        public int BloodTestRequestId { get; set; }
 
         [BindProperty]
-        public DateTime appointmentDateTime { get; set; }
+        public DateTime AppointmentDateTime { get; set; }
 
         public ScheduleBloodworkModel(IBloodTestService bloodTestService, IPrescriptionService prescriptionService, IMedicationService medicationService, UserManager<ApplicationUser> userManager)
         {
@@ -45,32 +45,26 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         public async Task OnGetAsync()
         {
-            await loadData();
+            await InitPageAsync();
         }
 
         public async Task<PageResult> OnPostAsync()
         {
-            Console.WriteLine("Prescription id " + prescriptionId);
-            Console.WriteLine("blood test id " + bloodTestRequestId);
-            Console.WriteLine("datetime " + appointmentDateTime);
+            var result = await _bloodTestService.SetBloodTestDateTimeAsync(Prescriptions.First(item => item.Id == PrescriptionId), (short) BloodTestRequestId, AppointmentDateTime);
 
-            var result = await _bloodTestService.SetBloodTestDateTimeAsync(Prescriptions.Where(item => item.Id == prescriptionId).First(), (short) bloodTestRequestId, appointmentDateTime);
-
-            await loadData();
+            await InitPageAsync();
 
             if (result == 1)
             {
                 return Page();
             }
-            else
-            {
-                ModelState.AddModelError("Request blood test error", "Blood Test service returned error value");
 
-                return Page();
-            }
+            ModelState.AddModelError("Request blood test error", "Blood Test service returned error value");
+
+            return Page();
         }
 
-        private async Task loadData()
+        private async Task InitPageAsync()
         {
             BloodTests = _bloodTestService.GetBloodTests().ToList();
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().OrderBy(item => item.BloodTestStatus).ToList();
@@ -83,7 +77,6 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             foreach (var item in Prescriptions)
             {
                 Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
-
                 Patients.Add(await _userManager.FindByIdAsync(item.PatientId));
             }
         }

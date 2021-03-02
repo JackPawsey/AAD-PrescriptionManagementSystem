@@ -1,4 +1,5 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.GeneralPractitioner.Pages.ScheduleBloodworkModel
 @{
     ViewData["Title"] = "Schedule Bloodwork";
@@ -11,45 +12,48 @@
 <div id=" Search" class="form-group form-inline mb-5">
     <form class="form-inline">
         <div class="form-group">
-            <label class=" control-label ml-3"><b>ID</b></label>
+            <label class=" control-label ml-3">
+                <b>ID</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="ID" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3"><b>First Name</b></label>
+            <label class=" control-label ml-3">
+                <b>First Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="First Name" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3 "><b>Last Name</b></label>
+            <label class=" control-label ml-3 ">
+                <b>Last Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="Last Name" />
         </div>
-
-
-
         <button class="input-group-addon btn btn-primary float-right ml-5">Search</button>
     </form>
-
-
 </div>
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th scope="col">Blood Test Request ID</th>
-            <th scope="col">Request Status</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Medication</th>
-            <th scope="col">Dosage</th>
-            <th scope="col">Appointment Date</th>
-            <th scope="col">Appointment Time</th>
-        </tr>
+    <tr>
+        <th scope="col">Blood Test Request ID</th>
+        <th scope="col">Request Status</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Medication</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Appointment Date</th>
+        <th scope="col">Appointment Time</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.BloodTestRequests.Count; i++)
-        {
+    @for (var i = 0; i < Model.BloodTestRequests.Count; i++)
+    {
+        var isScheduled = Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Scheduled;
+
         <form method="post">
-            <input type="hidden" value="@Model.Prescriptions[i].Id" name="prescriptionId" />
-            <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="bloodTestRequestId" />
+            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+            <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="BloodTestRequestId" />
             <tr>
                 <td>@Model.BloodTestRequests[i].Id</td>
                 <td>@Model.BloodTestRequests[i].BloodTestStatus</td>
@@ -58,29 +62,30 @@
                 <td>@Model.Medications[i].MedicationName</td>
                 <td>@Model.Prescriptions[i].Dosage</td>
                 <td>
-                    <div id="Date">
-                        <input required type="date" class="form-control-sm" />
-                    </div>
+                    @if (isScheduled)
+                    {
+                        @Model.BloodTestRequests[i].AppointmentTime.ToShortDateString()
+                    }
+                    else
+                    {
+                        <input required type="date" class="form-control" />
+                    }
                 </td>
                 <td>
-                    <div id="Time">
-                        <input required type="time" class="form-control-sm" name="appointmentDateTime">
-                    </div>
+                    @if (isScheduled)
+                    {
+                        @Model.BloodTestRequests[i].AppointmentTime.ToShortTimeString()
+                    }
+                    else
+                    {
+                        <input required type="time" class="form-control" name="AppointmentDateTime">
+                    }
                 </td>
-                @if (Model.BloodTestRequests[i].BloodTestStatus.ToString().Equals("Scheduled"))
-                {
-                    <td>
-                        <input disabled type="submit" class="btn btn-primary float-right" value="Confirm" />
-                    </td>
-                }
-                else
-                {
-                    <td>
-                        <input type="submit" class="btn btn-primary float-right" value="Confirm" />
-                    </td>
-                }
+                <td>
+                    <input type="submit" class="btn btn-primary float-right" value="Confirm" @(isScheduled ? "disabled" : "") />
+                </td>
             </tr>
         </form>
-         }
-        </tbody>
+    }
+    </tbody>
 </table>
