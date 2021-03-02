@@ -41,7 +41,7 @@ else if (TempData["EnterPrescriptionCollectionDateTimeFailure"] != null)
             <tr>
                 @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
                 {
-                    if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Arranged || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Pending || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.BeingPrepared || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.CollectionReady)
+                    if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Pending || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.BeingPrepared || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.CollectionReady)
                     {
                         <td>@Model.Prescriptions[i].Id</td>
                         <td>@Model.Medications[i].MedicationName</td>
