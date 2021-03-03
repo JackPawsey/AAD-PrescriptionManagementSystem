@@ -84,17 +84,6 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => prescriptionIds.Contains(item.PrescriptionId)).OrderBy(item => item.BloodTestStatus).ToList();
 
             await LoadBloodTestRequestsAndPrescriptionsAsync();
-
-            //foreach (var item in BloodTestRequests)
-            //{
-            //    Prescriptions.Add(_prescriptionService.GetPrescriptions(item.PrescriptionId).ElementAt(0));
-            //}
-
-            //foreach (var item in Prescriptions)
-            //{
-            //    Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
-            //    Patients.Add(await _userManager.FindByIdAsync(item.PatientId));
-            //}
         }
 
         private async Task InitPageAsync()
@@ -107,17 +96,6 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().OrderBy(item => item.BloodTestStatus).ToList();
 
             await LoadBloodTestRequestsAndPrescriptionsAsync();
-
-            //foreach (var item in BloodTestRequests)
-            //{
-            //    Prescriptions.Add(_prescriptionService.GetPrescriptions(item.PrescriptionId).ElementAt(0));
-            //}
-
-            //foreach (var item in Prescriptions)
-            //{
-            //    Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
-            //    Patients.Add(await _userManager.FindByIdAsync(item.PatientId));
-            //}
         }
 
         private async Task LoadBloodTestRequestsAndPrescriptionsAsync()
