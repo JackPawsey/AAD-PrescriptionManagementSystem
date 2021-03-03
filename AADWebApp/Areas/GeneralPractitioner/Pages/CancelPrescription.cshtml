@@ -1,4 +1,5 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.GeneralPractitioner.Pages.CancelPrescriptionModel
 @{
     ViewData["Title"] = "Cancel Prescription";
@@ -11,70 +12,71 @@
 <div id=" Search" class="form-group form-inline mb-5">
     <form class="form-inline">
         <div class="form-group">
-            <label class=" control-label ml-3"><b>ID</b></label>
+            <label class=" control-label ml-3">
+                <b>ID</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="ID" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3"><b>First Name</b></label>
+            <label class=" control-label ml-3">
+                <b>First Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="First Name" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3 "><b>Last Name</b></label>
+            <label class=" control-label ml-3 ">
+                <b>Last Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="Last Name" />
         </div>
 
-
         <button class="input-group-addon btn btn-primary float-right ml-5">Search</button>
     </form>
-
-
 </div>
+    
+@if (TempData["PrescriptionCancelSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["PrescriptionCancelSuccess"]</p>
+} else if (TempData["PrescriptionCancelFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["PrescriptionCancelFailure"]</p>
+}
 
 <table class="table table-hover table-striped">
     <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Patient ID</th>
-            <th scope="col"> First Name</th>
-            <th scope="col"> Last Name</th>
-            <th scope="col">Medication ID</th>
-            <th scope="col">Medication Name</th>
-            <th scope="col">Medication Start</th>
-            <th scope="col">Medication End</th>
-            <th scope="col">Cancel</th>
-        </tr>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Issue Frequency</th>
+        <th scope="col">Status</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+        <th scope="col">Cancel</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < 8; i++)
-        {
+    @for (var i = 0; i < Model.Prescriptions.Count(); i++)
+    {
+        var isCancelled = Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Terminated;
+
+        <form method="POST">
+            <input type="hidden" value="@Model.Prescriptions[i].Id" name="Id" />
             <tr>
-                <th scope="row">@(i+1)</th>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
+                <td>@Model.Prescriptions[i].Id</td>
+                <td>@Model.Patients[i].FirstName</td>
+                <td>@Model.Patients[i].LastName</td>
+                <td>@Model.Medications[i].MedicationName</td>
+                <td>@Model.Prescriptions[i].IssueFrequency</td>
+                <td>@Model.Prescriptions[i].PrescriptionStatus</td>
+                <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
                 <td>
-                    <div id="DateStart">
-                        <input type="date" class="form-control-sm" name="Medication Start" id="Medication Start" />
-                    </div>
-                </td>
-                <td>
-                    <div id="DateEnd">
-                        <input type="date" class="form-control-sm" name="Medication End" id="Medication End" />
-                    </div>
-                </td>
-                <td>
-                    <div id="CheckBox" class="form-check">
-                        <input type="checkbox" name="Status" value="Cancel" class="form-check-input" id="Cancel@(i+1)" />
-                        <label for="Cancel@(i+1)">
-                            Cancel
-                        </label>
-                    </div>
+                    <input type="submit" class="btn btn-primary float-right" value="Cancel" @(isCancelled ? "disabled" : "") />
                 </td>
             </tr>
-        }
+        </form>
+    }
     </tbody>
 </table>
-
-<button class="btn btn-primary float-right">Confirm</button>

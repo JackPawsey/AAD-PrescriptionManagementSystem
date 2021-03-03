@@ -10,6 +10,8 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
 
         public static string Email => "Email";
 
+        public static string CommunicationPreferences => "CommunicationPreferences";
+
         public static string ChangePassword => "ChangePassword";
 
         public static string DownloadPersonalData => "DownloadPersonalData";
@@ -30,6 +32,11 @@ namespace AADWebApp.Areas.Identity.Pages.Account.Manage
         public static string EmailNavClass(ViewContext viewContext)
         {
             return PageNavClass(viewContext, Email);
+        }
+
+        public static string CommunicationPreferencesNavClass(ViewContext viewContext)
+        {
+            return PageNavClass(viewContext, CommunicationPreferences);
         }
 
         public static string ChangePasswordNavClass(ViewContext viewContext)

@@ -105,3 +105,8 @@ div.login-logout-tab a.nav-link {
 .btn-no-border {
     border: 0;
 }
+
+/* Table */
+table > tbody > tr > td, table > thead > tr > th {
+    vertical-align: middle!important;
+}

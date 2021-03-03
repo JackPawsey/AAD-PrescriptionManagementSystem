@@ -1,4 +1,5 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.GeneralPractitioner.Pages.ScheduleBloodworkModel
 @{
     ViewData["Title"] = "Schedule Bloodwork";
@@ -11,68 +12,77 @@
 <div id=" Search" class="form-group form-inline mb-5">
     <form class="form-inline">
         <div class="form-group">
-            <label class=" control-label ml-3"><b>ID</b></label>
+            <label class=" control-label ml-3">
+                <b>ID</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="ID" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3"><b>First Name</b></label>
+            <label class=" control-label ml-3">
+                <b>First Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="First Name" />
         </div>
         <div class="form-group">
-            <label class=" control-label ml-3 "><b>Last Name</b></label>
+            <label class=" control-label ml-3 ">
+                <b>Last Name</b>
+            </label>
             <input type="text" class="form-control ml-5 " placeholder="Last Name" />
         </div>
-
-
-
         <button class="input-group-addon btn btn-primary float-right ml-5">Search</button>
     </form>
-
-
 </div>
+
+@if (TempData["ScheduleBloodworkSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["ScheduleBloodworkSuccess"]</p>
+} else if (TempData["ScheduleBloodworkFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["ScheduleBloodworkFailure"]</p>
+}
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Patient ID</th>
-            <th scope="col"> First Name</th>
-            <th scope="col"> Last Name</th>
-            <th scope="col">Date of Birth</th>
-            <th scope="col">Bloodwork Type</th>
-            <th scope="col">Appointment Date</th>
-        </tr>
+    <tr>
+        <th scope="col">Blood Test Request ID</th>
+        <th scope="col">Request Status</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Medication</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Appointment Date</th>
+    </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < 6; i++)
-        {
-            <tr>
-                <th scope="row">@(i+1)</th>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                <td>
-                    <div id="Date">
-                        <input type="date" class="form-control-sm" name="BirthDate"id="BirthDate" />
-                    </div>
-                </td>
+    @for (var i = 0; i < Model.BloodTestRequests.Count; i++)
+    {
+        var isScheduledOrComplete = Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Scheduled || Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Complete;
 
+        <form method="post">
+            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+            <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="BloodTestRequestId" />
+            <tr>
+                <td>@Model.BloodTestRequests[i].Id</td>
+                <td>@Model.BloodTestRequests[i].BloodTestStatus</td>
+                <td>@Model.Patients[i].FirstName</td>
+                <td>@Model.Patients[i].LastName</td>
+                <td>@Model.Medications[i].MedicationName</td>
+                <td>@Model.Prescriptions[i].Dosage</td>
                 <td>
-                    <div class="form-group">
-                        <select class="custom-select">
-                            <option selected> Choose Test</option>
-                            <option> </option>
-                        </select>
-                    </div>
+                    @if (isScheduledOrComplete)
+                    {
+                        @Model.BloodTestRequests[i].AppointmentTime
+                    }
+                    else
+                    {
+                        <input required type="datetime-local" class="form-control" name="AppointmentDateTime">
+                    }
                 </td>
                 <td>
-                    <div id="Date">
-                        <input type="date" class="form-control-sm" name="Appointment"id="Appointment" />
-                    </div>
+                    <input type="submit" class="btn btn-primary float-right" value="Confirm" @(isScheduledOrComplete ? "disabled" : "") />
                 </td>
             </tr>
-        }
+        </form>
+    }
     </tbody>
 </table>
-
-<button class="btn btn-primary float-right">Confirm</button>
