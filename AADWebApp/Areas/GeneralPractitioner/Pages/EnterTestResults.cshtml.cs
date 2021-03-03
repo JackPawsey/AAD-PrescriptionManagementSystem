@@ -24,7 +24,7 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         public List<BloodTest> BloodTests { get; private set; } = new List<BloodTest>();
         public List<BloodTestRequest> BloodTestRequests { get; private set; } = new List<BloodTestRequest>();
         public List<ApplicationUser> Patients { get; } = new List<ApplicationUser>();
-        public List<Prescription> Prescriptions { get; } = new List<Prescription>();
+        public List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
 
         [BindProperty]
         public int BloodTestRequestId { get; set; }
@@ -34,6 +34,9 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         [BindProperty]
         public DateTime BloodTestDateTime { get; set; }
+
+        [BindProperty]
+        public string SearchTerm { get; set; }
 
         public EnterTestResultsModel(IBloodTestService bloodTestService, UserManager<ApplicationUser> userManager, IPrescriptionService prescriptionService)
         {
@@ -73,11 +76,30 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             }
         }
 
+        public async Task OnPostSearchAsync()
+        {
+            var patientIds = _userManager.Users.Where(item => item.FirstName.Contains(SearchTerm) || item.LastName.Contains(SearchTerm)).Select(item => item.Id);
+
+            Prescriptions = _prescriptionService.GetPrescriptions().Where(item => patientIds.Contains(item.PatientId)).OrderBy(item => item.Id).ToList();
+
+            var prescriptionIds = Prescriptions.Select(item => item.Id);
+
+            BloodTests = _bloodTestService.GetBloodTests().ToList();
+            BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => item.BloodTestStatus == BloodTestRequestStatus.Scheduled && prescriptionIds.Contains(item.PrescriptionId)).OrderBy(item => item.BloodTestStatus).ToList();
+
+            await LoadPrescriptionsAndPatients();
+        }
+
         private async Task InitPageAsync()
         {
             BloodTests = _bloodTestService.GetBloodTests().ToList();
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => item.BloodTestStatus == BloodTestRequestStatus.Scheduled).OrderBy(item => item.BloodTestStatus).ToList();
 
+            await LoadPrescriptionsAndPatients();
+        }
+
+        private async Task LoadPrescriptionsAndPatients()
+        {
             foreach (var item in BloodTestRequests)
             {
                 Prescriptions.Add(_prescriptionService.GetPrescriptions(item.PrescriptionId).ElementAt(0));
