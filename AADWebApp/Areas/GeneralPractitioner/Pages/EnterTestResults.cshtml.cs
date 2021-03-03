@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static AADWebApp.Services.BloodTestService;
+using static AADWebApp.Services.PrescriptionService;
 
 namespace AADWebApp.Areas.GeneralPractitioner.Pages
 {
@@ -48,17 +49,27 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         public async Task OnPostAsync()
         {
-            var isSuccess = _bloodTestService.SetBloodTestResults((short) BloodTestRequestId, BloodTestResult, BloodTestDateTime);
+            await InitPageAsync();
+
+            var bloodTestSuccess = _bloodTestService.SetBloodTestResults((short) BloodTestRequestId, BloodTestResult, BloodTestDateTime);
+
+            var prescription = _prescriptionService.GetPrescriptions(BloodTestRequests.Where(item => item.Id == BloodTestRequestId).First().PrescriptionId).ElementAt(0);
+
+            var statusSuccess = _prescriptionService.SetPrescriptionStatus(prescription.Id, PrescriptionStatus.BloodworkReceived);
 
             await InitPageAsync();
 
-            if (isSuccess == 1)
+            if (bloodTestSuccess == 1 && statusSuccess == 1)
             {
                 TempData["EnterTestSuccess"] = $"Blood test results for blood test request {BloodTestRequestId} were {BloodTestResult} and received on {BloodTestDateTime}.";
             }
-            else
+            else if (bloodTestSuccess == 0)
             {
                 TempData["EnterTestFailure"] = $"Blood Test service returned error value.";
+            }
+            else
+            {
+                TempData["EnterTestFailure"] = $"Prescription service returned error value.";
             }
         }
 
