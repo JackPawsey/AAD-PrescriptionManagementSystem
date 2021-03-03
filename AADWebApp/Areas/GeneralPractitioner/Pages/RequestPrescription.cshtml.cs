@@ -47,6 +47,9 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         [BindProperty]
         public PrescriptionService.IssueFrequency IssueFrequency { get; set; }
 
+        [BindProperty]
+        public string SearchTerm { get; set; }
+
         public RequestPrescriptionModel(IMedicationService medicationService, IPatientService patientService, IPrescriptionService prescriptionService, UserManager<ApplicationUser> userManager)
         {
             _medicationService = medicationService;
@@ -60,7 +63,7 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             await InitPage();
         }
 
-        public async Task OnPostAsync()
+        public async Task OnPostPrescribeAsync()
         {
             await InitPage();
 
@@ -73,6 +76,18 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             else
             {
                 TempData["PrescriptionRequestFailure"] = $"Failed to prescribe medication.";
+            }
+        }
+
+        public async Task OnPostSearchAsync()
+        {
+            Medications = _medicationService.GetMedications().Where(item => item.MedicationName.Contains(SearchTerm)).OrderBy(item => item.MedicationName);
+
+            Console.WriteLine("hello world");
+            
+            foreach (var patient in _patientService.GetPatients())
+            {
+                Patients.Add(await _userManager.FindByIdAsync(patient.Id));
             }
         }
 

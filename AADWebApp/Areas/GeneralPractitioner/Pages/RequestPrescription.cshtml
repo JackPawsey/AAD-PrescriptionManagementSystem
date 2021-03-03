@@ -11,43 +11,20 @@
 <h3 class="mb-5">Search</h3>
 
 <div id=" Search" class="form-group form-inline mb-5">
-    <form class="form-inline">
+    <form method="post" class="form-inline">
         <div class="form-group">
-            <label class=" control-label ml-3">
-                <b>ID</b>
-            </label>
-            <input type="text" class="form-control ml-5 " placeholder="Medication ID" />
+            <label for="medication-name" class="mr-5">Medication Name</label>
+            <input type="text" class="form-control mr-5" id="medication-name" name="SearchTerm" placeholder="Medication Name">
         </div>
-        <div class="form-group">
-            <label class=" control-label ml-4">
-                <b>Medicine</b>
-            </label>
-            <input type="text" class="form-control ml-5 " placeholder="Medication Name" />
-        </div>
-        <div class="form-group">
-            <label class=" control-label ml-5 ">
-                <b>Restriction</b>
-            </label>
-            <div class="form-group ml-5">
-                <select class="custom-select">
-                    <option selected> Restriction Level</option>
-                    @for (var x = 0; x < 4; x++)
-                    {
-                        <option> @(x)</option>
-                    }
-
-                </select>
-            </div>
-        </div>
-
-        <button class="input-group-addon btn btn-primary float-right ml-5">Search</button>
+        <button type="submit" asp-page-handler="Search" class="btn btn-primary">Search</button>
     </form>
 </div>
 
 @if (TempData["PrescriptionRequestSuccess"] != null)
 {
     <p class="mb-2 p-2 bg-success text-white rounded">@TempData["PrescriptionRequestSuccess"]</p>
-} else if (TempData["PrescriptionRequestFailure"] != null)
+}
+else if (TempData["PrescriptionRequestFailure"] != null)
 {
     <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["PrescriptionRequestFailure"]</p>
 }
@@ -143,7 +120,7 @@
                 </div>
                 <div class="modal-footer">
                     <input type="submit" class="btn btn-danger float-left" data-dismiss="modal" value="Cancel" />
-                    <input type="submit" class="btn btn-primary float-right" value="Confirm" />
+                    <input type="submit" class="btn btn-primary float-right" value="Confirm" asp-page-handler="Prescribe"  />
                 </div>
             </div>
         </div>
