@@ -5,4 +5,50 @@
     Layout = "~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerLayout.cshtml";
 }
 
-<h1>General Practitioner Home</h1>
+<h1 class="mb-5 mt-5">General Practitioner Home</h1>
+
+<div class="card-deck mt-5 mb-5">
+    <div class="card ml-5">
+        <img class="card-img-top" src="~/lib/Images/MedicineBottle.png" style="height:300px">
+        <div class="card-body">
+            <a class="text-dark" asp-area="GeneralPractitioner" asp-page="/RequestPrescription">
+                <h5 class="card-title"> <b>Request Prescription</b></h5>
+            </a>
+            <p class="card-text">Request a Prescription to be approved for a patient.</p>
+        </div>
+    </div>
+    <div class="card ml-5">
+        <img class="card-img-top" src="~/lib/Images/Doctor-Patient.png" style="height:300px">
+        <div class="card-body">
+            <a class="text-dark" asp-area="GeneralPractitioner" asp-page="/CancelPrescription">
+                <h5 class="card-title"><b>Cancel Prescriptions</b></h5>
+            </a>
+            <p class="card-text">Cancel unwanted Prescriptions for patients.</p>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="card-deck mt-5 mb-5">
+    <div class="card ml-5">
+        <img class="card-img-top" src="~/lib/Images/BloodTestingShirt.png">
+        <div class="card-body">
+            <a class="text-dark" asp-area="GeneralPractitioner" asp-page="/ScheduleBloodwork">
+                <h5 class="card-title"> <b>Schedule Bloodwork</b></h5>
+            </a>
+            <p class="card-text">Schdeule a blood test requested by a pharmacist.</p>
+        </div>
+    </div>
+    <div class="card ml-5">
+        <img class="card-img-top" src="~/lib/Images/Results.png">
+        <div class="card-body">
+            <a class="text-dark" asp-area="GeneralPractitioner" asp-page="/EnterTestResults">
+                <h5 class="card-title"><b>Enter Results</b></h5>
+            </a>
+            <p class="card-text">Enter Results of blood tests.</p>
+        </div>
+    </div>
+
+
+</div>

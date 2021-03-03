@@ -5,4 +5,25 @@
     Layout = "~/Areas/Pharmacist/Pages/_PharmacistLayout.cshtml";
 }
 
-<h1>Pharmacist Home</h1>
+<h1 class="mb-5 mt-5">Pharmacist Home</h1>
+
+<div class="card-deck mt-5 mb-5">
+    <div class="card ml-5">
+        <img class="card-img-top" src="~/lib/Images/BloodTest.png">
+        <div class="card-body">
+            <a class="text-dark" asp-area="Pharmacist" asp-page="/RequestBloodwork">
+                <h5 class="card-title"> <b>Request Bloodwork</b></h5>
+            </a>
+            <p class="card-text">Get your Prescriptions approved Online.</p>
+        </div>
+    </div>
+    <div class="card ml-5">
+        <img class="card-img-top" src="~/lib/Images/MedicineVial.png">
+        <div class="card-body">
+            <a class="text-dark" asp-area="Pharmacist" asp-page="/ReviewPrescriptions">
+                <h5 class="card-title"><b> Review Prescriptions</b></h5>
+            </a>
+            <p class="card-text">Review Prescriptions and approve them for patients.</p>
+        </div>
+    </div>
+</div>
