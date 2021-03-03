@@ -63,7 +63,7 @@ namespace AADWebApp.Areas.Pharmacist.Pages
             {
                 TempData["ReviewPrescriptionSuccess"] = $"Status for prescription {PrescriptionId} was set to Awaiting Bloodwork.";
             }
-            else if (statusSuccess != 0)
+            else if (statusSuccess != 1)
             {
                 TempData["ReviewPrescriptionFailure"] = $"Prescription service returned error value.";
             }
