@@ -25,6 +25,9 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         [BindProperty]
         public int Id { get; set; }
 
+        [BindProperty]
+        public string SearchTerm { get; set; }
+
         public CancelPrescriptionModel(IPrescriptionService prescriptionService, IMedicationService medicationService, UserManager<ApplicationUser> userManager)
         {
             _prescriptionService = prescriptionService;
@@ -50,6 +53,19 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             else
             {
                 TempData["PrescriptionCancelFailure"] = $"Prescription returned error value";
+            }
+        }
+
+        public async Task OnPostSearchAsync()
+        {
+            var patientIds = _userManager.Users.Where(item => item.FirstName.Contains(SearchTerm) || item.LastName.Contains(SearchTerm)).Select(item => item.Id);
+
+            Prescriptions = _prescriptionService.GetPrescriptions().Where(item => patientIds.Contains(item.PatientId)).OrderBy(item => item.Id).ToList();
+
+            foreach (var item in Prescriptions)
+            {
+                Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
+                Patients.Add(await _userManager.FindByIdAsync(item.PatientId));
             }
         }
 
