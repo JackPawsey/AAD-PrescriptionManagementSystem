@@ -13,6 +13,7 @@ namespace AADWebApp.Services
         {
             PendingApproval,
             AwaitingBloodWork,
+            BloodworkReceived,
             Approved,
             Declined,
             Terminated
