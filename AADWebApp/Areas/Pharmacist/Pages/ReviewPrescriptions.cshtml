@@ -20,10 +20,10 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <h2 class="mb-5">Pending Approval</h2>
 
 <div class="table-responsive">
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-sm">
         <thead>
             <tr>
-                <th>Prescription ID</th>
+                <th>ID</th>
                 <th>Medication Name</th>
                 <th>Medication Restriction Level</th>
                 <th>Patient Name</th>
@@ -32,9 +32,7 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
                 <th>Prescription End</th>
                 <th>Frequency</th>
                 <th></th>
-                <th></th>
-                <th>Blood Test Type</th>
-                <th></th>
+                @* <th>Blood Test Type</th> *@
             </tr>
         </thead>
         <tbody>
@@ -63,24 +61,35 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
                             <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
                             <td>@Model.Prescriptions[i].IssueFrequency</td>
                             <td>
-                                <input type="submit" class="btn btn-sm btn-primary" value="Approved" asp-page-handler="Approved" />
-                            </td>
-                            <td>
-                                <input type="submit" class="btn btn-sm btn-primary" value="Declined" asp-page-handler="Declined" />
-                            </td>
+                                <table class="table table-sm table-borderless table-light m-0 p-0 table-not-striped">
+                                    <tr>
+                                        <td>
 
-                            <td>
-                                <select asp-for="BloodTestId" name="BloodTestId" class="form-control">
-                                    <option selected="selected">Select Blood Test Type</option>
-                                    @for (int x = 0; x < Model.BloodTests.Count; x++)
-                                    {
-                                        <option value="@Model.BloodTests[x].Id">@Model.BloodTests[x].FullTitle</option>
-                                    }
-                                </select>
-                            </td>
+                                            <input type="submit" class="btn btn-sm btn-success" value="Approved" asp-page-handler="Approved" />
+                                        </td>
+                                        <td>
 
-                            <td>
-                                <input type="submit" class="btn btn-sm btn-primary" value="Request Bloodwork" asp-page-handler="RequestBloodwork" />
+                                            <input type="submit" class="btn btn-sm btn-danger" value="Declined" asp-page-handler="Declined" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <input type="submit" class="btn btn-sm btn-warning w-100" value="Request Bloodwork" asp-page-handler="RequestBloodwork" />
+                                        </td>
+                                    </tr>
+                                </table>
+
+
+                                @* <td> *@
+                                @*     <select asp-for="BloodTestId" name="BloodTestId" class="form-control"> *@
+                                @*         <option selected="selected">Select Blood Test Type</option> *@
+                                @*         @for (int x = 0; x < Model.BloodTests.Count; x++) *@
+                                @*         { *@
+                                @*             <option value="@Model.BloodTests[x].Id">@Model.BloodTests[x].FullTitle</option> *@
+                                @*         } *@
+                                @*     </select> *@
+                                @* </td> *@
+
                             </td>
                         </tr>
                     </form>
@@ -94,10 +103,10 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <h2 class="mb-5">Awaiting Bloodwork</h2>
 
 <div class="table-responsive">
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-sm">
         <thead>
             <tr>
-                <th>Prescription ID</th>
+                <th>ID</th>
                 <th>Medication Name</th>
                 <th>Medication Restriction Level</th>
                 <th>Patient Name</th>
@@ -143,10 +152,10 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <h2 class="mb-5">Bloodwork Received</h2>
 
 <div class="table-responsive">
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-sm">
         <thead>
             <tr>
-                <th>Prescription ID</th>
+                <th>ID</th>
                 <th>Medication Name</th>
                 <th>Medication Restriction Level</th>
                 <th>Patient Name</th>
@@ -159,7 +168,7 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
             </tr>
         </thead>
         <tbody>
-            @for (int prescription = 0; prescription < Model.Prescriptions.Count; prescription++)
+            @for (var prescription = 0; prescription < Model.Prescriptions.Count; prescription++)
             {
                 @if (Model.Prescriptions[prescription].PrescriptionStatus == PrescriptionService.PrescriptionStatus.BloodworkReceived)
                 {
@@ -183,25 +192,23 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
                             <td>@Model.Prescriptions[prescription].DateStart.ToShortDateString()</td>
                             <td>@Model.Prescriptions[prescription].DateEnd.ToShortDateString()</td>
                             <td>@Model.Prescriptions[prescription].IssueFrequency</td>
-                            <td></td>
-                            <td></td>
                             <td>
-                                <input type="submit" class="btn btn-sm btn-primary" value="Approved" asp-page-handler="Approved" />
+                                <input type="submit" class="btn btn-sm btn-success" value="Approved" asp-page-handler="Approved" />
                             </td>
                             <td>
-                                <input type="submit" class="btn btn-sm btn-primary" value="Declined" asp-page-handler="Declined" />
+                                <input type="submit" class="btn btn-sm btn-danger" value="Declined" asp-page-handler="Declined" />
                             </td>
                         </tr>
 
-                        @for (int prescriptionRequests = 0; prescriptionRequests < Model.BloodTestRequests.Count; prescriptionRequests++)
+                        @for (var prescriptionRequests = 0; prescriptionRequests < Model.BloodTestRequests.Count; prescriptionRequests++)
                         {
-                            @for (int bloodTestRequest = 0; bloodTestRequest < Model.BloodTestRequests[prescriptionRequests].Count; bloodTestRequest++)
+                            @for (var bloodTestRequest = 0; bloodTestRequest < Model.BloodTestRequests[prescriptionRequests].Count; bloodTestRequest++)
                             {
                                 @if (Model.BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).PrescriptionId == Model.Prescriptions[prescription].Id)
                                 {
-                                    @for (int prescriptionResults = 0; prescriptionResults < Model.BloodTestResults.Count; prescriptionResults++)
+                                    @for (var prescriptionResults = 0; prescriptionResults < Model.BloodTestResults.Count; prescriptionResults++)
                                     {
-                                        @for (int bloodTestResult = 0; bloodTestResult < Model.BloodTestResults[prescriptionResults].Count; bloodTestResult++)
+                                        @for (var bloodTestResult = 0; bloodTestResult < Model.BloodTestResults[prescriptionResults].Count; bloodTestResult++)
                                         {
                                             @if (Model.BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).Id == Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).BloodTestRequestId)
                                             {
@@ -232,10 +239,10 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <h2 class="mb-5">Approved</h2>
 
 <div class="table-responsive">
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-sm">
         <thead>
             <tr>
-                <th>Prescription ID</th>
+                <th>ID</th>
                 <th>Medication Name</th>
                 <th>Medication Restriction Level</th>
                 <th>Patient Name</th>
@@ -282,10 +289,10 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <h2 class="mb-5">Declined</h2>
 
 <div class="table-responsive">
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-sm">
         <thead>
             <tr>
-                <th>Prescription ID</th>
+                <th>ID</th>
                 <th>Medication Name</th>
                 <th>Medication Restriction Level</th>
                 <th>Patient Name</th>
@@ -332,10 +339,10 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <h2 class="mb-5">Terminated</h2>
 
 <div class="table-responsive">
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-sm">
         <thead>
             <tr>
-                <th>Prescription ID</th>
+                <th>ID</th>
                 <th>Medication Name</th>
                 <th>Medication Restriction Level</th>
                 <th>Patient Name</th>

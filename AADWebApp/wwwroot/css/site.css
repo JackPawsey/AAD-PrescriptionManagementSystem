@@ -20,6 +20,7 @@ a {
     display: flex;
     flex-direction: row;
 }
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -108,5 +109,9 @@ div.login-logout-tab a.nav-link {
 
 /* Table */
 table > tbody > tr > td, table > thead > tr > th {
-    vertical-align: middle!important;
+    vertical-align: middle !important;
+}
+
+.table-not-striped tbody tr:nth-of-type(odd) {
+    background-color: transparent !important;
 }
