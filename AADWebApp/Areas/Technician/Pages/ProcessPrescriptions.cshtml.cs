@@ -22,6 +22,9 @@ namespace AADWebApp.Areas.Technician.Pages
         [BindProperty]
         public int PrescriptionCollectionId { get; set; }
 
+        [BindProperty]
+        public string SearchTerm { get; set; }
+
         public ProcessPrescriptionsModel(IPrescriptionService prescriptionService, IMedicationService medicationService, IPrescriptionCollectionService prescriptionCollectionService)
         {
             _prescriptionService = prescriptionService;
@@ -85,6 +88,20 @@ namespace AADWebApp.Areas.Technician.Pages
             else
             {
                 TempData["EnterPrescriptionStatusFailure"] = $"Prescription collection service returned error value.";
+            }
+        }
+
+        public async Task OnPostSearchAsync()
+        {
+            var medicationIds = _medicationService.GetMedications().Where(item => item.MedicationName.Contains(SearchTerm)).OrderBy(item => item.MedicationName).Select(item => item.Id);
+
+            Prescriptions = _prescriptionService.GetPrescriptions().Where(item => medicationIds.Contains(item.MedicationId)).ToList();
+
+            foreach (var item in Prescriptions)
+            {
+                Medications.Add(_medicationService.GetMedications(item.MedicationId).ElementAt(0));
+
+                PrescriptionCollections.Add(_prescriptionCollectionService.GetPrescriptionCollectionsByPrescriptionId(item.Id).ToList());
             }
         }
 

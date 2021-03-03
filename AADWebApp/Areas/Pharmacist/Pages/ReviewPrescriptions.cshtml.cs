@@ -154,33 +154,6 @@ namespace AADWebApp.Areas.Pharmacist.Pages
 
                 BloodTestRequests.Add(bloodTestRequests);
             }
-
-            //for (int prescription = 0; prescription < Prescriptions.Count; prescription++)
-            //{
-            //    Console.WriteLine("prescription id: " + Prescriptions[prescription].Id);
-
-            //    for (int prescriptionRequests = 0; prescriptionRequests < BloodTestRequests.Count; prescriptionRequests++)
-            //    {
-            //        for (int bloodTestRequest = 0; bloodTestRequest < BloodTestRequests[prescriptionRequests].Count; bloodTestRequest++)
-            //        {
-            //            if (BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).PrescriptionId == Prescriptions[prescription].Id)
-            //            {
-            //                Console.WriteLine("prescription has blood test request with id " + BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).Id);
-
-            //                for (int d = 0; d < BloodTestResults.Count; d++)
-            //                {
-            //                    for (int e = 0; e < BloodTestResults[d].Count; e++)
-            //                    {
-            //                        if (BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).Id == BloodTestResults[d].ElementAt(e).BloodTestRequestId)
-            //                        {
-            //                            Console.WriteLine("blood test result id " + BloodTestResults[d].ElementAt(e).Id);
-            //                        }   
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
         }
     }
 }

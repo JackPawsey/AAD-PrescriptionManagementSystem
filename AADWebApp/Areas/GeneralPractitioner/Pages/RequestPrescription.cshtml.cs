@@ -82,8 +82,6 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         public async Task OnPostSearchAsync()
         {
             Medications = _medicationService.GetMedications().Where(item => item.MedicationName.Contains(SearchTerm)).OrderBy(item => item.MedicationName);
-
-            Console.WriteLine("hello world");
             
             foreach (var patient in _patientService.GetPatients())
             {
