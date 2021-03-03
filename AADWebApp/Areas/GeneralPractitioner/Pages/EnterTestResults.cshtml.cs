@@ -63,7 +63,7 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             {
                 TempData["EnterTestSuccess"] = $"Blood test results for blood test request {BloodTestRequestId} were {BloodTestResult} and received on {BloodTestDateTime}.";
             }
-            else if (bloodTestSuccess == 0)
+            else if (bloodTestSuccess != 0)
             {
                 TempData["EnterTestFailure"] = $"Blood Test service returned error value.";
             }

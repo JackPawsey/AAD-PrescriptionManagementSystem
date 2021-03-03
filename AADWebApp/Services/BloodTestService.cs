@@ -120,16 +120,16 @@ namespace AADWebApp.Services
             return bloodTestRequests.AsEnumerable();
         }
 
-        public async Task<int> RequestBloodTestAsync(Prescription prescription, short bloodTestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
+        public async Task<int> RequestBloodTestAsync(Prescription prescription, short bloodTestId) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
         {
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             var bloodTest = GetBloodTests(bloodTestId).ElementAt(0);
 
-            await _notificationService.SendBloodTestRequestNotification(prescription, bloodTest, DateTime.Now, appointmentTime);
+            await _notificationService.SendBloodTestRequestNotification(prescription, bloodTest, DateTime.Now);
 
             //CREATE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', '{appointmentTime:yyyy-MM-dd HH:mm:ss}', '{BloodTestRequestStatus.Pending}')");
+            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', '{null}', '{BloodTestRequestStatus.Pending}')");
         }
 
         public async Task<int> SetBloodTestDateTimeAsync(Prescription prescription, short bloodTestRequestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(

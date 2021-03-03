@@ -22,262 +22,358 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
 <div class="table-responsive">
     <table class="table table-hover table-striped">
         <thead>
-        <tr>
-            <th>Prescription ID</th>
-            <th>Medication Name</th>
-            <th>Medication Restriction Level</th>
-            <th>Patient Name</th>
-            <th>Dosage</th>
-            <th>Prescription Start</th>
-            <th>Prescription End</th>
-            <th>Frequency</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Medication Name</th>
+                <th>Medication Restriction Level</th>
+                <th>Patient Name</th>
+                <th>Dosage</th>
+                <th>Prescription Start</th>
+                <th>Prescription End</th>
+                <th>Frequency</th>
+                <th></th>
+                <th></th>
+                <th>Blood Test Type</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        @for (var i = 0; i < Model.Prescriptions.Count; i++)
-        {
-            @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.PendingApproval)
+            @for (var i = 0; i < Model.Prescriptions.Count; i++)
             {
-                <form method="POST">
-                    <tr>
-                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>
-                            @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
-                            {
-                                @Html.Raw("<i>None</i>")
-                            }
-                            else
-                            {
-                                @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
-                            }
-                        </td>
-                        <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].IssueFrequency</td>
-                        <td>
-                            <input type="submit" class="btn btn-sm btn-primary" value="Approved" asp-page-handler="Approved" />
-                        </td>
-                        <td>
-                            <input type="submit" class="btn btn-sm btn-primary" value="Declined" asp-page-handler="Declined" />
-                        </td>
-                        <td>
-                            <input type="submit" class="btn btn-sm btn-primary" value="Bloodwork" asp-page-handler="AwaitingBloodwork" />
-                        </td>
-                    </tr>
-                </form>
+                @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.PendingApproval)
+                {
+                    <form method="POST">
+                        <tr>
+                            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>
+                                @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
+                                {
+                                    @Html.Raw("<i>None</i>")
+                                }
+                                else
+                                {
+                                    @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
+                                }
+                            </td>
+                            <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].IssueFrequency</td>
+                            <td>
+                                <input type="submit" class="btn btn-sm btn-primary" value="Approved" asp-page-handler="Approved" />
+                            </td>
+                            <td>
+                                <input type="submit" class="btn btn-sm btn-primary" value="Declined" asp-page-handler="Declined" />
+                            </td>
+
+                            <td>
+                                <select asp-for="BloodTestId" name="BloodTestId" class="form-control">
+                                    <option selected="selected">Select Blood Test Type</option>
+                                    @for (int x = 0; x < Model.BloodTests.Count; x++)
+                                    {
+                                        <option value="@Model.BloodTests[x].Id">@Model.BloodTests[x].FullTitle</option>
+                                    }
+                                </select>
+                            </td>
+
+                            <td>
+                                <input type="submit" class="btn btn-sm btn-primary" value="Request Bloodwork" asp-page-handler="RequestBloodwork" />
+                            </td>
+                        </tr>
+                    </form>
+                }
             }
-        }
         </tbody>
     </table>
 </div>
 
+<br />
 <h2 class="mb-5">Awaiting Bloodwork</h2>
 
 <div class="table-responsive">
     <table class="table table-hover table-striped">
         <thead>
-        <tr>
-            <th>Prescription ID</th>
-            <th>Medication Name</th>
-            <th>Medication Restriction Level</th>
-            <th>Patient Name</th>
-            <th>Dosage</th>
-            <th>Prescription Start</th>
-            <th>Prescription End</th>
-            <th>Frequency</th>
-            <th></th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Medication Name</th>
+                <th>Medication Restriction Level</th>
+                <th>Patient Name</th>
+                <th>Dosage</th>
+                <th>Prescription Start</th>
+                <th>Prescription End</th>
+                <th>Frequency</th>
+            </tr>
         </thead>
         <tbody>
-        @for (var i = 0; i < Model.Prescriptions.Count; i++)
-        {
-            @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.AwaitingBloodWork)
+            @for (var i = 0; i < Model.Prescriptions.Count; i++)
             {
-                <form method="POST">
-                    <tr>
-                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>
-                            @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
-                            {
-                                @Html.Raw("<i>None</i>")
-                            }
-                            else
-                            {
-                                @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
-                            }
-                        </td>
-                        <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].IssueFrequency</td>
-                        <td>
-                            <input type="submit" class="btn btn-sm btn-primary" value="Approved" asp-page-handler="Approved" />
-                        </td>
-                        <td>
-                            <input type="submit" class="btn btn-sm btn-primary" value="Declined" asp-page-handler="Declined" />
-                        </td>
-                    </tr>
-                </form>
+                @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.AwaitingBloodWork)
+                {
+                    <form method="POST">
+                        <tr>
+                            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>
+                                @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
+                                {
+                                    @Html.Raw("<i>None</i>")
+                                }
+                                else
+                                {
+                                    @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
+                                }
+                            </td>
+                            <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].IssueFrequency</td>
+                        </tr>
+                    </form>
+                }
             }
-        }
+        </tbody>
+    </table>
+</div>
+<br />
+<h2 class="mb-5">Bloodwork Received</h2>
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Medication Name</th>
+                <th>Medication Restriction Level</th>
+                <th>Patient Name</th>
+                <th>Dosage</th>
+                <th>Prescription Start</th>
+                <th>Prescription End</th>
+                <th>Frequency</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int prescription = 0; prescription < Model.Prescriptions.Count; prescription++)
+            {
+                @if (Model.Prescriptions[prescription].PrescriptionStatus == PrescriptionService.PrescriptionStatus.BloodworkReceived)
+                {
+                    <form method="POST">
+                        <tr>
+                            <input type="hidden" value="@Model.Prescriptions[prescription].Id" name="PrescriptionId" />
+                            <td>@Model.Prescriptions[prescription].Id</td>
+                            <td>@Model.Medications[prescription].MedicationName</td>
+                            <td>
+                                @if (Model.Medications[prescription].BloodWorkRestrictionLevel == null)
+                                {
+                                    @Html.Raw("<i>None</i>")
+                                }
+                                else
+                                {
+                                    @Model.Medications[prescription].BloodWorkRestrictionLevel.ToString()
+                                }
+                            </td>
+                            <td>@Model.Patients[prescription].FirstName @Model.Patients[prescription].LastName</td>
+                            <td>@Model.Prescriptions[prescription].Dosage</td>
+                            <td>@Model.Prescriptions[prescription].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[prescription].DateEnd.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[prescription].IssueFrequency</td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <input type="submit" class="btn btn-sm btn-primary" value="Approved" asp-page-handler="Approved" />
+                            </td>
+                            <td>
+                                <input type="submit" class="btn btn-sm btn-primary" value="Declined" asp-page-handler="Declined" />
+                            </td>
+                        </tr>
+
+                        @for (int prescriptionRequests = 0; prescriptionRequests < Model.BloodTestRequests.Count; prescriptionRequests++)
+                        {
+                            @for (int bloodTestRequest = 0; bloodTestRequest < Model.BloodTestRequests[prescriptionRequests].Count; bloodTestRequest++)
+                            {
+                                @if (Model.BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).PrescriptionId == Model.Prescriptions[prescription].Id)
+                                {
+                                    @for (int prescriptionResults = 0; prescriptionResults < Model.BloodTestResults.Count; prescriptionResults++)
+                                    {
+                                        @for (int bloodTestResult = 0; bloodTestResult < Model.BloodTestResults[prescriptionResults].Count; bloodTestResult++)
+                                        {
+                                            @if (Model.BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).Id == Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).BloodTestRequestId)
+                                            {
+                                                <tr>
+                                                    <th>Blood Test Results</th>
+                                                    <th>Test Results Time</th>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>@Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).Result</td>
+                                                    @*dont test my for loop skills*@
+                                                    <td>@Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).ResultTime</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    </form>
+                }
+            }
         </tbody>
     </table>
 </div>
 
+<br />
 <h2 class="mb-5">Approved</h2>
 
 <div class="table-responsive">
     <table class="table table-hover table-striped">
         <thead>
-        <tr>
-            <th>Prescription ID</th>
-            <th>Medication Name</th>
-            <th>Medication Restriction Level</th>
-            <th>Patient Name</th>
-            <th>Dosage</th>
-            <th>Prescription Start</th>
-            <th>Prescription End</th>
-            <th>Frequency</th>
-        </tr>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Medication Name</th>
+                <th>Medication Restriction Level</th>
+                <th>Patient Name</th>
+                <th>Dosage</th>
+                <th>Prescription Start</th>
+                <th>Prescription End</th>
+                <th>Frequency</th>
+            </tr>
         </thead>
         <tbody>
-        @for (var i = 0; i < Model.Prescriptions.Count; i++)
-        {
-            @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Approved)
+            @for (var i = 0; i < Model.Prescriptions.Count; i++)
             {
-                <form method="POST">
-                    <tr>
-                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>
-                            @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
-                            {
-                                @Html.Raw("<i>None</i>")
-                            }
-                            else
-                            {
-                                @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
-                            }
-                        </td>
-                        <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].IssueFrequency</td>
-                    </tr>
-                </form>
+                @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Approved)
+                {
+                    <form method="POST">
+                        <tr>
+                            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>
+                                @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
+                                {
+                                    @Html.Raw("<i>None</i>")
+                                }
+                                else
+                                {
+                                    @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
+                                }
+                            </td>
+                            <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].IssueFrequency</td>
+                        </tr>
+                    </form>
+                }
             }
-        }
         </tbody>
     </table>
 </div>
 
+<br />
 <h2 class="mb-5">Declined</h2>
 
 <div class="table-responsive">
     <table class="table table-hover table-striped">
         <thead>
-        <tr>
-            <th>Prescription ID</th>
-            <th>Medication Name</th>
-            <th>Medication Restriction Level</th>
-            <th>Patient Name</th>
-            <th>Dosage</th>
-            <th>Prescription Start</th>
-            <th>Prescription End</th>
-            <th>Frequency</th>
-        </tr>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Medication Name</th>
+                <th>Medication Restriction Level</th>
+                <th>Patient Name</th>
+                <th>Dosage</th>
+                <th>Prescription Start</th>
+                <th>Prescription End</th>
+                <th>Frequency</th>
+            </tr>
         </thead>
         <tbody>
-        @for (var i = 0; i < Model.Prescriptions.Count; i++)
-        {
-            @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Declined)
+            @for (var i = 0; i < Model.Prescriptions.Count; i++)
             {
-                <form method="POST">
-                    <tr>
-                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>
-                            @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
-                            {
-                                @Html.Raw("<i>None</i>")
-                            }
-                            else
-                            {
-                                @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
-                            }
-                        </td>
-                        <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].IssueFrequency</td>
-                    </tr>
-                </form>
+                @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Declined)
+                {
+                    <form method="POST">
+                        <tr>
+                            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>
+                                @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
+                                {
+                                    @Html.Raw("<i>None</i>")
+                                }
+                                else
+                                {
+                                    @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
+                                }
+                            </td>
+                            <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].IssueFrequency</td>
+                        </tr>
+                    </form>
+                }
             }
-        }
         </tbody>
     </table>
 </div>
 
+<br />
 <h2 class="mb-5">Terminated</h2>
 
 <div class="table-responsive">
     <table class="table table-hover table-striped">
         <thead>
-        <tr>
-            <th>Prescription ID</th>
-            <th>Medication Name</th>
-            <th>Medication Restriction Level</th>
-            <th>Patient Name</th>
-            <th>Dosage</th>
-            <th>Prescription Start</th>
-            <th>Prescription End</th>
-            <th>Frequency</th>
-        </tr>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Medication Name</th>
+                <th>Medication Restriction Level</th>
+                <th>Patient Name</th>
+                <th>Dosage</th>
+                <th>Prescription Start</th>
+                <th>Prescription End</th>
+                <th>Frequency</th>
+            </tr>
         </thead>
         <tbody>
-        @for (var i = 0; i < Model.Prescriptions.Count; i++)
-        {
-            @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Terminated)
+            @for (var i = 0; i < Model.Prescriptions.Count; i++)
             {
-                <form method="POST">
-                    <tr>
-                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>
-                            @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
-                            {
-                                @Html.Raw("<i>None</i>")
-                            }
-                            else
-                            {
-                                @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
-                            }
-                        </td>
-                        <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
-                        <td>@Model.Prescriptions[i].IssueFrequency</td>
-                    </tr>
-                </form>
+                @if (Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Terminated)
+                {
+                    <form method="POST">
+                        <tr>
+                            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>
+                                @if (Model.Medications[i].BloodWorkRestrictionLevel == null)
+                                {
+                                    @Html.Raw("<i>None</i>")
+                                }
+                                else
+                                {
+                                    @Model.Medications[i].BloodWorkRestrictionLevel.ToString()
+                                }
+                            </td>
+                            <td>@Model.Patients[i].FirstName @Model.Patients[i].LastName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].IssueFrequency</td>
+                        </tr>
+                    </form>
+                }
             }
-        }
         </tbody>
     </table>
 </div>
