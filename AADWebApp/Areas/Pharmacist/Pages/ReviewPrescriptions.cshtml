@@ -199,14 +199,30 @@ else if (TempData["ReviewPrescriptionFailure"] != null)
                                             @if (Model.BloodTestRequests[prescriptionRequests].ElementAt(bloodTestRequest).Id == Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).BloodTestRequestId)
                                             {
                                                 <tr>
+                                                    <th></th>
                                                     <th>Blood Test Results</th>
                                                     <th>Test Results Time</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
                                                 </tr>
 
                                                 <tr>
-                                                    <td>@Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).Result</td>
+                                                    <td></td>
+                                                    <td>@(Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).Result ? "Pass" : "Fail")</td>
                                                     @*dont test my for loop skills*@
                                                     <td>@Model.BloodTestResults[prescriptionResults].ElementAt(bloodTestResult).ResultTime</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr>
                                             }
                                         }
