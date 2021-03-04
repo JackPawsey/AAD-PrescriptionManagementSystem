@@ -80,7 +80,11 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //CREATE PrescriptionCollections TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO PrescriptionCollections (PrescriptionId, CollectionStatus, CollectionStatusUpdated, CollectionTime) VALUES ('{prescriptionId}', '{collectionStatus}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{collectionTime:yyyy-MM-dd HH:mm:ss}')");
+            var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO PrescriptionCollections (PrescriptionId, CollectionStatus, CollectionStatusUpdated, CollectionTime) VALUES ('{prescriptionId}', '{collectionStatus}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{collectionTime:yyyy-MM-dd HH:mm:ss}')");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int CancelPrescriptionCollection(short id)
@@ -88,7 +92,11 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //UPDATE PrescriptionCollections TABLE ROW
-            return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{CollectionStatus.Cancelled}' WHERE Id = '{id}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{CollectionStatus.Cancelled}' WHERE Id = '{id}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int SetPrescriptionCollectionStatus(short id, CollectionStatus collectionStatus)
@@ -96,7 +104,11 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //UPDATE PrescriptionCollections TABLE ROW CollectionStatus
-            return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{collectionStatus}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{collectionStatus}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int SetPrescriptionCollectionCollected(short id)
@@ -104,21 +116,29 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //UPDATE PrescriptionCollections TABLE ROW CollectionStatus
-            return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{CollectionStatus.Collected}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', CollectionTime = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionStatus = '{CollectionStatus.Collected}', CollectionStatusUpdated = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', CollectionTime = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{id}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public async Task<int> SetPrescriptionCollectionTimeAsync(Prescription prescription, DateTime collectionTime)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
-
             if (collectionTime > prescription.DateStart && collectionTime < prescription.DateEnd)
             {
+                _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
+
                 await _notificationService.SendCollectionTimeNotification(prescription, collectionTime);
 
                 var prescriptionCollection = GetPrescriptionCollectionsByPrescriptionId(prescription.Id).ElementAt(0);
 
                 //UPDATE prescription_collections TABLE ROW collection_time
-                return _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionTime = '{collectionTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{prescriptionCollection.Id}'");
+                var dbResult = _databaseService.ExecuteNonQuery($"UPDATE PrescriptionCollections SET CollectionTime = '{collectionTime:yyyy-MM-dd HH:mm:ss}' WHERE Id = '{prescriptionCollection.Id}'");
+
+                _databaseService.CloseConnection();
+
+                return dbResult;
             }
 
             return -1;
