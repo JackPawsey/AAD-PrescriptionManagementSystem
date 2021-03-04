@@ -15,6 +15,7 @@ namespace AADWebApp.Services
             AwaitingBloodWork,
             BloodworkReceived,
             Approved,
+            Finished,
             Declined,
             Terminated
         }
