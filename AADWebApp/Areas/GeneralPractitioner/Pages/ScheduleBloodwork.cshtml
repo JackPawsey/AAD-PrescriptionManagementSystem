@@ -42,6 +42,7 @@ else if (TempData["ScheduleBloodworkFailure"] != null)
             <th scope="col">Medication</th>
             <th scope="col">Dosage</th>
             <th scope="col">Appointment Date</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -59,19 +60,20 @@ else if (TempData["ScheduleBloodworkFailure"] != null)
                     <td>@Model.Patients[i].LastName</td>
                     <td>@Model.Medications[i].MedicationName</td>
                     <td>@Model.Prescriptions[i].Dosage</td>
-                    <td>
-                        @if (isScheduledOrComplete)
-                        {
-                            @Model.BloodTestRequests[i].AppointmentTime
-                        }
-                        else
-                        {
-                            <input required type="datetime-local" class="form-control" name="AppointmentDateTime">
-                        }
-                    </td>
-                    <td>
-                        <input type="submit" class="btn btn-primary float-right" value="Confirm" @(isScheduledOrComplete ? "disabled" : "") />
-                    </td>
+
+                    @if (isScheduledOrComplete)
+                    {
+                        <td>@Model.BloodTestRequests[i].AppointmentTime</td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td><input required type="datetime-local" class="form-control" name="AppointmentDateTime"></td>
+
+                        <td>
+                            <input type="submit" class="btn btn-success float-right" value="Confirm" @(isScheduledOrComplete ? "disabled" : "") />
+                        </td>
+                    }
                 </tr>
             </form>
         }

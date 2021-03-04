@@ -27,7 +27,7 @@ namespace AADWebApp.Services
             _medicationService = medicationService;
         }
 
-        // Precription Notification ############################################
+        // Prescription Notification ############################################
 
         public async Task<bool> SendPrescriptionNotification(Prescription prescription, int occurrences, DateTime nextCollectionTime)
         {

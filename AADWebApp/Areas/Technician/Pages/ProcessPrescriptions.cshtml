@@ -60,7 +60,7 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
                             <td>@Model.Prescriptions[i].DateStart</td>
                             <td>@Model.Prescriptions[i].DateEnd</td>
                             <td>
-                                <input type="submit" class="btn btn-primary float-right" value="Being Prepared" asp-page-handler="Prepared" />
+                                <input type="submit" class="btn btn-success float-right" value="Being Prepared" asp-page-handler="Prepared" />
                             </td>
                         }
                     </tr>
@@ -99,7 +99,7 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
                             <td>@Model.Prescriptions[i].DateStart</td>
                             <td>@Model.Prescriptions[i].DateEnd</td>
                             <td>
-                                <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Ready" />
+                                <input type="submit" class="btn btn-success float-right" value="Collection Ready" asp-page-handler="Ready" />
                             </td>
                         }
                     </tr>
@@ -138,7 +138,7 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
                             <td>@Model.Prescriptions[i].DateStart</td>
                             <td>@Model.Prescriptions[i].DateEnd</td>
                             <td>
-                                <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Collected" />
+                                <input type="submit" class="btn btn-success float-right" value="Collected" asp-page-handler="Collected" />
                             </td>
                         }
                     </tr>
