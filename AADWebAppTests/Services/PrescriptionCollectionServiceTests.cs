@@ -126,8 +126,10 @@ namespace AADWebAppTests.Services
                 Assert.AreEqual(allExpected.ElementAt(i).CollectionStatus, afterCreateResultsList.ElementAt(i).CollectionStatus);
                 Assert.IsFalse(allExpected.ElementAt(i).CollectionStatusUpdated.Equals(afterCreateResultsList.ElementAt(i).CollectionStatusUpdated));
                 Assert.IsTrue(allExpected.ElementAt(i).CollectionStatusUpdated - afterCreateResultsList.ElementAt(i).CollectionStatusUpdated > TimeSpan.Zero);
-                Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortDateString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortDateString());
-                Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortTimeString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortTimeString());
+                //Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortDateString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortDateString());
+                //Assert.AreEqual(allExpected.ElementAt(i).CollectionTime.ToShortTimeString(), afterCreateResultsList.ElementAt(i).CollectionTime.ToShortTimeString());
+
+                Assert.AreEqual(null, afterCreateResultsList.ElementAt(i).CollectionTime);
             }
 
             // Check results - get prescription collections with valid id
@@ -142,8 +144,10 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionStatus, afterCreateResultsByValidIdList.ElementAt(0).CollectionStatus);
             Assert.IsFalse(prescriptionCollections.ElementAt(0).CollectionStatusUpdated.Equals(afterCreateResultsByValidIdList.ElementAt(0).CollectionStatusUpdated));
             Assert.IsTrue(prescriptionCollections.ElementAt(0).CollectionStatusUpdated - afterCreateResultsByValidIdList.ElementAt(0).CollectionStatusUpdated > TimeSpan.Zero);
-            Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionTime.ToShortDateString(), afterCreateResultsByValidIdList.ElementAt(0).CollectionTime.ToShortDateString());
-            Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionTime.ToShortTimeString(), afterCreateResultsByValidIdList.ElementAt(0).CollectionTime.ToShortTimeString());
+            //Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionTime.ToShortDateString(), afterCreateResultsByValidIdList.ElementAt(0).CollectionTime.ToShortDateString());
+            //Assert.AreEqual(prescriptionCollections.ElementAt(0).CollectionTime.ToShortTimeString(), afterCreateResultsByValidIdList.ElementAt(0).CollectionTime.ToShortTimeString());
+
+            Assert.AreEqual(null, afterCreateResultsList.ElementAt(0).CollectionTime);
 
             // Check results - get prescription collections with invalid id
             var afterCreateResultsByInvalidId = _prescriptionCollectionService.GetPrescriptionCollections(99);
@@ -216,8 +220,10 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedUpdatePrescription.CollectionStatus, afterUpdatePrescription.CollectionStatus);
             Assert.IsFalse(expectedUpdatePrescription.CollectionStatusUpdated.Equals(afterUpdatePrescription.CollectionStatusUpdated));
             Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
-            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
-            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+            //Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
+            //Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+
+            Assert.AreEqual(null, afterUpdatePrescription.CollectionTime);
         }
 
         [TestMethod]
@@ -324,8 +330,10 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedUpdatePrescription.CollectionStatus, afterUpdatePrescription.CollectionStatus);
             Assert.IsFalse(expectedUpdatePrescription.CollectionStatusUpdated.Equals(afterUpdatePrescription.CollectionStatusUpdated));
             Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
-            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
-            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+            //Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
+            //Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+
+            Assert.AreEqual(null, afterUpdatePrescription.CollectionTime);
         }
 
         [TestMethod]
@@ -346,7 +354,7 @@ namespace AADWebAppTests.Services
                     PrescriptionId = 1,
                     CollectionStatus = CollectionStatus.Cancelled,
                     CollectionStatusUpdated = now,
-                    CollectionTime = now
+                    CollectionTime = DateTime.MinValue
                 }
             };
 
@@ -374,8 +382,10 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(expectedUpdatePrescription.CollectionStatus, afterUpdatePrescription.CollectionStatus);
             Assert.IsFalse(expectedUpdatePrescription.CollectionStatusUpdated.Equals(afterUpdatePrescription.CollectionStatusUpdated));
             Assert.IsTrue(expectedUpdatePrescription.CollectionStatusUpdated - afterUpdatePrescription.CollectionStatusUpdated > TimeSpan.Zero);
-            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
-            Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+            //Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortDateString(), afterUpdatePrescription.CollectionTime.ToShortDateString());
+            //Assert.AreEqual(expectedUpdatePrescription.CollectionTime.ToShortTimeString(), afterUpdatePrescription.CollectionTime.ToShortTimeString());
+
+            Assert.AreEqual(null, afterUpdatePrescription.CollectionTime);
         }
 
         private IEnumerable<PrescriptionCollection> AddPrescriptionCollection(short prescriptionId, CollectionStatus collectionStatus, DateTime collectionStatusUpdated, DateTime collectionTime)

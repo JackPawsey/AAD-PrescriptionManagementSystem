@@ -9,6 +9,6 @@ namespace AADWebApp.Models
         public short PrescriptionId { get; set; }
         public CollectionStatus CollectionStatus { get; set; }
         public DateTime CollectionStatusUpdated { get; set; }
-        public DateTime CollectionTime { get; set; }
+        public DateTime? CollectionTime { get; set; }
     }
 }
