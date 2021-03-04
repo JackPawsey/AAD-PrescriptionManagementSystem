@@ -8,6 +8,21 @@
 
 <h1 class="mb-5">Process Prescription Collections</h1>
 
+<h3 class="mb-5">Search</h3>
+
+<div id=" Search" class="form-group form-inline mb-5">
+    <form method="post" class="form-inline">
+        <div class="form-group">
+            <label for="medication-name" class="mr-5">Medication Name</label>
+            <input type="text" class="form-control mr-5" id="medication-name" name="SearchTerm" placeholder="Medication Name">
+        </div>
+        <button type="submit" asp-page-handler="Search" class="btn btn-primary">Search</button>
+    </form>
+    <form method="get">
+        <button type="submit" asp-page-handler="OnGet" class="btn btn-primary ml-5">Clear</button>
+    </form>
+</div>
+
 <h2 class="mb-5">Collections Pending</h2>
 
 @if (TempData["EnterPrescriptionStatusSuccess"] != null)
@@ -21,150 +36,153 @@ else if (TempData["EnterPrescriptionStatusFailure"] != null)
 
 <table class="table table-striped table-hover">
     <thead>
-    <tr>
-        <th scope="col">Prescription ID</th>
-        <th scope="col">Medication Name</th>
-        <th scope="col">Dosage</th>
-        <th scope="col">Prescription Start</th>
-        <th scope="col">Prescription End</th>
-    </tr>
+        <tr>
+            <th scope="col">Prescription ID</th>
+            <th scope="col">Medication Name</th>
+            <th scope="col">Dosage</th>
+            <th scope="col">Prescription Start</th>
+            <th scope="col">Prescription End</th>
+        </tr>
     </thead>
     <tbody>
-    @for (var i = 0; i < Model.Prescriptions.Count; i++)
-    {
-        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+        @for (var i = 0; i < Model.Prescriptions.Count; i++)
         {
-            <form method="post">
-                <tr>
-                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
-                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Pending)
-                    {
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart</td>
-                        <td>@Model.Prescriptions[i].DateEnd</td>
-                        <td>
-                            <input type="submit" class="btn btn-primary float-right" value="Being Prepared" asp-page-handler="Prepared" />
-                        </td>
-                    }
-                </tr>
-            </form>
+            @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+            {
+                <form method="post">
+                    <tr>
+                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Pending)
+                        {
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart</td>
+                            <td>@Model.Prescriptions[i].DateEnd</td>
+                            <td>
+                                <input type="submit" class="btn btn-success float-right" value="Being Prepared" asp-page-handler="Prepared" />
+                            </td>
+                        }
+                    </tr>
+                </form>
+            }
         }
-    }
     </tbody>
 </table>
 
+<br />
 <h2 class="mb-5">Collections Being Prepared</h2>
 
 <table class="table table-striped table-hover">
     <thead>
-    <tr>
-        <th scope="col">Prescription ID</th>
-        <th scope="col">Medication Name</th>
-        <th scope="col">Dosage</th>
-        <th scope="col">Prescription Start</th>
-        <th scope="col">Prescription End</th>
-    </tr>
+        <tr>
+            <th scope="col">Prescription ID</th>
+            <th scope="col">Medication Name</th>
+            <th scope="col">Dosage</th>
+            <th scope="col">Prescription Start</th>
+            <th scope="col">Prescription End</th>
+        </tr>
     </thead>
     <tbody>
-    @for (var i = 0; i < Model.Prescriptions.Count; i++)
-    {
-        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+        @for (var i = 0; i < Model.Prescriptions.Count; i++)
         {
-            <form method="post">
-                <tr>
-                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
-                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.BeingPrepared)
-                    {
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart</td>
-                        <td>@Model.Prescriptions[i].DateEnd</td>
-                        <td>
-                            <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Ready" />
-                        </td>
-                    }
-                </tr>
-            </form>
+            @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+            {
+                <form method="post">
+                    <tr>
+                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.BeingPrepared)
+                        {
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart</td>
+                            <td>@Model.Prescriptions[i].DateEnd</td>
+                            <td>
+                                <input type="submit" class="btn btn-success float-right" value="Collection Ready" asp-page-handler="Ready" />
+                            </td>
+                        }
+                    </tr>
+                </form>
+            }
         }
-    }
     </tbody>
 </table>
 
+<br />
 <h2 class="mb-5">Collections Ready</h2>
 
 <table class="table table-striped table-hover">
     <thead>
-    <tr>
-        <th scope="col">Prescription ID</th>
-        <th scope="col">Medication Name</th>
-        <th scope="col">Dosage</th>
-        <th scope="col">Prescription Start</th>
-        <th scope="col">Prescription End</th>
-    </tr>
+        <tr>
+            <th scope="col">Prescription ID</th>
+            <th scope="col">Medication Name</th>
+            <th scope="col">Dosage</th>
+            <th scope="col">Prescription Start</th>
+            <th scope="col">Prescription End</th>
+        </tr>
     </thead>
     <tbody>
-    @for (var i = 0; i < Model.Prescriptions.Count; i++)
-    {
-        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+        @for (var i = 0; i < Model.Prescriptions.Count; i++)
         {
-            <form method="post">
-                <tr>
-                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
-                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.CollectionReady)
-                    {
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart</td>
-                        <td>@Model.Prescriptions[i].DateEnd</td>
-                        <td>
-                            <input type="submit" class="btn btn-primary float-right" value="Collection Ready" asp-page-handler="Collected" />
-                        </td>
-                    }
-                </tr>
-            </form>
+            @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+            {
+                <form method="post">
+                    <tr>
+                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.CollectionReady)
+                        {
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart</td>
+                            <td>@Model.Prescriptions[i].DateEnd</td>
+                            <td>
+                                <input type="submit" class="btn btn-success float-right" value="Collected" asp-page-handler="Collected" />
+                            </td>
+                        }
+                    </tr>
+                </form>
+            }
         }
-    }
     </tbody>
 </table>
 
+<br />
 <h2 class="mb-5">Prescriptions Collected</h2>
 
 <table class="table table-striped table-hover">
     <thead>
-    <tr>
-        <th scope="col">Prescription ID</th>
-        <th scope="col">Medication Name</th>
-        <th scope="col">Dosage</th>
-        <th scope="col">Prescription Start</th>
-        <th scope="col">Prescription End</th>
-        <th scope="col">Collected At</th>
-    </tr>
+        <tr>
+            <th scope="col">Prescription ID</th>
+            <th scope="col">Medication Name</th>
+            <th scope="col">Dosage</th>
+            <th scope="col">Prescription Start</th>
+            <th scope="col">Prescription End</th>
+            <th scope="col">Collected At</th>
+        </tr>
     </thead>
     <tbody>
-    @for (var i = 0; i < Model.Prescriptions.Count; i++)
-    {
-        @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+        @for (var i = 0; i < Model.Prescriptions.Count; i++)
         {
-            <form method="post">
-                <tr>
-                    <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
-                    @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Collected)
-                    {
-                        <td>@Model.Prescriptions[i].Id</td>
-                        <td>@Model.Medications[i].MedicationName</td>
-                        <td>@Model.Prescriptions[i].Dosage</td>
-                        <td>@Model.Prescriptions[i].DateStart</td>
-                        <td>@Model.Prescriptions[i].DateEnd</td>
+            @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+            {
+                <form method="post">
+                    <tr>
+                        <input type="hidden" value="@Model.PrescriptionCollections[i].ElementAt(x).Id" name="PrescriptionCollectionId" />
+                        @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Collected)
+                        {
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>@Model.Prescriptions[i].Dosage</td>
+                            <td>@Model.Prescriptions[i].DateStart</td>
+                            <td>@Model.Prescriptions[i].DateEnd</td>
 
-                        <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionTime</td>
-                    }
-                </tr>
-            </form>
+                            <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionTime</td>
+                        }
+                    </tr>
+                </form>
+            }
         }
-    }
     </tbody>
 </table>

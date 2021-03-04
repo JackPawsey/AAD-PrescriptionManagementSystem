@@ -12,7 +12,7 @@ namespace AADWebApp.Interfaces
         public IEnumerable<BloodTestResult> GetBloodTestResults(short? bloodTestRequestId = null);
         public IEnumerable<BloodTestRequest> GetBloodTestRequests(short? id = null);
         public IEnumerable<BloodTestRequest> GetBloodTestRequestsByPrescriptionId(short? prescriptionId = null);
-        public Task<int> RequestBloodTestAsync(Prescription prescription, short bloodTestId, DateTime appointmentTime);
+        public Task<int> RequestBloodTestAsync(Prescription prescription, short bloodTestId);
         public Task<int> SetBloodTestDateTimeAsync(Prescription prescription, short bloodTestRequestId, DateTime appointmentTime);
         public int SetBloodTestResults(short bloodRequestTestId, bool result, DateTime resultTime);
         public int SetBloodTestRequestStatus(short id, BloodTestRequestStatus bloodTestRequestStatus);

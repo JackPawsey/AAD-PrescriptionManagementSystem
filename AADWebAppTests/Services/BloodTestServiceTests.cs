@@ -140,7 +140,7 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = timeNow,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
@@ -148,7 +148,7 @@ namespace AADWebAppTests.Services
                     Id = 2,
                     PrescriptionId = 2,
                     BloodTestId = 3,
-                    AppointmentTime = timeNow,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
@@ -156,7 +156,7 @@ namespace AADWebAppTests.Services
                     Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = timeNow,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -168,7 +168,7 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = timeNow,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 },
                 new BloodTestRequest
@@ -176,7 +176,7 @@ namespace AADWebAppTests.Services
                     Id = 3,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = timeNow,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -188,7 +188,7 @@ namespace AADWebAppTests.Services
                     Id = 2,
                     PrescriptionId = 2,
                     BloodTestId = 3,
-                    AppointmentTime = timeNow,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -224,13 +224,13 @@ namespace AADWebAppTests.Services
             };
 
             // Request blood tests
-            var affectedRows1 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, timeNow).Result;
+            var affectedRows1 = _bloodTestService.RequestBloodTestAsync(prescription1, 1).Result;
             Assert.AreEqual(1, affectedRows1);
 
-            var affectedRows2 = _bloodTestService.RequestBloodTestAsync(prescription2, 3, timeNow).Result;
+            var affectedRows2 = _bloodTestService.RequestBloodTestAsync(prescription2, 3).Result;
             Assert.AreEqual(1, affectedRows2);
 
-            var affectedRows3 = _bloodTestService.RequestBloodTestAsync(prescription1, 1, timeNow).Result;
+            var affectedRows3 = _bloodTestService.RequestBloodTestAsync(prescription1, 1).Result;
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
@@ -286,7 +286,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, initialTime);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1);
 
             // Begin actual test
             // Prep expected
@@ -297,7 +297,7 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = initialTime,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -311,7 +311,7 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = updatedTime,
+                    AppointmentTime = null,
                     BloodTestStatus = BloodTestRequestStatus.Pending
                 }
             };
@@ -379,8 +379,8 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
-            _bloodTestService.RequestBloodTestAsync(prescription, 2, timeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1);
+            _bloodTestService.RequestBloodTestAsync(prescription, 2);
 
             // Check the blood test requests have been set to complete
             var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
@@ -487,7 +487,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1);
 
             // Check the blood test requests have been set to complete
             var beforeBloodTestRequests = _bloodTestService.GetBloodTestRequests();
@@ -528,7 +528,7 @@ namespace AADWebAppTests.Services
                 IssueFrequency = IssueFrequency.Monthly
             };
 
-            _bloodTestService.RequestBloodTestAsync(prescription, 1, timeNow);
+            _bloodTestService.RequestBloodTestAsync(prescription, 1);
 
             // Check row was inserted
             var afterInsertRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");

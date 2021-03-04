@@ -34,6 +34,9 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
         [BindProperty]
         public DateTime AppointmentDateTime { get; set; }
 
+        [BindProperty]
+        public string SearchTerm { get; set; }
+
         public ScheduleBloodworkModel(IBloodTestService bloodTestService, IPrescriptionService prescriptionService, IMedicationService medicationService, UserManager<ApplicationUser> userManager)
         {
             _bloodTestService = bloodTestService;
@@ -65,6 +68,24 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
             }
         }
 
+        public async Task OnPostSearchAsync()
+        {
+            BloodTestRequests = new List<BloodTestRequest>();
+            Prescriptions = new List<Prescription>();
+            Medications = new List<Medication>();
+            Patients = new List<ApplicationUser>();
+
+            var patientIds = _userManager.Users.Where(item => item.FirstName.Contains(SearchTerm) || item.LastName.Contains(SearchTerm)).Select(item => item.Id);
+
+            Prescriptions = _prescriptionService.GetPrescriptions().Where(item => patientIds.Contains(item.PatientId)).OrderBy(item => item.Id).ToList();
+
+            var prescriptionIds = Prescriptions.Select(item => item.Id);
+
+            BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => prescriptionIds.Contains(item.PrescriptionId)).OrderBy(item => item.BloodTestStatus).ToList();
+
+            await LoadBloodTestRequestsAndPrescriptionsAsync();
+        }
+
         private async Task InitPageAsync()
         {
             BloodTestRequests = new List<BloodTestRequest>();
@@ -74,6 +95,11 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
             BloodTestRequests = _bloodTestService.GetBloodTestRequests().OrderBy(item => item.BloodTestStatus).ToList();
 
+            await LoadBloodTestRequestsAndPrescriptionsAsync();
+        }
+
+        private async Task LoadBloodTestRequestsAndPrescriptionsAsync()
+        {
             foreach (var item in BloodTestRequests)
             {
                 Prescriptions.Add(_prescriptionService.GetPrescriptions(item.PrescriptionId).ElementAt(0));

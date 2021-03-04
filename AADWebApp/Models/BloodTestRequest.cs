@@ -8,7 +8,7 @@ namespace AADWebApp.Models
         public short Id { get; set; }
         public short PrescriptionId { get; set; }
         public short BloodTestId { get; set; }
-        public DateTime AppointmentTime { get; set; }
+        public DateTime? AppointmentTime { get; set; }
         public BloodTestRequestStatus BloodTestStatus { get; set; }
     }
 }

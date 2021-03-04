@@ -9,7 +9,7 @@ namespace AADWebApp.Interfaces
         public Task<bool> SendPrescriptionNotification(Prescription prescription, int occurrences, DateTime nextCollectionTime);
         public Task<bool> SendCollectionTimeNotification(Prescription prescription, DateTime collectionTime);
         public Task<bool> SendCancellationNotification(Prescription prescription, DateTime cancellationTime);
-        public Task<bool> SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime, DateTime appointmentTime);
+        public Task<bool> SendBloodTestRequestNotification(Prescription prescription, BloodTest bloodTest, DateTime requestTime);
         public Task<bool> SendBloodTestTimeUpdateNotification(Prescription prescription, BloodTestRequest bloodTestRequest, DateTime newTime);
     }
 }
