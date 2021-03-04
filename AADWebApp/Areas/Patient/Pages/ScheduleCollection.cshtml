@@ -69,6 +69,7 @@ else if (TempData["EnterPrescriptionCollectionDateTimeFailure"] != null)
     </tbody>
 </table>
 
+<br />
 <h2 class="mb-5">Past Collections</h2>
 
 <table class="table table-sm table-striped table-hover">
@@ -82,26 +83,24 @@ else if (TempData["EnterPrescriptionCollectionDateTimeFailure"] != null)
     </tr>
     </thead>
     <tbody>
-    @for (var i = 0; i < Model.Prescriptions.Count; i++)
-    {
-        <form method="post">
-            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
-            <tr>
-                @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+        @for (var i = 0; i < Model.Prescriptions.Count; i++)
+        {
+            @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+            {
+                if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Collected || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Cancelled)
                 {
-                    if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Collected || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Cancelled)
-                    {
-                        {
+                    <form method="post">
+                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                        <tr>
                             <td>@Model.Prescriptions[i].Id</td>
                             <td>@Model.Medications[i].MedicationName</td>
                             <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
                             <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
                             <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus</td>
-                        }
+                        </tr>
+                    </form>
                     }
                 }
-            </tr>
-        </form>
-    }
-    </tbody>
+            }
+     </tbody>
 </table>
