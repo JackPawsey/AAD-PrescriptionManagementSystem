@@ -92,8 +92,14 @@ namespace AADWebApp.Areas.GeneralPractitioner.Pages
 
         private async Task InitPageAsync()
         {
-            BloodTests = _bloodTestService.GetBloodTests().ToList();
-            BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => item.BloodTestStatus == BloodTestRequestStatus.Scheduled).OrderBy(item => item.BloodTestStatus).ToList();
+            BloodTestRequests = _bloodTestService.GetBloodTestRequests().Where(item => item.BloodTestStatus == BloodTestRequestStatus.Scheduled).ToList();
+
+            var bloodTestIds = BloodTestRequests.Select(item => item.BloodTestId);
+
+            for (int i = 0; i < bloodTestIds.Count(); i++)
+            {
+                BloodTests.Add(_bloodTestService.GetBloodTests().Where(item => item.Id == bloodTestIds.ElementAt(i)).ElementAt(0));
+            }
 
             await LoadPrescriptionsAndPatients();
         }
