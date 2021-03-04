@@ -24,7 +24,7 @@ namespace AADWebApp.Models
             _serviceProvider = serviceProvider;
         }
 
-        public void SetupTimer()
+        public async Task SetupTimerAsync()
         {
             var prescriptionDuration = Prescription.DateEnd - Prescription.DateStart;
 
@@ -39,10 +39,14 @@ namespace AADWebApp.Models
 
             Occurrences = (int) (prescriptionDuration.TotalMilliseconds / Interval);
 
+            Occurrences--;
+
             var nextCollectionTime = DateTime.Now.AddMilliseconds(Interval);
             var prescriptionCollectionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionCollectionService>();
             prescriptionCollectionService.CreatePrescriptionCollection(Prescription.Id, CollectionStatus.Pending, nextCollectionTime); // Send initial PrescriptionCollection
-            Occurrences--;
+
+            var notificationService = _serviceProvider.CreateScope().ServiceProvider.GetService<INotificationService>();
+            await notificationService.SendPrescriptionNotification(Prescription, Occurrences, nextCollectionTime); // Send initial Prescription email
 
             CreateTimer();
         }

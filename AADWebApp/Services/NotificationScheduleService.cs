@@ -28,7 +28,7 @@ namespace AADWebApp.Services
             {
                 var prescriptionSchedule = _serviceProvider.GetService<IPrescriptionSchedule>();
                 prescriptionSchedule.Prescription = prescription;
-                prescriptionSchedule.SetupTimer();
+                prescriptionSchedule.SetupTimerAsync();
 
                 _prescriptionSchedules.Add(prescriptionSchedule);
 
