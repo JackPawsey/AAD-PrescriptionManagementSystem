@@ -5,6 +5,7 @@ using System.Timers;
 using AADWebApp.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using static AADWebApp.Services.PrescriptionCollectionService;
+using static AADWebApp.Services.PrescriptionService;
 using static AADWebApp.Services.PrescriptionService.IssueFrequency;
 
 namespace AADWebApp.Models
@@ -60,6 +61,11 @@ namespace AADWebApp.Models
                 Timer.Elapsed += async delegate { await TimerElapsed(Prescription, Occurrences, Interval); };
                 Timer.Start();
                 Console.WriteLine("Schedule for prescription " + Prescription.Id + " started");
+            }
+            else
+            {
+                var prescriptionService = _serviceProvider.CreateScope().ServiceProvider.GetService<IPrescriptionService>();
+                prescriptionService.SetPrescriptionStatus(Prescription.Id, PrescriptionStatus.Finished);
             }
         }
 
