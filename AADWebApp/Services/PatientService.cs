@@ -49,28 +49,44 @@ namespace AADWebApp.Services
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            return _databaseService.ExecuteNonQuery($"UPDATE Patients SET CommunicationPreferences = '{communicationPreferences}' WHERE Id = '{patientId}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE Patients SET CommunicationPreferences = '{communicationPreferences}' WHERE Id = '{patientId}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int UpdateGeneralPractitioner(string patientId, string generalPractitionerName)
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            return _databaseService.ExecuteNonQuery($"UPDATE Patients SET GeneralPractitioner = '{generalPractitionerName}' WHERE Id = '{patientId}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE Patients SET GeneralPractitioner = '{generalPractitionerName}' WHERE Id = '{patientId}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int CreateNewPatientEntry(string patientId, CommunicationPreferences communicationPreferences, string nhsNumber, string generalPractitionerName)
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            return _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('{patientId}', '{communicationPreferences}', '{nhsNumber}', '{generalPractitionerName}')");
+            var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO Patients (Id, CommunicationPreferences, NhsNumber, GeneralPractitioner) VALUES ('{patientId}', '{communicationPreferences}', '{nhsNumber}', '{generalPractitionerName}')");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int DeletePatient(string patientId)
         {
             _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
 
-            return _databaseService.ExecuteNonQuery($"DELETE FROM Patients WHERE Id = '{patientId}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"DELETE FROM Patients WHERE Id = '{patientId}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
     }
 }

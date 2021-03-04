@@ -104,7 +104,11 @@ namespace AADWebApp.Services
                 _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
                 //CREATE prescriptions TABLE ROW
-                return _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus.PendingApproval}', '{issueFrequency}')");
+                var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO Prescriptions (MedicationId, PatientId, Dosage, DateStart, DateEnd, PrescriptionStatus, IssueFrequency) VALUES ('{medicationId}', '{patientId}', '{dosage}', '{dateStart:yyyy-MM-dd HH:mm:ss}', '{dateEnd:yyyy-MM-dd HH:mm:ss}', '{PrescriptionStatus.PendingApproval}', '{issueFrequency}')");
+
+                _databaseService.CloseConnection();
+
+                return dbResult;
             }
             else
             {
@@ -149,18 +153,24 @@ namespace AADWebApp.Services
             if (prescription.PrescriptionStatus.Equals(PrescriptionStatus.Approved))
             {
                 //UPDATE prescriptions TABLE ROW prescription_status COLUMN
-                return _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
-            }
-            else
-            {
-                if (prescriptionStatus.Equals(PrescriptionStatus.Approved))
-                {
-                    _notificationScheduleService.CreatePrescriptionSchedule(prescription); // Start PrescriptionSchedule when prescription is approved
-                }
+                var dbResult1 = _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
 
-                //UPDATE prescriptions TABLE ROW prescription_status COLUMN
-                return _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
+                _databaseService.CloseConnection();
+
+                return dbResult1;
             }
+
+            if (prescriptionStatus.Equals(PrescriptionStatus.Approved))
+            {
+                _notificationScheduleService.CreatePrescriptionSchedule(prescription); // Start PrescriptionSchedule when prescription is approved
+            }
+
+            //UPDATE prescriptions TABLE ROW prescription_status COLUMN
+            var dbResult2 = _databaseService.ExecuteNonQuery($"UPDATE Prescriptions SET PrescriptionStatus = '{prescriptionStatus}' WHERE Id = '{id}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult2;
         }
     }
 }

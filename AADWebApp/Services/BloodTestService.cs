@@ -129,7 +129,11 @@ namespace AADWebApp.Services
             await _notificationService.SendBloodTestRequestNotification(prescription, bloodTest, DateTime.Now);
 
             //CREATE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', '{null}', '{BloodTestRequestStatus.Pending}')");
+            var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', '{null}', '{BloodTestRequestStatus.Pending}')");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public async Task<int> SetBloodTestDateTimeAsync(Prescription prescription, short bloodTestRequestId, DateTime appointmentTime) // We don't want to have to pass the prescription here but run into circular dependancy problems if not :(
@@ -141,7 +145,11 @@ namespace AADWebApp.Services
             await _notificationService.SendBloodTestTimeUpdateNotification(prescription, bloodTestRequest, appointmentTime);
 
             //UPDATE BloodTestRequests TABLE ROW appointmentTime COLUMN
-            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}', BloodTestStatus = '{BloodTestRequestStatus.Scheduled}' WHERE Id = '{bloodTestRequestId}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET AppointmentTime = '{appointmentTime:yyyy-MM-dd HH:mm:ss}', BloodTestStatus = '{BloodTestRequestStatus.Scheduled}' WHERE Id = '{bloodTestRequestId}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int SetBloodTestResults(short bloodRequestTestId, bool result, DateTime resultTime)
@@ -152,7 +160,11 @@ namespace AADWebApp.Services
             SetBloodTestRequestStatus(bloodRequestTestId, BloodTestRequestStatus.Complete);
 
             //CREATE BloodTestResults TABLE ROW
-            return _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
+            var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int SetBloodTestRequestStatus(short id, BloodTestRequestStatus bloodTestRequestStatus)
@@ -160,7 +172,11 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //UPDATE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET BloodTestStatus = '{bloodTestRequestStatus}' WHERE Id = '{id}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET BloodTestStatus = '{bloodTestRequestStatus}' WHERE Id = '{id}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
 
         public int CancelBloodTestRequest(short id)
@@ -168,7 +184,11 @@ namespace AADWebApp.Services
             _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //UPDATE BloodTestRequests TABLE ROW
-            return _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET BloodTestStatus = '{BloodTestRequestStatus.Cancelled}' WHERE Id = '{id}'");
+            var dbResult = _databaseService.ExecuteNonQuery($"UPDATE BloodTestRequests SET BloodTestStatus = '{BloodTestRequestStatus.Cancelled}' WHERE Id = '{id}'");
+
+            _databaseService.CloseConnection();
+
+            return dbResult;
         }
     }
 }
