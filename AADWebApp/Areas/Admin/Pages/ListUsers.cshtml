@@ -24,26 +24,18 @@
                 <div class="card w-100">
                     <div class="card-header">User ID : @user.Id</div>
                     <div class="card-body">
-                        <table class="table">
+                        <table class="table table-sm">
                             <tr>
                                 <th>User Name</th>
                                 <td>@user.FirstName @user.LastName</td>
                             </tr>
                             <tr>
                                 <th>Email Address</th>
-                                <td>@user.NormalizedEmail</td>
+                                <td>@user.Email</td>
                             </tr>
                             <tr>
                                 <th>Phone Number</th>
                                 <td>@user.PhoneNumber</td>
-                            </tr>
-                            <tr>
-                                <th>Email Confirmed</th>
-                                <td>@user.EmailConfirmed</td>
-                            </tr>
-                            <tr>
-                                <th>Phone Number Confirmed</th>
-                                <td>@user.PhoneNumberConfirmed</td>
                             </tr>
                             <tr>
                                 <th>NHS Number</th>
@@ -58,8 +50,12 @@
                                 <td>@user.GeneralPractioner</td>
                             </tr>
                             <tr>
-                                <th>Two factor enabled</th>
-                                <td>@user.TwoFactorEnabled</td>
+                                <th>First Name</th>
+                                <td>@user.FirstName</td>
+                            </tr>
+                            <tr>
+                                <th>Last Name</th>
+                                <td>@user.LastName</td>
                             </tr>
                         </table>
                     </div>
