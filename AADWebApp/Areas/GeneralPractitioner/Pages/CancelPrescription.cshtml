@@ -1,8 +1,72 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.GeneralPractitioner.Pages.CancelPrescriptionModel
 @{
     ViewData["Title"] = "Cancel Prescription";
     Layout = "~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerLayout.cshtml";
 }
 
-<h1>Cancel Prescription</h1>
+<h1 class="mb-5">Cancel Prescription</h1>
+
+<h3 class="mb-5">Search</h3>
+
+<div id=" Search" class="form-group form-inline mb-5">
+    <form method="post" class="form-inline">
+        <div class="form-group">
+            <label for="medication-name" class="mr-5">Patient Name</label>
+            <input type="text" class="form-control mr-5" id="medication-name" name="SearchTerm" placeholder="Patient Name">
+        </div>
+        <button type="submit" asp-page-handler="Search" class="btn btn-primary">Search</button>
+    </form>
+    <form method="get">
+        <button type="submit" asp-page-handler="OnGet" class="btn btn-primary ml-5">Clear</button>
+    </form>
+</div>
+
+@if (TempData["PrescriptionCancelSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["PrescriptionCancelSuccess"]</p>
+}
+else if (TempData["PrescriptionCancelFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["PrescriptionCancelFailure"]</p>
+}
+
+<table class="table table-sm table-hover table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Prescription ID</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Medication Name</th>
+            <th scope="col">Issue Frequency</th>
+            <th scope="col">Status</th>
+            <th scope="col">Prescription Start</th>
+            <th scope="col">Prescription End</th>
+            <th scope="col">Cancel</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.Prescriptions.Count(); i++)
+        {
+            var isCancelled = Model.Prescriptions[i].PrescriptionStatus == PrescriptionService.PrescriptionStatus.Terminated;
+
+            <form method="POST">
+                <input type="hidden" value="@Model.Prescriptions[i].Id" name="Id" />
+                <tr>
+                    <td>@Model.Prescriptions[i].Id</td>
+                    <td>@Model.Patients[i].FirstName</td>
+                    <td>@Model.Patients[i].LastName</td>
+                    <td>@Model.Medications[i].MedicationName</td>
+                    <td>@Model.Prescriptions[i].IssueFrequency</td>
+                    <td>@Model.Prescriptions[i].PrescriptionStatus</td>
+                    <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                    <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                    <td>
+                        <input type="submit" class="btn btn-danger float-right" value="Cancel" @(isCancelled ? "disabled" : "") />
+                    </td>
+                </tr>
+            </form>
+        }
+    </tbody>
+</table>

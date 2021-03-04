@@ -21,4 +21,12 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\lib\Images\humberto-chavez-FVh_yqLR9eA-unsplash.png" />
+  </ItemGroup>
+
 </Project>

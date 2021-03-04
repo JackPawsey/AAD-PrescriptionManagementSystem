@@ -1,8 +1,81 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.GeneralPractitioner.Pages.ScheduleBloodworkModel
 @{
     ViewData["Title"] = "Schedule Bloodwork";
     Layout = "~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerLayout.cshtml";
 }
 
-<h1>Schedule Bloodwork</h1>
+<h1 class="mb-5">Schedule Bloodwork</h1>
+
+<h3 class="mb-5">Search</h3>
+
+<div id=" Search" class="form-group form-inline mb-5">
+    <form method="post" class="form-inline">
+        <div class="form-group">
+            <label for="medication-name" class="mr-5">Patient Name</label>
+            <input type="text" class="form-control mr-5" id="medication-name" name="SearchTerm" placeholder="Patient Name">
+        </div>
+        <button type="submit" asp-page-handler="Search" class="btn btn-primary">Search</button>
+    </form>
+    <form method="get">
+        <button type="submit" asp-page-handler="OnGet" class="btn btn-primary ml-5">Clear</button>
+    </form>
+</div>
+
+@if (TempData["ScheduleBloodworkSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["ScheduleBloodworkSuccess"]</p>
+}
+else if (TempData["ScheduleBloodworkFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["ScheduleBloodworkFailure"]</p>
+}
+
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Blood Test Request ID</th>
+            <th scope="col">Request Status</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Medication</th>
+            <th scope="col">Dosage</th>
+            <th scope="col">Appointment Date</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.BloodTestRequests.Count; i++)
+        {
+            var isScheduledOrComplete = Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Scheduled || Model.BloodTestRequests[i].BloodTestStatus == BloodTestService.BloodTestRequestStatus.Complete;
+
+            <form method="post">
+                <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                <input type="hidden" value="@Model.BloodTestRequests[i].Id" name="BloodTestRequestId" />
+                <tr>
+                    <td>@Model.BloodTestRequests[i].Id</td>
+                    <td>@Model.BloodTestRequests[i].BloodTestStatus</td>
+                    <td>@Model.Patients[i].FirstName</td>
+                    <td>@Model.Patients[i].LastName</td>
+                    <td>@Model.Medications[i].MedicationName</td>
+                    <td>@Model.Prescriptions[i].Dosage</td>
+
+                    @if (isScheduledOrComplete)
+                    {
+                        <td>@Model.BloodTestRequests[i].AppointmentTime</td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td><input required type="datetime-local" class="form-control" name="AppointmentDateTime"></td>
+
+                        <td>
+                            <input type="submit" class="btn btn-success float-right" value="Confirm" @(isScheduledOrComplete ? "disabled" : "") />
+                        </td>
+                    }
+                </tr>
+            </form>
+        }
+    </tbody>
+</table>

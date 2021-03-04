@@ -5,4 +5,24 @@
     Layout = "~/Areas/Technician/Pages/_TechnicianLayout.cshtml";
 }
 
-<h1>Technician Home</h1>
+<h1 class="mt-5 mb-5">Technician Home</h1>
+    <div class="card-deck mt-5 mb-5">
+            <div class="card ml-5">
+                <img class="card-img-top" src="~/lib/Images/MedicineCabinet.png">
+                <div class="card-body">
+                    <a class="text-dark" asp-area="Technician" asp-page="/ProcessPrescriptions">
+                        <h5 class="card-title"> <b>Process Prescriptions</b></h5>
+                    </a>
+                    <p class="card-text">Process Prescriptions and get them ready for preparation.</p>
+                </div>
+            </div>
+            <div class="card ml-5">
+                <img class="card-img-top" src="~/lib/Images/Pills.png">
+                <div class="card-body">
+                    <a class="text-dark" asp-area="Technician" asp-page="/ProcessPrescriptions">
+                        <h5 class="card-title"><b> Check Prescription Status</b></h5>
+                    </a>
+                        <p class="card-text">Be alerted whether a prescription is ready or collected.</p>
+                        </div>
+            </div>
+    </div>

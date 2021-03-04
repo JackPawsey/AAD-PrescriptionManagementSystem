@@ -1,8 +1,127 @@
 ﻿@page
+@using AADWebApp.Models
 @model AADWebApp.Areas.GeneralPractitioner.Pages.RequestPrescriptionModel
 @{
     ViewData["Title"] = "Request Prescription";
     Layout = "~/Areas/GeneralPractitioner/Pages/_GeneralPractitionerLayout.cshtml";
 }
 
-<h1>Request Prescription</h1>
+<h1 class="mb-5">Request Prescription</h1>
+
+<h3 class="mb-5">Search</h3>
+
+<div id=" Search" class="form-group form-inline mb-5">
+    <form method="post" class="form-inline">
+        <div class="form-group">
+            <label for="medication-name" class="mr-5">Medication Name</label>
+            <input type="text" class="form-control mr-5" id="medication-name" name="SearchTerm" placeholder="Medication Name">
+        </div>
+        <button type="submit" asp-page-handler="Search" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+@if (TempData["PrescriptionRequestSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["PrescriptionRequestSuccess"]</p>
+}
+else if (TempData["PrescriptionRequestFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["PrescriptionRequestFailure"]</p>
+}
+
+<table class="table table-sm table-striped table-hover">
+    <thead>
+    <tr>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Restriction Level</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+        <th scope="col">Dosage</th>
+        <th scope="col">Issue Frequency</th>
+        <th scope="col">Select</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var medication in Model.Medications)
+    {
+        <tr data-medication-id="@medication.Id">
+            <td class="js-medication-name">@medication.MedicationName</td>
+            <td class="js-medication-restriction-level">
+                @if (medication.BloodWorkRestrictionLevel == null)
+                {
+                    @Html.Raw("<i>None</i>")
+                }
+                else
+                {
+                    @medication.BloodWorkRestrictionLevel.ToString()
+                }
+            </td>
+            <td>
+                <input type="date" class="form-control js-start-date" required />
+            </td>
+            <td>
+                <input type="date" class="form-control js-end-date" required />
+            </td>
+            <td>
+                <input type="number" class="form-control js-dosage" placeholder="Dosage (mg)" min="0" step="any" required />
+            </td>
+            <td>
+                <select class="form-control js-issue-frequency" asp-items="@Model.IssueFrequencies">
+                    <option value="">---</option>
+                </select>
+            </td>
+            <td>
+                <button data-toggle="modal" data-target="#request-prescription-patient-modal" class="btn btn-success float-right">Prescribe</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<!--Modal-->
+<div class="modal fade" tabindex="-1" id="request-prescription-patient-modal">
+    <form method="POST">
+        <div class="modal-dialog" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"> Choose Patient</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Select</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var patient in Model.Patients)
+                            {
+                                <tr>
+                                    <td>@patient.FirstName</td>
+                                    <td>@patient.LastName</td>
+                                    <td>
+                                        <div id="CheckBox" class="form-check-input mt-0">
+                                            <input type="radio" name="Id" value="@(patient.Id)" class="form-check-input" id="SelectPatient" required />
+                                            <label for="SelectPatient">Choose</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger float-left" data-dismiss="modal" value="Cancel" />
+                    <input type="submit" class="btn btn-primary float-right" value="Confirm" asp-page-handler="Prescribe"  />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

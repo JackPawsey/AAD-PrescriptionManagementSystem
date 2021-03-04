@@ -1,8 +1,107 @@
 ﻿@page
+@using AADWebApp.Services
 @model AADWebApp.Areas.Patient.Pages.ScheduleCollectionModel
 @{
     ViewData["Title"] = "Schedule Collection";
     Layout = "~/Areas/Patient/Pages/_PatientLayout.cshtml";
 }
 
-<h1>Schedule Collection</h1>
+<h1 class="mb-5">Schedule Prescription Collections</h1>
+
+<h2 class="mb-5">Upcoming Collections</h2>
+
+@if (TempData["EnterPrescriptionCollectionDateTimeSuccess"] != null)
+{
+    <p class="mb-2 p-2 bg-success text-white rounded">@TempData["EnterPrescriptionCollectionDateTimeSuccess"]</p>
+}
+else if (TempData["EnterPrescriptionCollectionDateTimeFailure"] != null)
+{
+    <p class="mb-2 p-2 bg-danger text-white rounded">@TempData["EnterPrescriptionCollectionDateTimeFailure"]</p>
+}
+
+<table class="table table-sm table-striped table-hover">
+    <thead>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+        <th scope="col">Collection Status</th>
+        <th scope="col">Collection Status Last Updated</th>
+        <th scope="col">Current Collection Date/Time</th>
+        <th scope="col">New Collection Date/Time</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.Prescriptions.Count; i++)
+        {
+            @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+            {
+                if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Pending || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.BeingPrepared || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.CollectionReady)
+                {
+                    <form method="post">
+                        <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+                        <tr>
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+
+                            <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus</td>
+                            <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionStatusUpdated</td>
+                            <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionTime</td>
+
+                            @if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus != PrescriptionCollectionService.CollectionStatus.CollectionReady)
+                            {
+                                <td>
+                                    <input required type="datetime-local" class="form-control" name="CollectionDateTime">
+                                </td>
+                                <td>
+                                    <input type="submit" class="btn btn-primary float-right" value="Schedule" />
+                                </td>
+                            }
+                        </tr>
+                    </form>
+                    }
+                }
+            }
+    </tbody>
+</table>
+
+<h2 class="mb-5">Past Collections</h2>
+
+<table class="table table-sm table-striped table-hover">
+    <thead>
+    <tr>
+        <th scope="col">Prescription ID</th>
+        <th scope="col">Medication Name</th>
+        <th scope="col">Prescription Start</th>
+        <th scope="col">Prescription End</th>
+        <th scope="col">Collection Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (var i = 0; i < Model.Prescriptions.Count; i++)
+    {
+        <form method="post">
+            <input type="hidden" value="@Model.Prescriptions[i].Id" name="PrescriptionId" />
+            <tr>
+                @for (var x = 0; x < Model.PrescriptionCollections[i].Count; x++)
+                {
+                    if (Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Collected || Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus == PrescriptionCollectionService.CollectionStatus.Cancelled)
+                    {
+                        {
+                            <td>@Model.Prescriptions[i].Id</td>
+                            <td>@Model.Medications[i].MedicationName</td>
+                            <td>@Model.Prescriptions[i].DateStart.ToShortDateString()</td>
+                            <td>@Model.Prescriptions[i].DateEnd.ToShortDateString()</td>
+                            <td>@Model.PrescriptionCollections[i].ElementAt(x).CollectionStatus</td>
+                        }
+                    }
+                }
+            </tr>
+        </form>
+    }
+    </tbody>
+</table>

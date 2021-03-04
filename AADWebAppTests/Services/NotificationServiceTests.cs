@@ -144,7 +144,7 @@ namespace AADWebAppTests.Services
                 RestrictionLevel = 1
             };
 
-            var result = _notificationService.SendBloodTestRequestNotification(prescripton, bloodTest, DateTime.Now, DateTime.Now.AddDays(5)).Result;
+            var result = _notificationService.SendBloodTestRequestNotification(prescripton, bloodTest, DateTime.Now).Result;
             Assert.IsTrue(result);
         }
 
