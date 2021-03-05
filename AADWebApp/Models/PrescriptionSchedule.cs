@@ -88,7 +88,8 @@ namespace AADWebApp.Models
 
         public void CancelSchedule()
         {
-            Timer.Stop();
+            Timer?.Stop();
+
             Console.WriteLine("Prescription " + Prescription.Id + " schedule stopped");
         }
     }
