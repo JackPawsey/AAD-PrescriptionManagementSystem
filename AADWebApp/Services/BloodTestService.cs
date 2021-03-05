@@ -88,7 +88,7 @@ namespace AADWebApp.Services
                     Id = (short) result.GetValue(0),
                     PrescriptionId = (short) result.GetValue(1),
                     BloodTestId = (short) result.GetValue(2),
-                    AppointmentTime = (DateTime) result.GetValue(3),
+                    AppointmentTime = Convert.IsDBNull(result.GetValue(3)) ? (DateTime?) null : (DateTime?) result.GetValue(3),
                     BloodTestStatus = (BloodTestRequestStatus) Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
                 });
             }
@@ -112,7 +112,7 @@ namespace AADWebApp.Services
                     Id = (short) result.GetValue(0),
                     PrescriptionId = (short) result.GetValue(1),
                     BloodTestId = (short) result.GetValue(2),
-                    AppointmentTime = (DateTime) result.GetValue(3),
+                    AppointmentTime = Convert.IsDBNull(result.GetValue(3)) ? (DateTime?) null : (DateTime?) result.GetValue(3),
                     BloodTestStatus = (BloodTestRequestStatus) Enum.Parse(typeof(BloodTestRequestStatus), result.GetValue(4).ToString() ?? throw new InvalidOperationException())
                 });
             }
@@ -129,7 +129,7 @@ namespace AADWebApp.Services
             await _notificationService.SendBloodTestRequestNotification(prescription, bloodTest, DateTime.Now);
 
             //CREATE BloodTestRequests TABLE ROW
-            var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', '{null}', '{BloodTestRequestStatus.Pending}')");
+            var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestRequests (PrescriptionId, BloodTestId, AppointmentTime, BloodTestStatus) VALUES ('{prescription.Id}', '{bloodTestId}', null, '{BloodTestRequestStatus.Pending}')");
 
             _databaseService.CloseConnection();
 
@@ -154,10 +154,10 @@ namespace AADWebApp.Services
 
         public int SetBloodTestResults(short bloodRequestTestId, bool result, DateTime resultTime)
         {
-            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
-
             // Set the corresponding blood test request to be complete
             SetBloodTestRequestStatus(bloodRequestTestId, BloodTestRequestStatus.Complete);
+
+            _databaseService.ConnectToMssqlServer(DatabaseService.AvailableDatabases.ProgramData);
 
             //CREATE BloodTestResults TABLE ROW
             var dbResult = _databaseService.ExecuteNonQuery($"INSERT INTO BloodTestResults (BloodTestRequestId, TestResult, ResultTime) VALUES ('{bloodRequestTestId}', {(result ? 1 : 0)}, '{resultTime:yyyy-MM-dd HH:mm:ss}')");

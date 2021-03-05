@@ -123,8 +123,7 @@ namespace AADWebAppTests.Services
         public void WhenRequestingBloodTestsRowsAreAdded()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(preSetupRows == 0);
+            AssertBloodTestRequestsTableContainsXRows(0);
 
             var beforeRequestResults = _bloodTestService.GetBloodTestRequests().ToList();
             Assert.IsTrue(!beforeRequestResults.Any());
@@ -234,8 +233,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
-            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(databaseRows == 3);
+            AssertBloodTestRequestsTableContainsXRows(3);
 
             // Check results - GetBloodTestRequests with no id
             var afterRequestResults = _bloodTestService.GetBloodTestRequestsByPrescriptionId();
@@ -264,12 +262,11 @@ namespace AADWebAppTests.Services
         public void WhenSettingsAnAppointmentTimeTheRowIsUpdated()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(preSetupRows == 0);
+            AssertBloodTestRequestsTableContainsXRows(0);
 
             // Prerequisite setup
-            var initialTime = DateTime.Now;
-            var updatedTime = initialTime.AddDays(1);
+            DateTime? initialTime = null;
+            var updatedTime = DateTime.Now;
 
             var timeNow = DateTime.Now;
             var timeTomorrow = DateTime.Now.AddDays(1);
@@ -311,16 +308,15 @@ namespace AADWebAppTests.Services
                     Id = 1,
                     PrescriptionId = 1,
                     BloodTestId = 1,
-                    AppointmentTime = null,
-                    BloodTestStatus = BloodTestRequestStatus.Pending
+                    AppointmentTime = updatedTime,
+                    BloodTestStatus = BloodTestRequestStatus.Scheduled
                 }
             };
 
             var afterExpectedSerialised = Serialize(expectedAfterUpdate);
 
             // Check prior to adding - via the database
-            var priorAddingDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(priorAddingDatabaseRows == 1);
+            AssertBloodTestRequestsTableContainsXRows(1);
 
             // Check prior to adding
             var beforeUpdateResults = _bloodTestService.GetBloodTestRequests();
@@ -335,8 +331,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows);
 
             // Check results to adding - via the database
-            var afterUpdateDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(afterUpdateDatabaseRows == 1);
+            AssertBloodTestRequestsTableContainsXRows(1);
 
             // Check results - GetBloodTestRequests with no id
             var afterUpdateResults = _bloodTestService.GetBloodTestRequests();
@@ -360,8 +355,7 @@ namespace AADWebAppTests.Services
         public void WhenAddingBloodTestResultsRowsAreAdded()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
-            Assert.IsTrue(preSetupRows == 0);
+            AssertBloodTestResultsTableContainsXRows(0);
 
             // Prerequisite setup
             var timeNow = DateTime.Now;
@@ -428,8 +422,7 @@ namespace AADWebAppTests.Services
             var expected1Serialised = Serialize(expected1);
 
             // Check prior to adding blood tests - via the database
-            var beforeAnyResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
-            Assert.IsTrue(beforeAnyResultsDatabaseRows == 0);
+            AssertBloodTestResultsTableContainsXRows(0);
 
             // Set blood test results
             var affectedRows1 = _bloodTestService.SetBloodTestResults(1, false, timeNow);
@@ -439,8 +432,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows2);
 
             // Check prior to adding blood tests - via the database
-            var afterAddingResultsDatabaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
-            Assert.IsTrue(afterAddingResultsDatabaseRows == 2);
+            AssertBloodTestResultsTableContainsXRows(2);
 
             // Check results - GetBloodTestResults with no id
             var afterResultResults = _bloodTestService.GetBloodTestResults();
@@ -468,8 +460,7 @@ namespace AADWebAppTests.Services
         public void WhenSettingAnBloodTestRequestStatusTheRowIsUpdated()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
-            Assert.IsTrue(preSetupRows == 0);
+            AssertBloodTestResultsTableContainsXRows(0);
 
             // Prerequisite setup
             var timeNow = DateTime.Now;
@@ -509,8 +500,7 @@ namespace AADWebAppTests.Services
         public void WhenCancellingBloodTestRequest()
         {
             // Check prior to any setup - via the database
-            var preSetupRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(preSetupRows == 0);
+            AssertBloodTestRequestsTableContainsXRows(0);
 
             // Prerequisite setup
             var timeNow = DateTime.Now;
@@ -531,8 +521,7 @@ namespace AADWebAppTests.Services
             _bloodTestService.RequestBloodTestAsync(prescription, 1);
 
             // Check row was inserted
-            var afterInsertRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
-            Assert.IsTrue(afterInsertRows == 1);
+            AssertBloodTestRequestsTableContainsXRows(1);
 
             var result = _bloodTestService.CancelBloodTestRequest(1);
             Assert.AreEqual(result, 1);
@@ -540,6 +529,30 @@ namespace AADWebAppTests.Services
             //Check that the blood test request has been cancelled
             var result2 = _bloodTestService.GetBloodTestRequests(1).ElementAt(0);
             Assert.AreEqual(result2.BloodTestStatus, BloodTestRequestStatus.Cancelled); // this doesnt work but should
+        }
+
+        private void AssertBloodTestRequestsTableContainsXRows(int expectedRows)
+        {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
+            
+            // Check prior to make sure there are no prescription_collections
+            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestRequests");
+            var methodResults = _bloodTestService.GetBloodTestRequests();
+
+            Assert.AreEqual(methodResults.Count(), databaseResults);
+            Assert.AreEqual(expectedRows, databaseResults);
+        }
+
+        private void AssertBloodTestResultsTableContainsXRows(int expectedRows)
+        {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
+            
+            // Check prior to make sure there are no prescription_collections
+            var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM BloodTestResults");
+            var methodResults = _bloodTestService.GetBloodTestResults();
+
+            Assert.AreEqual(expectedRows, databaseResults);
+            Assert.AreEqual(methodResults.Count(), databaseResults);
         }
     }
 }

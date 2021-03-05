@@ -414,6 +414,8 @@ namespace AADWebAppTests.Services
 
         private void AssertPrescriptionCollectionTableContainsXRows(int expectedRows)
         {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
+            
             // Check prior to make sure there are no prescription_collections
             var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM PrescriptionCollections");
             var methodResults = _prescriptionCollectionService.GetPrescriptionCollections();

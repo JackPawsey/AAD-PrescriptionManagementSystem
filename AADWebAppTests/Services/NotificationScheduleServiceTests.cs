@@ -118,7 +118,7 @@ namespace AADWebAppTests.Services
             // Check prior to make sure there are no PrescriptionSchedules
             var count = _notificationScheduleService.GetPrescriptionSchedules().Count();
 
-            Assert.AreEqual(count, expectedCount);
+            Assert.AreEqual(expectedCount, count);
         }
     }
 }
