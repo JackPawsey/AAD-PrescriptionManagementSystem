@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using AADWebApp.Interfaces;
 using AADWebApp.Models;
+using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static AADWebApp.Services.PrescriptionService;
 
@@ -87,6 +89,8 @@ namespace AADWebAppTests.Services
             CreatePrescriptionSchedule(1, 1, "patientId", 77, DateTime.Now, DateTime.Now.AddDays(1), PrescriptionStatus.PendingApproval);
 
             AssertPrescriptionScheduleListContainsXSchedules(1);
+            
+            Thread.Sleep(1000);
 
             var result = _notificationScheduleService.CancelPrescriptionSchedule(1);
 
@@ -118,7 +122,7 @@ namespace AADWebAppTests.Services
             // Check prior to make sure there are no PrescriptionSchedules
             var count = _notificationScheduleService.GetPrescriptionSchedules().Count();
 
-            Assert.AreEqual(count, expectedCount);
+            Assert.AreEqual(expectedCount, count);
         }
     }
 }

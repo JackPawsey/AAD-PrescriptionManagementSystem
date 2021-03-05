@@ -103,8 +103,7 @@ namespace AADWebAppTests.Services
             Assert.AreEqual(1, affectedRows3);
 
             // Check amount of database rows
-            var databaseRows = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM Patients");
-            Assert.IsTrue(databaseRows == 3);
+            AssertPatientsTableContainsXRows(3);
 
             // Check results - GetPatients with no id
             var afterCreateResults = _patientService.GetPatients();
@@ -261,6 +260,8 @@ namespace AADWebAppTests.Services
 
         private void AssertPatientsTableContainsXRows(int expectedRows)
         {
+            _databaseService.ConnectToMssqlServer(AvailableDatabases.ProgramData);
+            
             // Check prior to make sure there are no patients
             var databaseResults = _databaseService.ExecuteScalarQuery("SELECT COUNT(*) FROM Patients");
             var methodResults = _patientService.GetPatients();
